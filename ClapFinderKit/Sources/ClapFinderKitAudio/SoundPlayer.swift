@@ -1,0 +1,84 @@
+import AVFoundation
+import ClapFinderKitData
+import OSLog
+import Observation
+
+// MARK: - SoundPlayer
+
+/// Plays a single animal sound file from a given bundle at maximum volume.
+///
+/// Sound files are stored in the **app** bundle (`ClapFinder/Resources/Audio/`),
+/// not the ClapFinderKit framework bundle. The caller passes the bundle in
+/// `play(animal:in:)` — defaults to `Bundle.main` in production.
+///
+/// ```swift
+/// soundPlayer.play(animal: selectedAnimal)   // uses Bundle.main
+/// ```
+@Observable
+@MainActor
+public final class SoundPlayer {
+
+    // MARK: Public state
+
+    /// `true` while a sound is actively playing.
+    public private(set) var isPlaying = false
+
+    // MARK: Private
+
+    private var player: AVAudioPlayer?
+
+    // MARK: Logging
+
+    nonisolated private static let logger = Logger(
+        subsystem: "com.appcentral.clapfinder",
+        category: "SoundPlayer"
+    )
+
+    // MARK: Init
+
+    public init() {}
+
+    // MARK: Public API
+
+    /// Plays the sound file for `animal`.
+    ///
+    /// - Parameters:
+    ///   - animal: The animal whose sound to play.
+    ///   - bundle: Bundle containing the CAF audio resource (default: `Bundle.main`).
+    public func play(animal: Animal, in bundle: Bundle = .main) {
+        stop()  // cancel any in-progress sound
+
+        guard let url = bundle.url(forResource: animal.soundFile, withExtension: nil) else {
+            Self.logger.error("Sound file not found: \(animal.soundFile) in \(bundle.bundlePath)")
+            return
+        }
+
+        do {
+            let p = try AVAudioPlayer(contentsOf: url)
+            p.volume = 1.0
+            p.numberOfLoops = 0
+            p.prepareToPlay()
+            p.play()
+            player = p
+            isPlaying = true
+            Self.logger.debug("Playing \(animal.soundFile) (duration \(p.duration, format: .fixed(precision: 2))s)")
+
+            // Flip isPlaying back to false after the track finishes.
+            let duration = p.duration
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(max(duration, 0.05)))
+                // Guard against the player being replaced mid-flight
+                if self?.player === p { self?.isPlaying = false }
+            }
+        } catch {
+            Self.logger.error("AVAudioPlayer init failed: \(error)")
+        }
+    }
+
+    /// Stops playback immediately.
+    public func stop() {
+        player?.stop()
+        player = nil
+        isPlaying = false
+    }
+}
