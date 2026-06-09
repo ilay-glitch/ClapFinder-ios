@@ -1,5 +1,9 @@
 /* ClapFinder — Localizable Strings */
 
+/* MARK: - Privacy / permissions */
+/* Note: NSMicrophoneUsageDescription in Info.plist must match the intent here */
+"permission.microphone"   = "ClapFinder listens for claps so you can find your phone. The microphone is only used for clap detection and nothing else.";
+
 /* MARK: - Home screen */
 "home.title"              = "ClapFinder";
 "home.subtitle"           = "Clap twice to find your phone";

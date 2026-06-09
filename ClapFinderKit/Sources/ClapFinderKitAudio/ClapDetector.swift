@@ -16,6 +16,12 @@ import OSLog
 /// 4. Two peaks within `clapWindowSeconds` (0.5 s) trigger `onClapDetected`.
 /// 5. A `cooldownSeconds` (1.0 s) lockout prevents duplicate fires.
 ///
+/// ## Background operation
+/// Requires `UIBackgroundModes = ["audio"]` in `Info.plist`. When that key is
+/// present the engine keeps running with the screen off or the app backgrounded.
+/// The detector automatically stops and restarts around AVAudioSession
+/// interruptions (phone calls, Siri) using async notification streams.
+///
 /// ## Usage
 /// ```swift
 /// let detector = ClapDetector()
@@ -61,6 +67,9 @@ public final class ClapDetector {
     private var firstClapTime: Date?
     private var inCooldown = false
     private var currentThreshold: Float = Sensitivity.medium.threshold
+    /// Retained so we can cancel notification observers when the detector stops.
+    /// Cancelled in `tearDown()` (called by `stop()`).
+    private var interruptionTask: Task<Void, Never>?
 
     // MARK: - Logging
 
@@ -91,6 +100,7 @@ public final class ClapDetector {
         } catch {
             throw ClapDetectorError.audioSessionConfigFailed(underlying: error)
         }
+        startNotificationObservers()
 #endif
 
         installTap()
@@ -99,6 +109,7 @@ public final class ClapDetector {
             try engine.start()
         } catch {
             engine.inputNode.removeTap(onBus: 0)
+            interruptionTask?.cancel()
             throw ClapDetectorError.engineStartFailed(underlying: error)
         }
 
@@ -109,14 +120,11 @@ public final class ClapDetector {
     /// Stops the engine and tears down the input tap.
     public func stop() {
         guard isListening else { return }
-        engine.inputNode.removeTap(onBus: 0)
-        engine.stop()
-        reset()
-        isListening = false
+        tearDown()
         Self.logger.info("Listening stopped")
     }
 
-    // MARK: - Private helpers
+    // MARK: - Private — setup / teardown
 
     private func installTap() {
         let inputNode = engine.inputNode
@@ -132,6 +140,17 @@ public final class ClapDetector {
             }
         }
     }
+
+    private func tearDown() {
+        engine.inputNode.removeTap(onBus: 0)
+        engine.stop()
+        interruptionTask?.cancel()
+        interruptionTask = nil
+        reset()
+        isListening = false
+    }
+
+    // MARK: - Core detection state machine
 
     /// Core detection state machine — must be called on the main actor.
     func processSample(dBFS: Float) {
@@ -165,6 +184,8 @@ public final class ClapDetector {
     }
 
 #if os(iOS)
+    // MARK: - AVAudioSession configuration
+
     private func configureAudioSession() throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(
@@ -172,6 +193,117 @@ public final class ClapDetector {
             options: [.mixWithOthers, .allowBluetooth, .defaultToSpeaker]
         )
         try session.setActive(true)
+    }
+
+    // MARK: - Notification observers
+
+    /// Subscribes to AVAudioSession interruption and route-change notifications
+    /// using Swift Concurrency async streams (no @objc needed, Swift 6 safe).
+    private func startNotificationObservers() {
+        interruptionTask?.cancel()
+        interruptionTask = Task { @MainActor [weak self] in
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { @MainActor [weak self] in
+                    await self?.observeInterruptions()
+                }
+                group.addTask { @MainActor [weak self] in
+                    await self?.observeRouteChanges()
+                }
+            }
+        }
+    }
+
+    private func observeInterruptions() async {
+        let notifications = NotificationCenter.default.notifications(
+            named: AVAudioSession.interruptionNotification
+        )
+        for await notification in notifications {
+            guard !Task.isCancelled else { return }
+            handleInterruption(notification)
+        }
+    }
+
+    private func observeRouteChanges() async {
+        let notifications = NotificationCenter.default.notifications(
+            named: AVAudioSession.routeChangeNotification
+        )
+        for await notification in notifications {
+            guard !Task.isCancelled else { return }
+            handleRouteChange(notification)
+        }
+    }
+
+    private func handleInterruption(_ notification: Notification) {
+        guard
+            let info = notification.userInfo,
+            let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let interruptionType = AVAudioSession.InterruptionType(rawValue: typeValue)
+        else { return }
+
+        switch interruptionType {
+        case .began:
+            Self.logger.info("Audio session interrupted — pausing engine")
+            // Pause the engine without fully tearing down (keeps isListening true
+            // so we know we should resume when the interruption ends).
+            engine.pause()
+            reset()
+
+        case .ended:
+            guard
+                let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt,
+                AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume)
+            else {
+                Self.logger.info("Interruption ended — shouldResume not set, stopping")
+                tearDown()
+                return
+            }
+            Self.logger.info("Interruption ended — resuming engine")
+            resumeAfterInterruption()
+
+        @unknown default:
+            break
+        }
+    }
+
+    private func handleRouteChange(_ notification: Notification) {
+        guard
+            let info = notification.userInfo,
+            let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
+        else { return }
+
+        switch reason {
+        case .oldDeviceUnavailable:
+            // e.g. Bluetooth headset disconnected; engine may stall — restart tap
+            Self.logger.info("Audio route changed (old device unavailable) — restarting tap")
+            restartTap()
+        default:
+            break
+        }
+    }
+
+    private func resumeAfterInterruption() {
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+            try engine.start()
+            Self.logger.info("Engine resumed after interruption")
+        } catch {
+            Self.logger.error("Failed to resume after interruption: \(error)")
+            tearDown()
+        }
+    }
+
+    private func restartTap() {
+        engine.inputNode.removeTap(onBus: 0)
+        installTap()
+        if !engine.isRunning {
+            do {
+                try engine.start()
+            } catch {
+                Self.logger.error("Failed to restart engine after route change: \(error)")
+                tearDown()
+            }
+        }
     }
 #endif
 
