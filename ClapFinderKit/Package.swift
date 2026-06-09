@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "ClapFinderKit",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .macOS(.v14)   // required for swift build on macOS host
     ],
     products: [
         .library(name: "ClapFinderKitDesign",       targets: ["ClapFinderKitDesign"]),
