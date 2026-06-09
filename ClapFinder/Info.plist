@@ -37,6 +37,15 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>ClapFinder listens for claps so you can find your phone. The microphone is only used for clap detection and nothing else.</string>
 
+    <!-- ── Tracking (ATT) ───────────────────────────────────────── -->
+    <!--
+        Required if AppTrackingTransparency framework is linked.
+        All Ages copy: plain English, no marketing language.
+        Actual tracking only begins in Phase 2 when the ad SDK is added.
+    -->
+    <key>NSUserTrackingUsageDescription</key>
+    <string>ClapFinder may show ads to keep the app free. Allow tracking to see ads that are relevant to you.</string>
+
     <!-- ── Hardware requirements ─────────────────────────────────── -->
     <key>UIRequiredDeviceCapabilities</key>
     <array>
