@@ -1,0 +1,18 @@
+[
+  { "id": "dog",      "name": "Dog",      "emoji": "🐕", "soundFile": "dog_bark.caf"        },
+  { "id": "cat",      "name": "Cat",      "emoji": "🐈", "soundFile": "cat_meow.caf"        },
+  { "id": "cow",      "name": "Cow",      "emoji": "🐮", "soundFile": "cow_moo.caf"         },
+  { "id": "frog",     "name": "Frog",     "emoji": "🐸", "soundFile": "frog_ribbit.caf"     },
+  { "id": "duck",     "name": "Duck",     "emoji": "🦆", "soundFile": "duck_quack.caf"      },
+  { "id": "pig",      "name": "Pig",      "emoji": "🐖", "soundFile": "pig_oink.caf"        },
+  { "id": "rooster",  "name": "Rooster",  "emoji": "🐔", "soundFile": "rooster_crow.caf"    },
+  { "id": "sheep",    "name": "Sheep",    "emoji": "🐑", "soundFile": "sheep_baa.caf"       },
+  { "id": "lion",     "name": "Lion",     "emoji": "🦁", "soundFile": "lion_roar.caf"       },
+  { "id": "elephant", "name": "Elephant", "emoji": "🐘", "soundFile": "elephant_trumpet.caf"},
+  { "id": "monkey",   "name": "Monkey",   "emoji": "🐒", "soundFile": "monkey_chatter.caf"  },
+  { "id": "fox",      "name": "Fox",      "emoji": "🦊", "soundFile": "fox_yip.caf"         },
+  { "id": "wolf",     "name": "Wolf",     "emoji": "🐺", "soundFile": "wolf_howl.caf"       },
+  { "id": "parrot",   "name": "Parrot",   "emoji": "🦜", "soundFile": "parrot_hello.caf"    },
+  { "id": "dolphin",  "name": "Dolphin",  "emoji": "🐬", "soundFile": "dolphin_click.caf"   },
+  { "id": "bee",      "name": "Bee",      "emoji": "🐝", "soundFile": "bee_buzz.caf"        }
+]

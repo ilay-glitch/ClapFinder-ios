@@ -1,8 +1,8 @@
 /// ClapFinderKitData
 ///
 /// Responsibilities:
-/// - Animal model
-/// - catalog.json (16 animal sounds)
-/// - CatalogStore: loads catalog, persists selected animal + sensitivity via UserDefaults
-/// - Sensitivity enum: low / medium / high with dBFS threshold
+/// - `Animal` — Codable + Identifiable model for a catalog entry.
+/// - `Sensitivity` — low / medium / high with dBFS threshold values.
+/// - `CatalogStore` — @Observable store; loads catalog.json, persists preferences.
+/// - `Resources/catalog.json` — 16-entry animal sound catalog.
 public enum ClapFinderKitData {}
