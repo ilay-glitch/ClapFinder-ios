@@ -8,11 +8,11 @@ let package = Package(
         .macOS(.v14)   // required for swift build on macOS host
     ],
     products: [
-        .library(name: "ClapFinderKitDesign",       targets: ["ClapFinderKitDesign"]),
-        .library(name: "ClapFinderKitAudio",         targets: ["ClapFinderKitAudio"]),
-        .library(name: "ClapFinderKitData",          targets: ["ClapFinderKitData"]),
-        .library(name: "ClapFinderKitAds",           targets: ["ClapFinderKitAds"]),
-        .library(name: "ClapFinderKitLocalization",  targets: ["ClapFinderKitLocalization"]),
+        .library(name: "ClapFinderKitDesign", targets: ["ClapFinderKitDesign"]),
+        .library(name: "ClapFinderKitAudio", targets: ["ClapFinderKitAudio"]),
+        .library(name: "ClapFinderKitData", targets: ["ClapFinderKitData"]),
+        .library(name: "ClapFinderKitAds", targets: ["ClapFinderKitAds"]),
+        .library(name: "ClapFinderKitLocalization", targets: ["ClapFinderKitLocalization"])
     ],
     targets: [
         // Design tokens — the only module where hex color literals are permitted.
@@ -48,6 +48,6 @@ let package = Package(
             name: "ClapFinderKitTests",
             dependencies: ["ClapFinderKitAudio", "ClapFinderKitData"],
             path: "Tests/ClapFinderKitTests"
-        ),
+        )
     ]
 )

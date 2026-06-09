@@ -1,7 +1,7 @@
 import AVFoundation
 import ClapFinderKitData
-import OSLog
 import Observation
+import OSLog
 
 // MARK: - SoundPlayer
 
@@ -54,21 +54,22 @@ public final class SoundPlayer {
         }
 
         do {
-            let p = try AVAudioPlayer(contentsOf: url)
-            p.volume = 1.0
-            p.numberOfLoops = 0
-            p.prepareToPlay()
-            p.play()
-            player = p
+            let audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer.volume = 1.0
+            audioPlayer.numberOfLoops = 0
+            audioPlayer.prepareToPlay()
+            audioPlayer.play()
+            player = audioPlayer
             isPlaying = true
-            Self.logger.debug("Playing \(animal.soundFile) (duration \(p.duration, format: .fixed(precision: 2))s)")
+            let trackDuration = audioPlayer.duration
+            Self.logger.debug("Playing \(animal.soundFile) (duration \(trackDuration, format: .fixed(precision: 2))s)")
 
             // Flip isPlaying back to false after the track finishes.
-            let duration = p.duration
-            Task { @MainActor [weak self] in
+            let duration = trackDuration
+            Task { @MainActor [weak self, weak audioPlayer] in
                 try? await Task.sleep(for: .seconds(max(duration, 0.05)))
                 // Guard against the player being replaced mid-flight
-                if self?.player === p { self?.isPlaying = false }
+                if self?.player === audioPlayer { self?.isPlaying = false }
             }
         } catch {
             Self.logger.error("AVAudioPlayer init failed: \(error)")

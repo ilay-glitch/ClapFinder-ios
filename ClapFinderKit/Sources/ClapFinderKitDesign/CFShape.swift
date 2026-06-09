@@ -1,5 +1,7 @@
 import CoreFoundation
 
+// swiftlint:disable colon identifier_name
+
 // MARK: - CFRadius
 
 /// Corner radius tokens.
@@ -33,3 +35,5 @@ public enum CFSpacing {
     /// 48pt
     public static let xxl: CGFloat = 48
 }
+
+// swiftlint:enable colon identifier_name

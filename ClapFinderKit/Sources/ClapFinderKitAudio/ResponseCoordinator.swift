@@ -1,7 +1,7 @@
 import ClapFinderKitData
 import Foundation
-import OSLog
 import Observation
+import OSLog
 
 // MARK: - ResponseCoordinator
 

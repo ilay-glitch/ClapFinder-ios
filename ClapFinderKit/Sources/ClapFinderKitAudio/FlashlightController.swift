@@ -1,10 +1,9 @@
-import OSLog
-import Observation
-
 // MARK: - FlashlightController
 
 #if os(iOS)
 import AVFoundation
+import Observation
+import OSLog
 
 /// Pulses the rear-facing torch 3× on double-clap detection.
 ///
@@ -71,21 +70,21 @@ public final class FlashlightController {
     // MARK: Private
 
     private func runPulse(device: AVCaptureDevice) async {
-        for i in 0..<pulseCount {
-            setTorch(device: device, on: true)
+        for index in 0..<pulseCount {
+            setTorch(device: device, isOn: true)
             try? await Task.sleep(for: .seconds(onDuration))
-            setTorch(device: device, on: false)
-            if i < pulseCount - 1 {
+            setTorch(device: device, isOn: false)
+            if index < pulseCount - 1 {
                 try? await Task.sleep(for: .seconds(offDuration))
             }
         }
         Self.logger.debug("Torch pulse complete (\(self.pulseCount)×)")
     }
 
-    private func setTorch(device: AVCaptureDevice, on: Bool) {
+    private func setTorch(device: AVCaptureDevice, isOn: Bool) {
         do {
             try device.lockForConfiguration()
-            device.torchMode = on ? .on : .off
+            device.torchMode = isOn ? .on : .off
             device.unlockForConfiguration()
         } catch {
             Self.logger.error("Torch lockForConfiguration failed: \(error)")
@@ -96,6 +95,8 @@ public final class FlashlightController {
 #else
 
 // MARK: - macOS stub (package builds cleanly on CLI / Simulator without camera)
+
+import Observation
 
 /// No-op stub on platforms without a torch.
 @Observable
