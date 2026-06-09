@@ -1,3 +1,29 @@
-/* ClapFinder — Localizable Strings
-   All user-visible strings must be referenced from here.
-   Populated in PR-6 (Home UI) and subsequent PRs. */
+/* ClapFinder — Localizable Strings */
+
+/* MARK: - Home screen */
+"home.title"              = "ClapFinder";
+"home.subtitle"           = "Clap twice to find your phone";
+
+/* Listening toggle */
+"toggle.start"            = "Start listening";
+"toggle.stop"             = "Stop listening";
+
+/* Status labels */
+"status.idle"             = "Tap the mic to start";
+"status.listening"        = "Listening…";
+"status.found"            = "Found you! 🎉";
+
+/* Sensitivity control */
+"sensitivity.label"       = "Sensitivity";
+"sensitivity.low"         = "Low";
+"sensitivity.medium"      = "Medium";
+"sensitivity.high"        = "High";
+
+/* Animal picker section header */
+"animals.header"          = "Choose a sound";
+
+/* Accessibility */
+"a11y.toggle.on"          = "Clap detection on";
+"a11y.toggle.off"         = "Clap detection off";
+"a11y.animal.selected"    = "%@, %@. Selected.";
+"a11y.animal.unselected"  = "%@, %@. Not selected.";

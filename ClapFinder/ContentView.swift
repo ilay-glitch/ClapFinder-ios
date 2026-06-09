@@ -1,8 +1,2 @@
-import SwiftUI
-
-// Placeholder — replaced by HomeView in PR-6.
-struct ContentView: View {
-    var body: some View {
-        Text("ClapFinder")
-    }
-}
+// ContentView.swift — retired in PR-6.
+// Entry point is now HomeView, injected via ClapFinderApp.

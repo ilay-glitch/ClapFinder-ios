@@ -3,12 +3,14 @@ import SwiftUI
 // MARK: - Hex helper (ClapFinderKitDesign only)
 
 extension Color {
-    /// Initialise a Color from a 24-bit hex literal.
-    /// Only call this from ClapFinderKitDesign — hex literals are banned elsewhere.
+    // Initialise a Color from a 24-bit hex literal.
+    // Only call this from ClapFinderKitDesign — hex literals are banned elsewhere.
     init(cfHex hex: UInt32, opacity: Double = 1.0) {
+        // swiftlint:disable identifier_name
         let r = Double((hex >> 16) & 0xFF) / 255.0
         let g = Double((hex >> 8)  & 0xFF) / 255.0
         let b = Double(hex         & 0xFF) / 255.0
+        // swiftlint:enable identifier_name
         self.init(.sRGB, red: r, green: g, blue: b, opacity: opacity)
     }
 }

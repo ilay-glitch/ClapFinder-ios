@@ -1,8 +1,8 @@
 import Accelerate
 import AVFoundation
 import ClapFinderKitData
-import OSLog
 import Observation
+import OSLog
 
 // MARK: - ClapDetector
 
@@ -142,7 +142,8 @@ public final class ClapDetector {
 
         if let first = firstClapTime, now.timeIntervalSince(first) <= clapWindowSeconds {
             // ✅ Second clap within window
-            Self.logger.debug("Double-clap detected (Δt \(now.timeIntervalSince(first), format: .fixed(precision: 3))s)")
+            let delta = now.timeIntervalSince(first)
+            Self.logger.debug("Double-clap detected (Δt \(delta, format: .fixed(precision: 3))s)")
             reset()
             inCooldown = true
             onClapDetected?()

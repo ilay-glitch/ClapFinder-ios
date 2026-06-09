@@ -11,7 +11,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 FAIL=0
 
 echo "▶ SwiftLint..."
-if ! swiftlint lint --strict --config "$REPO_ROOT/.swiftlint.yml" --path "$REPO_ROOT"; then
+if ! DYLD_FRAMEWORK_PATH=/Library/Developer/CommandLineTools/usr/lib \
+       swiftlint lint --strict --config "$REPO_ROOT/.swiftlint.yml" "$REPO_ROOT"; then
     FAIL=1
 fi
 
