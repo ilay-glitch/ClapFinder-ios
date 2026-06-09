@@ -30,7 +30,8 @@ let package = Package(
         .target(
             name: "ClapFinderKitData",
             dependencies: ["ClapFinderKitDesign"],
-            path: "Sources/ClapFinderKitData"
+            path: "Sources/ClapFinderKitData",
+            resources: [.process("Resources")]
         ),
         // Ad integration — stub in Phase 1, implemented in Phase 2.
         .target(
