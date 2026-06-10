@@ -47,7 +47,7 @@
 		5DA4187878AC5BCA29E872BE /* elephant_trumpet.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = elephant_trumpet.caf; sourceTree = "<group>"; };
 		5EEB0833A85E9C1912A30120 /* monkey_chatter.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = monkey_chatter.caf; sourceTree = "<group>"; };
 		694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseRingsView.swift; sourceTree = "<group>"; };
-		69C7B5BA09DB0E06F71EDAAF /* ClapFinder.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ClapFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		69C7B5BA09DB0E06F71EDAAF /* ClapFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClapFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BC17DDA0F210914C46F144C /* dolphin_click.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = dolphin_click.caf; sourceTree = "<group>"; };
 		72196F65E09891DEC7526178 /* ClapFinderKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ClapFinderKit; sourceTree = SOURCE_ROOT; };
 		7A9BDC0F59F38A7BA8C642D3 /* parrot_hello.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = parrot_hello.caf; sourceTree = "<group>"; };
@@ -335,6 +335,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ClapFinder/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -355,6 +356,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ClapFinder/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
