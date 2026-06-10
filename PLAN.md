@@ -13,8 +13,11 @@ Target: TestFlight build with full clap detection + animal sounds + flashlight +
 | PR-6 | Home UI: listening animation + animal grid + sensitivity control + toggle | Pending |
 | PR-7 | Background mode: AVAudioSession config + UIBackgroundModes + mic permission | Pending |
 | PR-8 | ATT prompt: App Tracking Transparency + family-appropriate copy | Pending |
+| PR-9 | Xcode project: xcodegen project.yml + app icon placeholder + Swift 6 isolation fixes + device QA log (MIGRATION_VALIDATION.md) | In progress |
 
-Real-device QA required to close Phase 1: mic detection (all 3 sensitivity levels), background clap (screen off, 10+ min), flashlight 3× pulse, audio at max volume in silent mode, ATT prompt first-launch flow.
+Real-device QA required to close Phase 1: mic detection (all 3 sensitivity levels), background clap (screen off, 10+ min), flashlight 3× pulse, audio at max volume in silent mode, ATT prompt first-launch flow. Results are recorded in `MIGRATION_VALIDATION.md`.
+
+> Note: Phase 2/3 PR numbers below shift by one (ads = PR-10, etc.) now that PR-9 is taken by the Xcode project PR.
 
 ## Phase 2 — Monetization + Analytics
 Prerequisite: ad network decision (AdMob vs. AppLovin MAX).
