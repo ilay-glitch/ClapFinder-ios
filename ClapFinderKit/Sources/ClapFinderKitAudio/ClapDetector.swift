@@ -312,7 +312,8 @@ public final class ClapDetector {
 
     /// Sets `isListening` and `currentThreshold` directly without starting the
     /// AVAudioEngine. **Only call this from test code.**
-    func setListeningForTesting(_ listening: Bool, sensitivity: Sensitivity) {
+    /// Public because ClapFinderKitMotion's test hook also drives it.
+    public func setListeningForTesting(_ listening: Bool, sensitivity: Sensitivity) {
         isListening = listening
         currentThreshold = sensitivity.threshold
     }
