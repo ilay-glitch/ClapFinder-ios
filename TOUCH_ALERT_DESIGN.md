@@ -170,8 +170,11 @@ Proposed shape (the `AlertTrigger` extraction the prompt asks for):
 | `TouchAlertView` + arm button + mode switcher | App target | UI per §7. |
 
 Module dependency addition: `ClapFinderKitMotion → ClapFinderKitData`,
-and `ClapFinderKitMotion → ClapFinderKitAudio` (for `AlarmResponder` +
-session management). No circular deps introduced.
+`ClapFinderKitMotion → ClapFinderKitAudio` (for `AlarmResponder` +
+session management), and `ClapFinderKitMotion → ClapFinderKitAds`
+(for `AnalyticsClient` — **acknowledged debt, not a pattern**: the
+analytics protocol extracts to its own module in the Firebase PR,
+which removes this edge). No circular deps introduced.
 
 ---
 

@@ -1,7 +1,7 @@
 #if canImport(Testing)
 import Foundation
 import Testing
-@testable import ClapFinderKitAudio
+@_spi(Testing) @testable import ClapFinderKitAudio
 @testable import ClapFinderKitData
 @testable import ClapFinderKitMotion
 

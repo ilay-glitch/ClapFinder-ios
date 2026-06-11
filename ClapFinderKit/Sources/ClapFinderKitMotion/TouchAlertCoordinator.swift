@@ -1,5 +1,5 @@
 import ClapFinderKitAds
-import ClapFinderKitAudio
+@_spi(Testing) import ClapFinderKitAudio
 import ClapFinderKitData
 import Foundation
 import Observation
