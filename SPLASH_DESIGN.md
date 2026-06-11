@@ -82,6 +82,7 @@ All hex values are taken verbatim from `LOADING_SCREEN_MOCKUP.html`:
 | `CFColor.splashMoonEdge` | `#FFD96B` | Moon radial edge, glow, sound-wave arcs |
 | `CFColor.splashHillBack` | `#5C2475` | Back hill |
 | `CFColor.splashHillFront` | `#471D62` | Front hill |
+| `CFColor.splashBarGlow` | `#FF8A5C` | Progress-bar glow (0.8 opacity) |
 
 Rationale: the night scene needs darker anchors than `CFGradient.brand`
 (`#8B5CF6 → #EC4899 → #F97316`), which stays the token for buttons,

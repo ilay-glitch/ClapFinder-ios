@@ -15,15 +15,29 @@ struct ClapFinderApp: App {
     @State private var coordinator = ResponseCoordinator()
     @State private var attManager = ATTManager()
     @State private var hasRequestedATT = false
+    /// Cold-launch splash gate. `WindowGroup` content is created once per
+    /// process, so the splash runs exactly once per cold launch — warm
+    /// resumes never re-enter it (SPLASH_DESIGN.md §6 rule 1).
+    @State private var showSplash = true
     @Environment(\.scenePhase) private var scenePhase
 
     private static let logger = Logger(subsystem: "com.appcentral.clapfinder", category: "App")
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environment(catalogStore)
-                .environment(coordinator)
+            if showSplash {
+                SplashView {
+                    withAnimation(.easeOut(duration: 0.35)) {
+                        showSplash = false
+                    }
+                }
+                .transition(.opacity)
+            } else {
+                HomeView()
+                    .environment(catalogStore)
+                    .environment(coordinator)
+                    .transition(.opacity)
+            }
         }
         .onChange(of: scenePhase) { _, phase in
             handleScenePhase(phase)
