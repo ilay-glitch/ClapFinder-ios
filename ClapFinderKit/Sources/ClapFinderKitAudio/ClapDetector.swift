@@ -68,8 +68,9 @@ public final class ClapDetector {
     private var inCooldown = false
     private var currentThreshold: Float = Sensitivity.medium.threshold
     /// Retained so we can cancel notification observers when the detector stops.
-    /// Cancelled in `tearDown()` (called by `stop()`).
+    /// Both tasks are cancelled in `tearDown()` (called by `stop()`).
     private var interruptionTask: Task<Void, Never>?
+    private var routeChangeTask: Task<Void, Never>?
 
     // MARK: - Logging
 
@@ -146,6 +147,8 @@ public final class ClapDetector {
         engine.stop()
         interruptionTask?.cancel()
         interruptionTask = nil
+        routeChangeTask?.cancel()
+        routeChangeTask = nil
         reset()
         isListening = false
     }
@@ -202,14 +205,12 @@ public final class ClapDetector {
     private func startNotificationObservers() {
         interruptionTask?.cancel()
         interruptionTask = Task { @MainActor [weak self] in
-            await withTaskGroup(of: Void.self) { group in
-                group.addTask { @MainActor [weak self] in
-                    await self?.observeInterruptions()
-                }
-                group.addTask { @MainActor [weak self] in
-                    await self?.observeRouteChanges()
-                }
-            }
+            guard let self else { return }
+            await self.observeInterruptions()
+        }
+        routeChangeTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            await self.observeRouteChanges()
         }
     }
 
