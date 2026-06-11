@@ -37,6 +37,16 @@ Distinguishes fill problems from caps working as designed:
 
 ---
 
+## Touch / Motion Alert (PR-11 — TOUCH_ALERT_DESIGN.md §8)
+
+| Event | Params | Fired when |
+|---|---|---|
+| `touch_alert_armed` | `sensitivity: String` | Arm button tapped (grace period starts) |
+| `touch_alert_triggered` | `sensitivity: String`, `grace_elapsed_s: Int` | Motion above threshold fires the alarm |
+| `touch_alert_disarmed` | `sensitivity: String`, `was_alarming: Bool`, `armed_duration_s: Int` | Disarm button tapped |
+
+---
+
 ## Reserved (future PRs — do not emit yet)
 
 - Detection funnel: `listening_started`, `listening_stopped`,
