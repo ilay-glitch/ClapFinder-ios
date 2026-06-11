@@ -46,7 +46,7 @@ let package = Package(
         ),
         .testTarget(
             name: "ClapFinderKitTests",
-            dependencies: ["ClapFinderKitAudio", "ClapFinderKitData"],
+            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData"],
             path: "Tests/ClapFinderKitTests"
         )
     ]

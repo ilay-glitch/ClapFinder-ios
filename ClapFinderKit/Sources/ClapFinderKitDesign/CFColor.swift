@@ -56,4 +56,30 @@ public enum CFColor {
     public static let celebrationCyan  = Color(cfHex: 0x22D3EE)
     /// Ad container background. Same as backgroundElevated.
     public static let adContainer      = Color(cfHex: 0x1A0F2E)
+
+    // MARK: Splash (LOADING_SCREEN_MOCKUP.html — splash-screen-only, DESIGN.md)
+
+    /// Splash moon radial center.
+    public static let splashMoonCore   = Color(cfHex: 0xFFF8D6)
+    /// Splash moon radial edge, glow, and sound-wave arcs.
+    public static let splashMoonEdge   = Color(cfHex: 0xFFD96B)
+    /// Splash back hill.
+    public static let splashHillBack   = Color(cfHex: 0x5C2475)
+    /// Splash front hill.
+    public static let splashHillFront  = Color(cfHex: 0x471D62)
+    /// Splash progress-bar glow (coral, used at 0.8 opacity).
+    public static let splashBarGlow    = Color(cfHex: 0xFF8A5C)
+
+    // MARK: Splash gradient anchors (used only by CFGradient splash tokens)
+
+    static let splashNight1 = Color(cfHex: 0x2B1055)
+    static let splashNight2 = Color(cfHex: 0x4A1A6B)
+    static let splashNight3 = Color(cfHex: 0x7B2D8B)
+    static let splashNight4 = Color(cfHex: 0xC44B8C)
+    static let splashNight5 = Color(cfHex: 0xF0735A)
+    static let splashGold   = Color(cfHex: 0xFFD96B)
+    static let splashPeach  = Color(cfHex: 0xFF9D6B)
+    static let splashPink   = Color(cfHex: 0xFF6BB5)
+    static let splashCoral  = Color(cfHex: 0xFF8A5C)
+    static let splashRose   = Color(cfHex: 0xFF5CA8)
 }

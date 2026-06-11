@@ -10,6 +10,11 @@ options:
 packages:
   ClapFinderKit:
     path: ClapFinderKit
+  # iOS-only binary SDK — app target ONLY. Never add to ClapFinderKit/Package.swift:
+  # it would break swift build/test on macOS CLI. See SPLASH_DESIGN.md §9.
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
+    from: 12.0.0
 
 configs:
   Debug: debug
@@ -52,3 +57,5 @@ targets:
         product: ClapFinderKitDesign
       - package: ClapFinderKit
         product: ClapFinderKitLocalization
+      - package: GoogleMobileAds
+        product: GoogleMobileAds

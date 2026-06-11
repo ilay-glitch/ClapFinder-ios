@@ -37,3 +37,29 @@ UI rendering only: home screen layout, animal grid, mic toggle, status
 label verified on iPhone 17 Pro simulator (iOS 26.4). Microphone,
 flashlight, and silent-switch behavior **cannot** be tested in the
 simulator.
+
+---
+
+## Device QA pass — PR-10 splash + App Open Ad
+
+| Field | Value |
+|---|---|
+| Date | ⏳ |
+| Tester | ⏳ |
+| Device model | ⏳ |
+| iOS version | ⏳ |
+| Build | ⏳ |
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| 1 | Real ad load + present | Second+ launch (not fresh install), online: splash shows disclaimer, test ad presents, dismiss lands on Home | ⏳ | Test ad unit — Google's demo creative |
+| 2 | Timeout path | Airplane mode, cold launch: splash exits to Home at ≤5 s, no ad, no hang | ⏳ | |
+| 3 | First-launch path | Fresh install (delete app first): splash shows NO disclaimer, no ad, lands on Home | ⏳ | |
+| 4 | Frequency cap | Two cold launches within 4 h (after an ad showed): second launch shows no ad | ⏳ | |
+| 5 | Background mid-splash | Background during splash, return: no restart, no double ad request | ⏳ | |
+
+### Simulator coverage (2026-06-11)
+Fresh install verified: splash scene renders per mockup, no disclaimer on
+first launch, hands off to Home. Second launch verified: disclaimer
+appears, test ad request fires. Real ad presentation, timeout, and
+frequency-cap timing require device QA.

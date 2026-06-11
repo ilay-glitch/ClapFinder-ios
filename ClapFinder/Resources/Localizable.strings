@@ -7,6 +7,12 @@
 /* Note: NSUserTrackingUsageDescription in Info.plist must match the intent here */
 "permission.tracking"     = "ClapFinder may show ads to keep the app free. Allow tracking to see ads that are relevant to you.";
 
+/* MARK: - Splash screen */
+"splash.tagline"          = "Clap your hands — your phone answers! 🐶";
+"splash.loading"          = "Loading %d%%…";
+/* Required while an App Open Ad request is in flight */
+"splash.adDisclaimer"     = "This action can contain ads";
+
 /* MARK: - Home screen */
 "home.title"              = "ClapFinder";
 "home.subtitle"           = "Clap twice to find your phone";

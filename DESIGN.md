@@ -26,6 +26,11 @@ Vibrant, energetic, family-friendly. NOT pastel. Dark background with bold gradi
 | `CFColor.listeningActive` | `#22C55E` | "Listening" green dot |
 | `CFColor.celebrationCyan` | `#22D3EE` | "Found!" success state |
 | `CFColor.adContainer` | `#1A0F2E` | Banner ad background |
+| `CFColor.splashMoonCore` | `#FFF8D6` | Splash moon radial center |
+| `CFColor.splashMoonEdge` | `#FFD96B` | Splash moon edge, glow, sound-wave arcs |
+| `CFColor.splashHillBack` | `#5C2475` | Splash back hill |
+| `CFColor.splashHillFront` | `#471D62` | Splash front hill |
+| `CFColor.splashBarGlow` | `#FF8A5C` | Splash progress-bar glow (0.8 opacity) |
 
 **Rule:** Hex literals only in `ClapFinderKitDesign`. All other modules reference `CFColor.*` tokens.
 
@@ -77,6 +82,14 @@ Font: SF Rounded — `.system(size:weight:design: .rounded)` in SwiftUI
 |------------|--------|-------|
 | `CFGradient.brand` | gradientStart → gradientMid → gradientEnd | Buttons, toggle active, selected borders |
 | `CFGradient.pulse` | gradientStart → gradientEnd | Pulse ring strokes |
+| `CFGradient.splashNight` | `#2B1055 → #4A1A6B → #7B2D8B → #C44B8C → #F0735A`, stops 0/30/55/78/100% | Splash background ONLY (SPLASH_DESIGN.md §3) |
+| `CFGradient.titleGold` | `#FFD96B → #FF9D6B → #FF6BB5` | Splash title text ONLY |
+| `CFGradient.splashBar` | `#FFD96B → #FF8A5C → #FF5CA8` | Splash progress fill ONLY |
+
+**Splash scope rule:** `splash*` and `titleGold` tokens are splash-screen-only.
+Buttons, toggles, and selected states keep `CFGradient.brand` — the splash
+night palette must not leak into app chrome. Hex values are verbatim from
+`LOADING_SCREEN_MOCKUP.html` (visual source of truth).
 
 ---
 
