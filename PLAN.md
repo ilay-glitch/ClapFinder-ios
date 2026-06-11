@@ -23,18 +23,24 @@ Ad network: **AdMob** (PM decision, locked in PR-10 — app open is the anchor p
 | PR | Scope | Status |
 |----|-------|--------|
 | PR-10 | Splash screen + AdMob App Open Ad (SPLASH_DESIGN.md, EVENTS.md created) | In progress |
-| PR-11 | Ad integration: banner (home bottom) + interstitial (3–5 uses, never during detection) | Pending |
-| PR-12 | Firebase Analytics + Adjust attribution | Pending |
-| PR-13 | Remote Config: sensitivity thresholds, interstitial frequency, A/B hooks | Pending |
-| PR-14 | Polish: confetti/star animation on find, final app icon, TestFlight regression build | Pending |
+| PR-11 | Touch/Motion Alert: arm/disarm, CoreMotion detection, alarm loop (TOUCH_ALERT_DESIGN.md) | Approved — starts after PR-10 QA |
+| PR-12 | Ad integration: banner (home bottom) + interstitial (3–5 uses, never during detection) | Pending |
+| PR-13 | Firebase Analytics + Adjust attribution | Pending |
+| PR-14 | Remote Config: sensitivity thresholds, interstitial frequency, A/B hooks | Pending |
+| PR-15 | Polish: confetti/star animation on find, final app icon, TestFlight regression build | Pending |
 
-> Numbering: PR-9 (Xcode project) insertion shifted Phase 2 by one;
-> the splash PR took PR-10, pushing ads/analytics/config/polish to
-> PR-11–14 and Phase 3 to PR-15/16.
+> Numbering: PR-9 (Xcode project) shifted Phase 2 by one; the splash
+> PR took PR-10. Touch alert takes PR-11 — core-feature completeness
+> before the second ad layer (PM ruling 2026-06-11) — pushing
+> ads/analytics/config/polish to PR-12–15 and Phase 3 to PR-16/17.
+>
+> GitHub PR mapping (GitHub numbers PRs and issues in one sequence, so
+> they drift from logical PR numbers): logical PR-9 = GitHub #9,
+> logical PR-10 = GitHub #11.
 
 ## Phase 3 — App Store Submission
 
 | PR | Scope | Status |
 |----|-------|--------|
-| PR-15 | App Store assets: icon, screenshots (6.5", 5.5", iPad 12.9") + metadata + privacy policy | Pending |
-| PR-16 | Submission build + App Store review | Pending |
+| PR-16 | App Store assets: icon, screenshots (6.5", 5.5", iPad 12.9") + metadata + privacy policy | Pending |
+| PR-17 | Submission build + App Store review | Pending |

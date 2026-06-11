@@ -30,6 +30,7 @@ Vibrant, energetic, family-friendly. NOT pastel. Dark background with bold gradi
 | `CFColor.splashMoonEdge` | `#FFD96B` | Splash moon edge, glow, sound-wave arcs |
 | `CFColor.splashHillBack` | `#5C2475` | Splash back hill |
 | `CFColor.splashHillFront` | `#471D62` | Splash front hill |
+| `CFColor.splashBarGlow` | `#FF8A5C` | Splash progress-bar glow (0.8 opacity) |
 
 **Rule:** Hex literals only in `ClapFinderKitDesign`. All other modules reference `CFColor.*` tokens.
 
