@@ -67,6 +67,43 @@ public final class FlashlightController {
         }
     }
 
+    // MARK: Continuous pulsing (touch-alert alarm)
+
+    private var continuousTask: Task<Void, Never>?
+
+    /// Pulses the torch continuously until `stopContinuousPulse()`.
+    /// Idempotent while running; no-op without a torch.
+    public func startContinuousPulse() {
+        guard continuousTask == nil else { return }
+
+        guard
+            let device = AVCaptureDevice.default(for: .video),
+            device.hasTorch
+        else {
+            Self.logger.warning("Torch unavailable — skipping continuous pulse")
+            return
+        }
+
+        isPulsing = true
+        continuousTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                guard let self else { return }
+                await self.runPulse(device: device)
+                try? await Task.sleep(for: .seconds(self.offDuration))
+            }
+        }
+    }
+
+    /// Stops continuous pulsing and forces the torch off.
+    public func stopContinuousPulse() {
+        continuousTask?.cancel()
+        continuousTask = nil
+        if let device = AVCaptureDevice.default(for: .video), device.hasTorch {
+            setTorch(device: device, isOn: false)
+        }
+        isPulsing = false
+    }
+
     // MARK: Private
 
     private func runPulse(device: AVCaptureDevice) async {
@@ -108,6 +145,8 @@ public final class FlashlightController {
     public private(set) var isPulsing = false
     public init() {}
     public func pulse() { /* no torch on macOS */ }
+    public func startContinuousPulse() { isPulsing = true }
+    public func stopContinuousPulse() { isPulsing = false }
 }
 
 #endif

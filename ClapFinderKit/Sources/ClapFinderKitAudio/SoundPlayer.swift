@@ -45,7 +45,9 @@ public final class SoundPlayer {
     /// - Parameters:
     ///   - animal: The animal whose sound to play.
     ///   - bundle: Bundle containing the CAF audio resource (default: `Bundle.main`).
-    public func play(animal: Animal, in bundle: Bundle = .main) {
+    ///   - loop: When `true`, the sound repeats until `stop()` is called
+    ///     (touch-alert alarm). Default `false` plays once.
+    public func play(animal: Animal, in bundle: Bundle = .main, loop: Bool = false) {
         stop()  // cancel any in-progress sound
 
         guard let url = bundle.url(forResource: animal.soundFile, withExtension: nil) else {
@@ -56,20 +58,25 @@ public final class SoundPlayer {
         do {
             let audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer.volume = 1.0
-            audioPlayer.numberOfLoops = 0
+            audioPlayer.numberOfLoops = loop ? -1 : 0
             audioPlayer.prepareToPlay()
             audioPlayer.play()
             player = audioPlayer
             isPlaying = true
             let trackDuration = audioPlayer.duration
-            Self.logger.debug("Playing \(animal.soundFile) (duration \(trackDuration, format: .fixed(precision: 2))s)")
+            Self.logger.debug(
+                "Playing \(animal.soundFile) (duration \(trackDuration, format: .fixed(precision: 2))s, loop \(loop))"
+            )
 
-            // Flip isPlaying back to false after the track finishes.
-            let duration = trackDuration
-            Task { @MainActor [weak self, weak audioPlayer] in
-                try? await Task.sleep(for: .seconds(max(duration, 0.05)))
-                // Guard against the player being replaced mid-flight
-                if self?.player === audioPlayer { self?.isPlaying = false }
+            // Flip isPlaying back to false after the track finishes (one-shot only —
+            // a looping player keeps isPlaying true until stop()).
+            if !loop {
+                let duration = trackDuration
+                Task { @MainActor [weak self, weak audioPlayer] in
+                    try? await Task.sleep(for: .seconds(max(duration, 0.05)))
+                    // Guard against the player being replaced mid-flight
+                    if self?.player === audioPlayer { self?.isPlaying = false }
+                }
             }
         } catch {
             Self.logger.error("AVAudioPlayer init failed: \(error)")
