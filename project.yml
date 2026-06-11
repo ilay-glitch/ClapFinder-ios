@@ -57,5 +57,7 @@ targets:
         product: ClapFinderKitDesign
       - package: ClapFinderKit
         product: ClapFinderKitLocalization
+      - package: ClapFinderKit
+        product: ClapFinderKitMotion
       - package: GoogleMobileAds
         product: GoogleMobileAds

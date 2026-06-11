@@ -35,8 +35,24 @@
 /* Animal picker section header */
 "animals.header"          = "Choose a sound";
 
+/* MARK: - Touch Alert (PR-11) */
+"mode.clap"                    = "Clap";
+"mode.touch"                   = "Touch Alert";
+"touch.status.disarmed"        = "Tap the shield to arm";
+"touch.status.grace"           = "Arming — put your phone down…";
+"touch.status.monitoring"      = "Armed — don't touch 🛡️";
+"touch.status.alarming"        = "Motion detected!";
+"touch.disarm"                 = "DISARM";
+"touch.notifExplainer.title"   = "One quick thing";
+"touch.notifExplainer.body"    = "ClapFinder will ask to send notifications — so we can tell you if monitoring stops.";
+"touch.notifExplainer.ok"      = "Got it";
+"touchAlert.notification.title" = "Touch Alert stopped";
+"touchAlert.notification.body"  = "The system interrupted monitoring. Your phone is not being watched right now.";
+
 /* Accessibility */
 "a11y.toggle.on"          = "Clap detection on";
 "a11y.toggle.off"         = "Clap detection off";
 "a11y.animal.selected"    = "%@, %@. Selected.";
 "a11y.animal.unselected"  = "%@, %@. Not selected.";
+"a11y.touch.armed"        = "Touch alert armed. Tap to disarm.";
+"a11y.touch.disarmed"     = "Touch alert off. Tap to arm.";
