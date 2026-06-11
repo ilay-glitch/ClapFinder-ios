@@ -96,7 +96,9 @@ struct ClapDetectorTests {
     @Test("processSample is ignored when isListening is false")
     func notListeningIgnored() {
         let (detector, fired) = makeDetector()
-        // Don't call start() — isListening remains false
+        // makeDetector() forces isListening on via the test hook — turn it
+        // back off so the guard under test is actually exercised.
+        detector.setListeningForTesting(false, sensitivity: .medium)
         detector.processSample(dBFS: -20)
         detector.processSample(dBFS: -20)
         #expect(!fired.value)
