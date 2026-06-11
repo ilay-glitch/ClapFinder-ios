@@ -19,6 +19,7 @@
 		4E607E825860DC2D744F0B9F /* rooster_crow.caf in Resources */ = {isa = PBXBuildFile; fileRef = C4FD638F38EA5721F09B12AA /* rooster_crow.caf */; };
 		5190609869231098D142D8B7 /* ClapFinderKitData in Frameworks */ = {isa = PBXBuildFile; productRef = BDEA670469C2DA5619F97569 /* ClapFinderKitData */; };
 		55B2FBFE23C2FFA31CD6E766 /* ModeSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74184C03D15468A78881BFC /* ModeSwitcherView.swift */; };
+		63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5481D18B530933145E1D7F55 /* InterstitialController.swift */; };
 		6C47271544A5AA86604CB9E3 /* ClapFinderKitLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = DE25CE73229C5787BECC0459 /* ClapFinderKitLocalization */; };
 		6F10E01534A50EA3EA9A2187 /* monkey_chatter.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5EEB0833A85E9C1912A30120 /* monkey_chatter.caf */; };
 		6F7A947C328DD7EF1029F8C9 /* pig_oink.caf in Resources */ = {isa = PBXBuildFile; fileRef = E0D88AE8FD753F2261A16E61 /* pig_oink.caf */; };
@@ -33,6 +34,7 @@
 		9C157D25F2CE8E190ECD7DB1 /* fox_yip.caf in Resources */ = {isa = PBXBuildFile; fileRef = 3AA6153BA227352F12437B47 /* fox_yip.caf */; };
 		9D3724256018F962979B3BD8 /* dolphin_click.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6BC17DDA0F210914C46F144C /* dolphin_click.caf */; };
 		9FB102267116B977253F26BB /* dog_bark.caf in Resources */ = {isa = PBXBuildFile; fileRef = 982F94330D8C525A1BE035DD /* dog_bark.caf */; };
+		A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4223CAE7C416F483AF18D47 /* BannerAdView.swift */; };
 		A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */; };
 		ABE3055D378A141B37A2B577 /* lion_roar.caf in Resources */ = {isa = PBXBuildFile; fileRef = BF2DCE6FA6A71824B9242620 /* lion_roar.caf */; };
 		B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */; };
@@ -53,6 +55,7 @@
 		314046E6E33DB47CD039CE26 /* cow_moo.caf */ = {isa = PBXFileReference; path = cow_moo.caf; sourceTree = "<group>"; };
 		3AA6153BA227352F12437B47 /* fox_yip.caf */ = {isa = PBXFileReference; path = fox_yip.caf; sourceTree = "<group>"; };
 		508FBC43B8DDEEAACD96A34B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		5481D18B530933145E1D7F55 /* InterstitialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialController.swift; sourceTree = "<group>"; };
 		54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertHeroView.swift; sourceTree = "<group>"; };
 		5DA4187878AC5BCA29E872BE /* elephant_trumpet.caf */ = {isa = PBXFileReference; path = elephant_trumpet.caf; sourceTree = "<group>"; };
 		5EEB0833A85E9C1912A30120 /* monkey_chatter.caf */ = {isa = PBXFileReference; path = monkey_chatter.caf; sourceTree = "<group>"; };
@@ -66,6 +69,7 @@
 		94D97DABA693A338ECA53390 /* frog_ribbit.caf */ = {isa = PBXFileReference; path = frog_ribbit.caf; sourceTree = "<group>"; };
 		982F94330D8C525A1BE035DD /* dog_bark.caf */ = {isa = PBXFileReference; path = dog_bark.caf; sourceTree = "<group>"; };
 		A38E87AFC4E016356FE91103 /* ListeningToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningToggleView.swift; sourceTree = "<group>"; };
+		A4223CAE7C416F483AF18D47 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlayView.swift; sourceTree = "<group>"; };
 		AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdLoader.swift; sourceTree = "<group>"; };
 		B65BA16DD4368B32B8468E5F /* cat_meow.caf */ = {isa = PBXFileReference; path = cat_meow.caf; sourceTree = "<group>"; };
@@ -172,6 +176,8 @@
 			isa = PBXGroup;
 			children = (
 				AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */,
+				A4223CAE7C416F483AF18D47 /* BannerAdView.swift */,
+				5481D18B530933145E1D7F55 /* InterstitialController.swift */,
 			);
 			path = Ads;
 			sourceTree = "<group>";
@@ -295,8 +301,10 @@
 				30849F4A4945475017DCD8EC /* AlarmOverlayView.swift in Sources */,
 				B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */,
 				D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */,
+				A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */,
 				A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */,
 				24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */,
+				63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */,
 				7E5E032275F595B3E2734707 /* ListeningToggleView.swift in Sources */,
 				55B2FBFE23C2FFA31CD6E766 /* ModeSwitcherView.swift in Sources */,
 				B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */,

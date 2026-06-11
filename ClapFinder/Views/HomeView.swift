@@ -20,6 +20,7 @@ struct HomeView: View {
     @Environment(CatalogStore.self) private var catalogStore
     @Environment(ResponseCoordinator.self) private var coordinator
     @Environment(TouchAlertCoordinator.self) private var touchAlert
+    @Environment(InterstitialController.self) private var interstitials
 
     /// Tracks the brief "Found you!" flash after a clap is detected.
     @State private var showFoundState = false
@@ -67,7 +68,20 @@ struct HomeView: View {
                 .padding(.horizontal, CFSpacing.md)
             }
             .scrollIndicators(.hidden)
+
+            // Banner: bottom of Home ONLY, idle-only (ADS_DESIGN.md D3) —
+            // hidden while listening and while the touch alert is armed.
+            if !coordinator.isActive && touchAlert.state == .disarmed {
+                VStack {
+                    Spacer()
+                    BannerAdView()
+                }
+                .ignoresSafeArea(edges: .bottom)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
+        .animation(.easeInOut(duration: 0.25), value: coordinator.isActive)
+        .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .disarmed)
         .onChange(of: coordinator.lastTriggeredAnimal) { _, animal in
             guard animal != nil else { return }
             showFoundState = true
@@ -227,10 +241,17 @@ struct HomeView: View {
         startError = nil
         if coordinator.isActive {
             coordinator.stop()
+            // Interstitial attempt at stop-listening ONLY (ADS_DESIGN.md D1).
+            // Detection is now off; the policy re-checks every flag anyway.
+            interstitials.attemptPresentation(
+                isDetectionActive: coordinator.isActive,
+                isAlarmActive: touchAlert.state != .disarmed
+            )
         } else {
             guard let animal = catalogStore.selectedAnimal else { return }
             do {
                 try coordinator.start(animal: animal, sensitivity: catalogStore.sensitivity)
+                interstitials.recordUse()   // D1: a use = a listening session start
             } catch {
                 startError = error.localizedDescription
             }

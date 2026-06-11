@@ -108,3 +108,15 @@ frequency-cap timing require device QA.
 | 9 | Mode exclusivity | Arming Touch stops clap listening and vice versa | ⏳ | |
 | 10 | **Threshold calibration** | At each sensitivity, record the minimum action that triggers (nudge / slide / pickup); adjust constants — calibrated values become shipped defaults | ⏳ | |
 | 11 | Battery soak | Overnight armed, report % drain | ⏳ | |
+
+---
+
+## Device QA pass — PR-12 Banner + Interstitial
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| 1 | Banner idle-only | Banner shows at Home bottom when idle; disappears while listening AND while armed | ⏳ | |
+| 2 | Interstitial frequency | Start+stop listening repeatedly: interstitial appears after 3–5 stops, then not again until another 3–5 | ⏳ | |
+| 3 | Never during detection | No interstitial appears while listening or mid-alarm; none on arm/disarm | ⏳ | |
+| 4 | Dismiss path | Interstitial dismiss returns to Home with detection off, app responsive | ⏳ | |
+| 5 | Counter persistence | Force-quit between uses: counter survives relaunch | ⏳ | |
