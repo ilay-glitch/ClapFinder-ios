@@ -6,6 +6,13 @@ requires device QA must not merge until its block is filled in.
 
 Result values: ✅ pass / ❌ fail (link issue) / ⏳ not yet run
 
+> **TestFlight blocker (2026-06-11):** 8 of 16 animal sounds are
+> synthesized stand-in tones, not real animal audio: lion, elephant,
+> monkey, fox, wolf, parrot, dolphin, bee. Real licensed audio for
+> these 8 must land before any TestFlight build. The other 8 (dog,
+> cat, cow, frog, duck, pig, rooster, sheep) are real company-owned
+> assets from Boomr's funny-animals pack.
+
 > **Gate status (2026-06-11, PM ruling):** PRs #9/#10/#11 merged ahead
 > of the device pass — PM-owned call. The QA gate relocates to two hard
 > stops that hold until BOTH blocks below are filled from a real device
