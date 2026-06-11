@@ -16,6 +16,7 @@ struct ClapFinderApp: App {
     @State private var coordinator: ResponseCoordinator
     @State private var touchAlert: TouchAlertCoordinator
     @State private var attManager = ATTManager()
+    @State private var interstitials = InterstitialController()
 
     init() {
         // Both coordinators share ONE AlarmResponder (sound + flashlight) —
@@ -50,6 +51,7 @@ struct ClapFinderApp: App {
                     .environment(catalogStore)
                     .environment(coordinator)
                     .environment(touchAlert)
+                    .environment(interstitials)
                     .transition(.opacity)
             }
         }
