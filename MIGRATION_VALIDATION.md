@@ -18,6 +18,11 @@ Result values: ✅ pass / ❌ fail (link issue) / ⏳ not yet run
 > 3. Production AdMob IDs (app ID + ad unit ID — placeholders are
 >    marked in Info.plist and AppOpenAdLoader).
 > 4. Final app icon (current icon is a solid-color placeholder).
+>
+> **Post-QA condition for PR-13/14 (Firebase+Adjust, Remote Config):**
+> cleared to land after the consolidated pass — UNLESS either touches
+> the ATT prompt code path (requesting, not just reading status), in
+> which case the ATT QA rows below re-run on device before TestFlight.
 
 ---
 
@@ -70,6 +75,7 @@ simulator.
 | 3 | First-launch path | Fresh install (delete app first): splash shows NO disclaimer, no ad, lands on Home | ⏳ | |
 | 4 | Frequency cap | Two cold launches within 4 h (after an ad showed): second launch shows no ad | ⏳ | |
 | 5 | Background mid-splash | Background during splash, return: no restart, no double ad request | ⏳ | |
+| 6 | ATT prompt after splash | Fresh install: ATT prompt appears only AFTER the splash completes and Home is visible — never over the splash | ⏳ | |
 
 ### Simulator coverage (2026-06-11)
 Fresh install verified: splash scene renders per mockup, no disclaimer on
