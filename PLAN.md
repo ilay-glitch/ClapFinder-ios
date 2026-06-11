@@ -31,6 +31,10 @@ Ad network: **AdMob** (PM decision, locked in PR-10 — app open is the anchor p
 > Numbering: PR-9 (Xcode project) insertion shifted Phase 2 by one;
 > the splash PR took PR-10, pushing ads/analytics/config/polish to
 > PR-11–14 and Phase 3 to PR-15/16.
+>
+> GitHub PR mapping (GitHub numbers PRs and issues in one sequence, so
+> they drift from logical PR numbers): logical PR-9 = GitHub #9,
+> logical PR-10 = GitHub #11.
 
 ## Phase 3 — App Store Submission
 
