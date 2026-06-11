@@ -6,6 +6,12 @@ requires device QA must not merge until its block is filled in.
 
 Result values: ✅ pass / ❌ fail (link issue) / ⏳ not yet run
 
+> **Gate status (2026-06-11, PM ruling):** PRs #9/#10/#11 merged ahead
+> of the device pass — PM-owned call. The QA gate relocates to two hard
+> stops that hold until BOTH blocks below are filled from a real device
+> pass: **(1) no TestFlight build**, **(2) no touch-alert implementation
+> start** (`phase2/pr-11-touch-alert` stays docs-only).
+
 ---
 
 ## Device QA pass — Phase 1 close (PR-9)
