@@ -12,7 +12,8 @@ let package = Package(
         .library(name: "ClapFinderKitAudio", targets: ["ClapFinderKitAudio"]),
         .library(name: "ClapFinderKitData", targets: ["ClapFinderKitData"]),
         .library(name: "ClapFinderKitAds", targets: ["ClapFinderKitAds"]),
-        .library(name: "ClapFinderKitLocalization", targets: ["ClapFinderKitLocalization"])
+        .library(name: "ClapFinderKitLocalization", targets: ["ClapFinderKitLocalization"]),
+        .library(name: "ClapFinderKitMotion", targets: ["ClapFinderKitMotion"])
     ],
     targets: [
         // Design tokens — the only module where hex color literals are permitted.
@@ -44,9 +45,15 @@ let package = Package(
             name: "ClapFinderKitLocalization",
             path: "Sources/ClapFinderKitLocalization"
         ),
+        // Touch/Motion alert — CoreMotion detection + alarm coordination.
+        .target(
+            name: "ClapFinderKitMotion",
+            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData"],
+            path: "Sources/ClapFinderKitMotion"
+        ),
         .testTarget(
             name: "ClapFinderKitTests",
-            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData"],
+            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData", "ClapFinderKitMotion"],
             path: "Tests/ClapFinderKitTests"
         )
     ]
