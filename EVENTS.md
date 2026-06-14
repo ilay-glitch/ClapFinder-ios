@@ -47,9 +47,19 @@ Distinguishes fill problems from caps working as designed:
 
 ---
 
+## Banner / Interstitial (PR-12 — ADS_DESIGN.md)
+
+| Event | Params | Fired when |
+|---|---|---|
+| `banner_loaded` | — | Banner ad fills |
+| `banner_failed` | `error_reason: String` | Banner request errors |
+| `interstitial_shown` | `uses_since_last: Int` | Interstitial presents (counter resets) |
+| `interstitial_suppressed` | `reason: String` | Eligible moment skipped: `detection_active` / `alarm_active` / `frequency_cap` / `not_loaded` |
+
+---
+
 ## Reserved (future PRs — do not emit yet)
 
 - Detection funnel: `listening_started`, `listening_stopped`,
   `clap_detected` — detection feature analytics, own doc round first.
-- Banner / interstitial events — banner+interstitial PR.
 - Attribution events — Adjust PR.
