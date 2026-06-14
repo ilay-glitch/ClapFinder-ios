@@ -1,7 +1,7 @@
 #if canImport(Testing)
 import Testing
 import AVFoundation
-@testable import ClapFinderKitAudio
+@_spi(Testing) @testable import ClapFinderKitAudio
 @testable import ClapFinderKitData
 
 // MARK: - ClapDetector logic tests

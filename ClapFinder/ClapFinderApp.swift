@@ -1,6 +1,7 @@
 import ClapFinderKitAds
 import ClapFinderKitAudio
 import ClapFinderKitData
+import ClapFinderKitMotion
 import OSLog
 import SwiftUI
 
@@ -12,8 +13,17 @@ import SwiftUI
 struct ClapFinderApp: App {
 
     @State private var catalogStore = CatalogStore()
-    @State private var coordinator = ResponseCoordinator()
+    @State private var coordinator: ResponseCoordinator
+    @State private var touchAlert: TouchAlertCoordinator
     @State private var attManager = ATTManager()
+
+    init() {
+        // Both coordinators share ONE AlarmResponder (sound + flashlight) —
+        // the AlertTrigger extraction from TOUCH_ALERT_DESIGN.md §6.
+        let responseCoordinator = ResponseCoordinator()
+        _coordinator = State(initialValue: responseCoordinator)
+        _touchAlert = State(initialValue: TouchAlertCoordinator(responder: responseCoordinator.responder))
+    }
     @State private var hasRequestedATT = false
     /// Cold-launch splash gate. `WindowGroup` content is created once per
     /// process, so the splash runs exactly once per cold launch — warm
@@ -36,6 +46,7 @@ struct ClapFinderApp: App {
                 HomeView()
                     .environment(catalogStore)
                     .environment(coordinator)
+                    .environment(touchAlert)
                     .transition(.opacity)
             }
         }

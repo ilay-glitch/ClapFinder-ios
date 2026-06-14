@@ -6,18 +6,18 @@ requires device QA must not merge until its block is filled in.
 
 Result values: ✅ pass / ❌ fail (link issue) / ⏳ not yet run
 
-> **TestFlight blocker (2026-06-11):** 8 of 16 animal sounds are
-> synthesized stand-in tones, not real animal audio: lion, elephant,
-> monkey, fox, wolf, parrot, dolphin, bee. Real licensed audio for
-> these 8 must land before any TestFlight build. The other 8 (dog,
-> cat, cow, frog, duck, pig, rooster, sheep) are real company-owned
-> assets from Boomr's funny-animals pack.
-
-> **Gate status (2026-06-11, PM ruling):** PRs #9/#10/#11 merged ahead
-> of the device pass — PM-owned call. The QA gate relocates to two hard
-> stops that hold until BOTH blocks below are filled from a real device
-> pass: **(1) no TestFlight build**, **(2) no touch-alert implementation
-> start** (`phase2/pr-11-touch-alert` stays docs-only).
+> **Gate status (2026-06-11, PM ruling — supersedes the two-stop gate):**
+> Implementation is ungated; everything builds first, QA happens once at
+> the end. **TestFlight requires all four:**
+> 1. All QA blocks below filled in ONE consolidated device pass —
+>    PR-9 block, PR-10 block, and the touch-alert block including
+>    threshold calibration.
+> 2. Real audio for all 16 animals (8 are synthesized stand-ins:
+>    lion, elephant, monkey, fox, wolf, parrot, dolphin, bee — the
+>    other 8 are company-owned assets from Boomr's funny-animals pack).
+> 3. Production AdMob IDs (app ID + ad unit ID — placeholders are
+>    marked in Info.plist and AppOpenAdLoader).
+> 4. Final app icon (current icon is a solid-color placeholder).
 
 ---
 
@@ -76,3 +76,29 @@ Fresh install verified: splash scene renders per mockup, no disclaimer on
 first launch, hands off to Home. Second launch verified: disclaimer
 appears, test ad request fires. Real ad presentation, timeout, and
 frequency-cap timing require device QA.
+
+---
+
+## Device QA pass — PR-11 Touch/Motion Alert
+
+| Field | Value |
+|---|---|
+| Date | ⏳ |
+| Tester | ⏳ |
+| Device model | ⏳ |
+| iOS version | ⏳ |
+| Build | ⏳ |
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| 1 | Pickup detection — Low | Arm at Low, phone flat on table, wait out grace, pick up deliberately | ⏳ | |
+| 2 | Pickup detection — Medium | Arm at Medium, slide phone across table | ⏳ | |
+| 3 | Pickup detection — High | Arm at High, nudge the table | ⏳ | |
+| 4 | Grace period | Arm, put phone down within 5 s — no alarm; move at 6 s — alarm | ⏳ | |
+| 5 | Screen-locked detection | Arm → lock screen → move phone → alarm fires | ⏳ | |
+| 6 | Alarm audio | Alarm at max volume with silent switch ON; loops until disarm | ⏳ | |
+| 7 | Disarm | Disarm stops sound + flashlight immediately; re-arm works | ⏳ | |
+| 8 | Interruption | Incoming call while armed → "monitoring stopped" notification | ⏳ | |
+| 9 | Mode exclusivity | Arming Touch stops clap listening and vice versa | ⏳ | |
+| 10 | **Threshold calibration** | At each sensitivity, record the minimum action that triggers (nudge / slide / pickup); adjust constants — calibrated values become shipped defaults | ⏳ | |
+| 11 | Battery soak | Overnight armed, report % drain | ⏳ | |

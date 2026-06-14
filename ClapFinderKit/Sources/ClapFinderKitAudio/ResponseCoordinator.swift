@@ -33,8 +33,13 @@ public final class ResponseCoordinator {
     // MARK: Dependencies
 
     public let detector: ClapDetector
-    public let soundPlayer: SoundPlayer
-    public let flashlight: FlashlightController
+    /// Shared response pipeline (sound + flashlight). Also consumed by
+    /// the touch-alert coordinator — see AlarmResponder.
+    public let responder: AlarmResponder
+
+    /// Convenience accessors (pre-AlarmResponder public API, kept stable).
+    public var soundPlayer: SoundPlayer { responder.soundPlayer }
+    public var flashlight: FlashlightController { responder.flashlight }
 
     /// Bundle used to resolve sound files. Defaults to `Bundle.main`;
     /// inject a custom bundle in tests.
@@ -55,8 +60,7 @@ public final class ResponseCoordinator {
     ///   (default: `Bundle.main`).
     public init(soundBundle: Bundle = .main) {
         self.detector = ClapDetector()
-        self.soundPlayer = SoundPlayer()
-        self.flashlight = FlashlightController()
+        self.responder = AlarmResponder(soundPlayer: SoundPlayer(), flashlight: FlashlightController())
         self.soundBundle = soundBundle
     }
 
@@ -68,8 +72,7 @@ public final class ResponseCoordinator {
         soundBundle: Bundle = .main
     ) {
         self.detector = detector
-        self.soundPlayer = soundPlayer
-        self.flashlight = flashlight
+        self.responder = AlarmResponder(soundPlayer: soundPlayer, flashlight: flashlight)
         self.soundBundle = soundBundle
     }
 
@@ -108,8 +111,7 @@ public final class ResponseCoordinator {
     private func respond(to animal: Animal, bundle: Bundle) {
         lastTriggeredAnimal = animal
         Self.logger.info("Clap response triggered — \(animal.name)")
-        soundPlayer.play(animal: animal, in: bundle)
-        flashlight.pulse()
+        responder.respondOnce(animal: animal, in: bundle)
     }
 
     // MARK: Testing support

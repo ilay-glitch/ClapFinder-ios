@@ -23,9 +23,9 @@ Ad network: **AdMob** (PM decision, locked in PR-10 — app open is the anchor p
 | PR | Scope | Status |
 |----|-------|--------|
 | PR-10 | Splash screen + AdMob App Open Ad (SPLASH_DESIGN.md, EVENTS.md created) | In progress |
-| PR-11 | Touch/Motion Alert: arm/disarm, CoreMotion detection, alarm loop (TOUCH_ALERT_DESIGN.md) | Approved — starts after PR-10 QA |
+| PR-11 | Touch/Motion Alert: arm/disarm, CoreMotion detection, alarm loop (TOUCH_ALERT_DESIGN.md) | In progress |
 | PR-12 | Ad integration: banner (home bottom) + interstitial (3–5 uses, never during detection) | Pending |
-| PR-13 | Firebase Analytics + Adjust attribution | Pending |
+| PR-13 | Firebase Analytics + Adjust attribution. Includes extracting `AnalyticsClient` from ClapFinderKitAds into its own module — removes the Motion→Ads dependency edge (acknowledged debt from PR-11) | Pending |
 | PR-14 | Remote Config: sensitivity thresholds, interstitial frequency, A/B hooks | Pending |
 | PR-15 | Polish: confetti/star animation on find, final app icon, TestFlight regression build | Pending |
 
