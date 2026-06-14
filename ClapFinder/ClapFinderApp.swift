@@ -40,6 +40,9 @@ struct ClapFinderApp: App {
                     withAnimation(.easeOut(duration: 0.35)) {
                         showSplash = false
                     }
+                    // ATT fires only after the splash hands off — the system
+                    // alert must never land on top of the splash (SPLASH_DESIGN.md §6).
+                    requestATTIfNeeded()
                 }
                 .transition(.opacity)
             } else {
@@ -61,7 +64,6 @@ struct ClapFinderApp: App {
         switch phase {
         case .active:
             Self.logger.info("App active")
-            requestATTIfNeeded()
 
         case .background:
             // UIBackgroundModes = ["audio"] keeps the engine running.
@@ -77,17 +79,19 @@ struct ClapFinderApp: App {
 
     // MARK: ATT
 
-    /// Fires the ATT prompt 1.5 s after the first `.active` scene phase.
+    /// Fires the ATT prompt 0.5 s after the splash hands off to Home.
     ///
-    /// Delay rationale:
-    /// - Lets the home screen fully render before the system alert appears.
-    /// - Avoids stacking ATT on top of the mic permission prompt.
+    /// Timing rationale:
+    /// - The splash already gave the app its branded first moment; the
+    ///   short delay just lets the Home cross-fade settle.
+    /// - Never appears over the splash (or over an App Open Ad — first
+    ///   launch shows no ad, and later launches have ATT determined).
     /// - Apple recommends not requesting ATT on cold launch.
     private func requestATTIfNeeded() {
         guard !hasRequestedATT else { return }
         hasRequestedATT = true
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(1.5))
+            try? await Task.sleep(for: .seconds(0.5))
             await attManager.requestAuthorizationIfNeeded()
         }
     }

@@ -140,8 +140,11 @@ All five must hold for an ad request to fire ("eligible"):
 **ATT interplay:** eligibility check reads
 `ATTrackingManager.trackingAuthorizationStatus` at request time.
 Status ≠ `.authorized` → request carries non-personalized-ads extras.
-The existing ATT prompt (1.5 s after first `.active`) always precedes
-the first possible ad request because rule 2 blocks first-launch ads.
+The ATT prompt fires from the splash's `onFinished` handler (0.5 s
+after Home appears) — never over the splash itself. It still always
+precedes the first possible ad request because rule 2 blocks
+first-launch ads. *(Amended 2026-06-11: originally 1.5 s after first
+`.active`, which landed the system alert on top of the splash.)*
 
 **Core-feature guarantee:** the splash/ad cycle runs only at cold
 launch, before detection can be armed. No ad logic exists anywhere in
