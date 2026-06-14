@@ -1,9 +1,11 @@
 # ADS_DESIGN.md — Banner + Interstitial (PR-12)
 
-**Version:** v1
+**Version:** v2 (PM rulings folded — approved for implementation)
 **PR:** logical PR-12 `phase2/pr-12-banner-interstitial`
-**Status:** Implemented to PM-stated hard constraints (2026-06-11);
-decision points D1–D3 below are mine and flagged for redline in the PR.
+**Status:** Approved 2026-06-11. D1–D3 ruled as proposed: "use" =
+clap listening start with attempt at stop-listening only; threshold
+drawn 3–5 per cycle with not-loaded preserving the counter; banner
+idle-only.
 
 ---
 
@@ -16,26 +18,30 @@ decision points D1–D3 below are mine and flagged for redline in the PR.
 4. From the touch-alert contract: **no interstitial on arm/disarm
    actions**; **no ad of any kind while armed or alarming.**
 
-## 2. Decisions made in implementation (flagged for PM redline)
+## 2. Decisions (RULED — PM 2026-06-11)
 
-**D1 — "Use" definition:** one use = one **clap-mode listening session
-start**. The interstitial attempt happens at **stop-listening only**.
-Touch-alert sessions neither count as uses nor trigger attempts —
-constraint 4 bans interstitials on arm/disarm, and counting uses that
-can never pay out would silently starve the placement.
+**D1 — "Use" definition — RULING: approved.** One use = one **clap-mode
+listening session start**. The interstitial attempt happens at
+**stop-listening only**. Touch-alert sessions neither count as uses nor
+trigger attempts — constraint 4 bans interstitials on arm/disarm, and
+counting uses that can never pay out would silently starve the
+placement.
 
-**D2 — Frequency mechanics:** at counter reset a threshold is drawn
-uniformly from 3–5 and persisted alongside the counter
-(`UserDefaults`). When `uses ≥ threshold` and all activity flags are
-clear, the next stop-listening shows the loaded interstitial, resets
-the counter, and draws a new threshold. RNG is injected for tests.
+**D2 — Frequency mechanics — RULING: approved.** At counter reset a
+threshold is drawn uniformly from 3–5 and persisted alongside the
+counter (`UserDefaults`). When `uses ≥ threshold` and all activity
+flags are clear, the next stop-listening shows the loaded interstitial,
+resets the counter, and draws a new threshold. A not-loaded suppression
+at an eligible moment **preserves** the counter (the user owes no extra
+uses because fill failed). RNG is injected for tests.
 
-**D3 — Banner visibility:** the banner renders **only while fully
-idle** — not listening, touch alert disarmed. A banner refresh is an
-ad trigger; constraint 4 bans triggers while armed/alarming, and
-hiding during clap listening keeps the detection screen clean for the
-same reason the contract bans interstitials there. Container per
-DESIGN.md: 50 pt, full width, bottom-anchored, `CFColor.adContainer`.
+**D3 — Banner visibility — RULING: approved.** The banner renders
+**only while fully idle** — not listening, touch alert disarmed. A
+banner refresh is an ad trigger; constraint 4 bans triggers while
+armed/alarming, and hiding during clap listening keeps the detection
+screen clean for the same reason the contract bans interstitials there.
+Container per DESIGN.md: 50 pt, full width, bottom-anchored,
+`CFColor.adContainer`.
 
 ## 3. Mechanics
 
