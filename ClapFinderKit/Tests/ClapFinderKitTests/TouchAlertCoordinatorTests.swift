@@ -111,12 +111,21 @@ struct AlarmResponderTests {
         AlarmResponder(soundPlayer: SoundPlayer(), flashlight: FlashlightController())
     }
 
-    @Test("startAlarm sets isAlarming and starts continuous flash")
+    @Test("startAlarm sets isAlarming and starts continuous flash + vibration")
     func startAlarmState() {
         let responder = makeResponder()
         responder.startAlarm(animal: animal, in: .main)
         #expect(responder.isAlarming)
         #expect(responder.flashlight.isPulsing)
+        #expect(responder.haptics.isVibrating)
+    }
+
+    @Test("stopAlarm stops the vibration too")
+    func stopAlarmStopsHaptics() {
+        let responder = makeResponder()
+        responder.startAlarm(animal: animal, in: .main)
+        responder.stopAlarm()
+        #expect(!responder.haptics.isVibrating)
     }
 
     @Test("startAlarm is idempotent while alarming")
