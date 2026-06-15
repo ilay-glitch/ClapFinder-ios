@@ -13,44 +13,44 @@
 		2EC4316D43D025650B6CDA6D /* ClapFinderKitAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 29009E77D63B9F74DA59AF8E /* ClapFinderKitAudio */; };
 		30849F4A4945475017DCD8EC /* AlarmOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */; };
 		34C59F813A02ECA904DACF70 /* sheep_baa.caf in Resources */ = {isa = PBXBuildFile; fileRef = F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */; };
+		37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 4641B24B3D6601188D02C221 /* air_horn.caf */; };
 		39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C28A92E42035AFE64CFBED6 /* SplashView.swift */; };
-		3B1F2B17CF8DA25802C14E73 /* elephant_trumpet.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5DA4187878AC5BCA29E872BE /* elephant_trumpet.caf */; };
 		46DE2E1650F309DB30C7C0D4 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = A34C84EBDD96B375E75B5DC2 /* ClapFinderKitActivity */; };
+		4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */ = {isa = PBXBuildFile; fileRef = 88EF60ED1B99B45FB9597062 /* beep.caf */; };
 		4E607E825860DC2D744F0B9F /* rooster_crow.caf in Resources */ = {isa = PBXBuildFile; fileRef = C4FD638F38EA5721F09B12AA /* rooster_crow.caf */; };
 		5190609869231098D142D8B7 /* ClapFinderKitData in Frameworks */ = {isa = PBXBuildFile; productRef = BDEA670469C2DA5619F97569 /* ClapFinderKitData */; };
 		55B2FBFE23C2FFA31CD6E766 /* ModeSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74184C03D15468A78881BFC /* ModeSwitcherView.swift */; };
 		63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5481D18B530933145E1D7F55 /* InterstitialController.swift */; };
 		6C47271544A5AA86604CB9E3 /* ClapFinderKitLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = DE25CE73229C5787BECC0459 /* ClapFinderKitLocalization */; };
 		6F0E6917F566DFF47C9E4603 /* ClapFinderWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86F503BAEA217D482BE9627 /* ClapFinderWidgetsBundle.swift */; };
-		6F10E01534A50EA3EA9A2187 /* monkey_chatter.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5EEB0833A85E9C1912A30120 /* monkey_chatter.caf */; };
 		6F7A947C328DD7EF1029F8C9 /* pig_oink.caf in Resources */ = {isa = PBXBuildFile; fileRef = E0D88AE8FD753F2261A16E61 /* pig_oink.caf */; };
 		71F1DF94678D20AEE4AEFDED /* ClapFinderKitDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5E9E3DE4EF5752F9AE65B6B8 /* ClapFinderKitDesign */; };
-		7542903E1CFB5EAE3396941D /* bee_buzz.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0BB80E13711FE06F30C324A3 /* bee_buzz.caf */; };
 		77BC3A85754C89212FC5268E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0D1A24CAACB4FEEBDC1F2582 /* Localizable.strings */; };
 		7E5E032275F595B3E2734707 /* ListeningToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38E87AFC4E016356FE91103 /* ListeningToggleView.swift */; };
 		7FE52FF73E2B71F85959495E /* TouchAlertLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9911E009298BAA6F4004B6 /* TouchAlertLiveActivity.swift */; };
+		80603027D4CF7CF5DDCE530F /* whistle.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0B2C34E5A31DD26E6309CDA2 /* whistle.caf */; };
 		807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */; };
 		83F8A9420968E5D18142D8D0 /* ClapFinderWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		882448679A5F04F22274DEA5 /* bell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2ACD4ACC57959E4B128A4721 /* bell.caf */; };
 		89336F8D4DCEBC858335A1DC /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F1849F5440D9BD66E9E8C135 /* GoogleMobileAds */; };
+		8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6C711829C5CE93258C85D182 /* alarm_clock.caf */; };
 		8CE113715A03CB9DDBF86F5D /* duck_quack.caf in Resources */ = {isa = PBXBuildFile; fileRef = C1762A4281DB585C456AAB3D /* duck_quack.caf */; };
 		9465FE5CC21A0DDF1126B99A /* ClapFinderKitAds in Frameworks */ = {isa = PBXBuildFile; productRef = 42963434D09D67693B1489D3 /* ClapFinderKitAds */; };
 		9B99D815E84E6D6CB2F9D23C /* ClapFinderKitMotion in Frameworks */ = {isa = PBXBuildFile; productRef = B6031855CF37D69C82E54CB8 /* ClapFinderKitMotion */; };
-		9C157D25F2CE8E190ECD7DB1 /* fox_yip.caf in Resources */ = {isa = PBXBuildFile; fileRef = 3AA6153BA227352F12437B47 /* fox_yip.caf */; };
-		9D3724256018F962979B3BD8 /* dolphin_click.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6BC17DDA0F210914C46F144C /* dolphin_click.caf */; };
+		9C8FA463CD777411D1A687F5 /* foghorn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 034457FB4DC6EBE426A37265 /* foghorn.caf */; };
 		9FB102267116B977253F26BB /* dog_bark.caf in Resources */ = {isa = PBXBuildFile; fileRef = 982F94330D8C525A1BE035DD /* dog_bark.caf */; };
 		A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4223CAE7C416F483AF18D47 /* BannerAdView.swift */; };
 		A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */; };
-		ABE3055D378A141B37A2B577 /* lion_roar.caf in Resources */ = {isa = PBXBuildFile; fileRef = BF2DCE6FA6A71824B9242620 /* lion_roar.caf */; };
+		B223DCED093866E1FEEA19CE /* siren.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6044AF28719447AAE601B0B9 /* siren.caf */; };
 		B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */; };
 		B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */; };
-		BFB6BBF31223387440231A33 /* parrot_hello.caf in Resources */ = {isa = PBXBuildFile; fileRef = 7A9BDC0F59F38A7BA8C642D3 /* parrot_hello.caf */; };
+		BB7B089073D09A4F8C81A381 /* doorbell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2F99ABA31E0D3D13A37458C4 /* doorbell.caf */; };
 		C11B2EB3034F179F44136C21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D28B7DB120999EAE3ABFF13 /* Assets.xcassets */; };
 		C9E8DF59BF10D74CA8304CB7 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = E1674C54C715190CF85BF37C /* ClapFinderKitActivity */; };
 		D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */; };
 		D123C8874ED735250D6B2EE6 /* frog_ribbit.caf in Resources */ = {isa = PBXBuildFile; fileRef = 94D97DABA693A338ECA53390 /* frog_ribbit.caf */; };
 		D817CD31036E73539B822806 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AD8116237551BE69D5D912DF /* Localizable.strings */; };
 		DC05314BEC28A75ED9DD8EC7 /* TouchAlertHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */; };
-		DD08D1C768C6A5492C9B9B0A /* wolf_howl.caf in Resources */ = {isa = PBXBuildFile; fileRef = FF9FA295024FB10C31ED47C5 /* wolf_howl.caf */; };
 		E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */ = {isa = PBXBuildFile; fileRef = B65BA16DD4368B32B8468E5F /* cat_meow.caf */; };
 		E1915D5B3A7348DD170D7A6A /* ClapFinderKitDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 69C77123E4DF5BCFB53F973E /* ClapFinderKitDesign */; };
 /* End PBXBuildFile section */
@@ -80,22 +80,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0BB80E13711FE06F30C324A3 /* bee_buzz.caf */ = {isa = PBXFileReference; path = bee_buzz.caf; sourceTree = "<group>"; };
+		034457FB4DC6EBE426A37265 /* foghorn.caf */ = {isa = PBXFileReference; path = foghorn.caf; sourceTree = "<group>"; };
+		0B2C34E5A31DD26E6309CDA2 /* whistle.caf */ = {isa = PBXFileReference; path = whistle.caf; sourceTree = "<group>"; };
 		0D1A24CAACB4FEEBDC1F2582 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		1C28A92E42035AFE64CFBED6 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ClapFinderWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2ACD4ACC57959E4B128A4721 /* bell.caf */ = {isa = PBXFileReference; path = bell.caf; sourceTree = "<group>"; };
+		2F99ABA31E0D3D13A37458C4 /* doorbell.caf */ = {isa = PBXFileReference; path = doorbell.caf; sourceTree = "<group>"; };
 		314046E6E33DB47CD039CE26 /* cow_moo.caf */ = {isa = PBXFileReference; path = cow_moo.caf; sourceTree = "<group>"; };
-		3AA6153BA227352F12437B47 /* fox_yip.caf */ = {isa = PBXFileReference; path = fox_yip.caf; sourceTree = "<group>"; };
+		4641B24B3D6601188D02C221 /* air_horn.caf */ = {isa = PBXFileReference; path = air_horn.caf; sourceTree = "<group>"; };
 		508FBC43B8DDEEAACD96A34B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		5481D18B530933145E1D7F55 /* InterstitialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialController.swift; sourceTree = "<group>"; };
 		54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertHeroView.swift; sourceTree = "<group>"; };
-		5DA4187878AC5BCA29E872BE /* elephant_trumpet.caf */ = {isa = PBXFileReference; path = elephant_trumpet.caf; sourceTree = "<group>"; };
-		5EEB0833A85E9C1912A30120 /* monkey_chatter.caf */ = {isa = PBXFileReference; path = monkey_chatter.caf; sourceTree = "<group>"; };
+		6044AF28719447AAE601B0B9 /* siren.caf */ = {isa = PBXFileReference; path = siren.caf; sourceTree = "<group>"; };
 		694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseRingsView.swift; sourceTree = "<group>"; };
 		69C7B5BA09DB0E06F71EDAAF /* ClapFinder.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ClapFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6BC17DDA0F210914C46F144C /* dolphin_click.caf */ = {isa = PBXFileReference; path = dolphin_click.caf; sourceTree = "<group>"; };
+		6C711829C5CE93258C85D182 /* alarm_clock.caf */ = {isa = PBXFileReference; path = alarm_clock.caf; sourceTree = "<group>"; };
 		72196F65E09891DEC7526178 /* ClapFinderKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ClapFinderKit; path = ClapFinderKit; sourceTree = SOURCE_ROOT; };
-		7A9BDC0F59F38A7BA8C642D3 /* parrot_hello.caf */ = {isa = PBXFileReference; path = parrot_hello.caf; sourceTree = "<group>"; };
+		88EF60ED1B99B45FB9597062 /* beep.caf */ = {isa = PBXFileReference; path = beep.caf; sourceTree = "<group>"; };
 		8D28B7DB120999EAE3ABFF13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D55CBE695533189A80B9256 /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
 		94D97DABA693A338ECA53390 /* frog_ribbit.caf */ = {isa = PBXFileReference; path = frog_ribbit.caf; sourceTree = "<group>"; };
@@ -108,7 +110,6 @@
 		AD8116237551BE69D5D912DF /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		B65BA16DD4368B32B8468E5F /* cat_meow.caf */ = {isa = PBXFileReference; path = cat_meow.caf; sourceTree = "<group>"; };
 		BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapFinderApp.swift; sourceTree = "<group>"; };
-		BF2DCE6FA6A71824B9242620 /* lion_roar.caf */ = {isa = PBXFileReference; path = lion_roar.caf; sourceTree = "<group>"; };
 		C1762A4281DB585C456AAB3D /* duck_quack.caf */ = {isa = PBXFileReference; path = duck_quack.caf; sourceTree = "<group>"; };
 		C4FD638F38EA5721F09B12AA /* rooster_crow.caf */ = {isa = PBXFileReference; path = rooster_crow.caf; sourceTree = "<group>"; };
 		C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityControlView.swift; sourceTree = "<group>"; };
@@ -117,7 +118,6 @@
 		F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */ = {isa = PBXFileReference; path = sheep_baa.caf; sourceTree = "<group>"; };
 		F86F503BAEA217D482BE9627 /* ClapFinderWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapFinderWidgetsBundle.swift; sourceTree = "<group>"; };
 		F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimalCardView.swift; sourceTree = "<group>"; };
-		FF9FA295024FB10C31ED47C5 /* wolf_howl.caf */ = {isa = PBXFileReference; path = wolf_howl.caf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,22 +159,22 @@
 		116E434BF6CFDB6FEF4ACD38 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
-				0BB80E13711FE06F30C324A3 /* bee_buzz.caf */,
+				4641B24B3D6601188D02C221 /* air_horn.caf */,
+				6C711829C5CE93258C85D182 /* alarm_clock.caf */,
+				88EF60ED1B99B45FB9597062 /* beep.caf */,
+				2ACD4ACC57959E4B128A4721 /* bell.caf */,
 				B65BA16DD4368B32B8468E5F /* cat_meow.caf */,
 				314046E6E33DB47CD039CE26 /* cow_moo.caf */,
 				982F94330D8C525A1BE035DD /* dog_bark.caf */,
-				6BC17DDA0F210914C46F144C /* dolphin_click.caf */,
+				2F99ABA31E0D3D13A37458C4 /* doorbell.caf */,
 				C1762A4281DB585C456AAB3D /* duck_quack.caf */,
-				5DA4187878AC5BCA29E872BE /* elephant_trumpet.caf */,
-				3AA6153BA227352F12437B47 /* fox_yip.caf */,
+				034457FB4DC6EBE426A37265 /* foghorn.caf */,
 				94D97DABA693A338ECA53390 /* frog_ribbit.caf */,
-				BF2DCE6FA6A71824B9242620 /* lion_roar.caf */,
-				5EEB0833A85E9C1912A30120 /* monkey_chatter.caf */,
-				7A9BDC0F59F38A7BA8C642D3 /* parrot_hello.caf */,
 				E0D88AE8FD753F2261A16E61 /* pig_oink.caf */,
 				C4FD638F38EA5721F09B12AA /* rooster_crow.caf */,
 				F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */,
-				FF9FA295024FB10C31ED47C5 /* wolf_howl.caf */,
+				6044AF28719447AAE601B0B9 /* siren.caf */,
+				0B2C34E5A31DD26E6309CDA2 /* whistle.caf */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -367,22 +367,22 @@
 			files = (
 				C11B2EB3034F179F44136C21 /* Assets.xcassets in Resources */,
 				77BC3A85754C89212FC5268E /* Localizable.strings in Resources */,
-				7542903E1CFB5EAE3396941D /* bee_buzz.caf in Resources */,
+				37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */,
+				8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */,
+				4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */,
+				882448679A5F04F22274DEA5 /* bell.caf in Resources */,
 				E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */,
 				1855A8AE8D565B818E2136BC /* cow_moo.caf in Resources */,
 				9FB102267116B977253F26BB /* dog_bark.caf in Resources */,
-				9D3724256018F962979B3BD8 /* dolphin_click.caf in Resources */,
+				BB7B089073D09A4F8C81A381 /* doorbell.caf in Resources */,
 				8CE113715A03CB9DDBF86F5D /* duck_quack.caf in Resources */,
-				3B1F2B17CF8DA25802C14E73 /* elephant_trumpet.caf in Resources */,
-				9C157D25F2CE8E190ECD7DB1 /* fox_yip.caf in Resources */,
+				9C8FA463CD777411D1A687F5 /* foghorn.caf in Resources */,
 				D123C8874ED735250D6B2EE6 /* frog_ribbit.caf in Resources */,
-				ABE3055D378A141B37A2B577 /* lion_roar.caf in Resources */,
-				6F10E01534A50EA3EA9A2187 /* monkey_chatter.caf in Resources */,
-				BFB6BBF31223387440231A33 /* parrot_hello.caf in Resources */,
 				6F7A947C328DD7EF1029F8C9 /* pig_oink.caf in Resources */,
 				4E607E825860DC2D744F0B9F /* rooster_crow.caf in Resources */,
 				34C59F813A02ECA904DACF70 /* sheep_baa.caf in Resources */,
-				DD08D1C768C6A5492C9B9B0A /* wolf_howl.caf in Resources */,
+				B223DCED093866E1FEEA19CE /* siren.caf in Resources */,
+				80603027D4CF7CF5DDCE530F /* whistle.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

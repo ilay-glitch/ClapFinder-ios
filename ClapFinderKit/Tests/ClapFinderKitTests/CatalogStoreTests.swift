@@ -10,10 +10,17 @@ struct CatalogStoreTests {
 
     // MARK: Catalog loading
 
-    @Test("Catalog loads all 16 animals")
-    func catalogLoads16Animals() {
+    @Test("Catalog loads all 16 sounds")
+    func catalogLoads16Sounds() {
         let store = CatalogStore(defaults: makeTestDefaults())
         #expect(store.animals.count == 16)
+    }
+
+    @Test("Catalog ids are all unique")
+    func catalogIDsUnique() {
+        let store = CatalogStore(defaults: makeTestDefaults())
+        let ids = store.animals.map(\.id)
+        #expect(Set(ids).count == ids.count)
     }
 
     @Test("Catalog animals all have non-empty fields")
@@ -44,10 +51,11 @@ struct CatalogStoreTests {
 
     // MARK: Default selection
 
-    @Test("Default selected animal is dog when no persisted value")
-    func defaultSelectedAnimalIsDog() {
+    @Test("Default selected sound is siren when no persisted value")
+    func defaultSelectedSoundIsSiren() {
         let store = CatalogStore(defaults: makeTestDefaults())
-        #expect(store.selectedAnimalID == "dog")
+        #expect(store.selectedAnimalID == "siren")
+        #expect(store.selectedAnimal?.id == "siren", "default must resolve to a real catalog entry")
     }
 
     @Test("selectedAnimal returns the correct Animal for the stored ID")
@@ -63,8 +71,8 @@ struct CatalogStoreTests {
     func selectedAnimalIDPersists() {
         let defaults = makeTestDefaults()
         let store = CatalogStore(defaults: defaults)
-        store.selectedAnimalID = "lion"
-        #expect(defaults.string(forKey: "cf_selectedAnimalID") == "lion")
+        store.selectedAnimalID = "bell"
+        #expect(defaults.string(forKey: "cf_selectedAnimalID") == "bell")
     }
 
     @Test("Changing sensitivity persists to UserDefaults")
@@ -79,10 +87,10 @@ struct CatalogStoreTests {
     func storeRestoresPersistedAnimalID() {
         let defaults = makeTestDefaults()
         let storeA = CatalogStore(defaults: defaults)
-        storeA.selectedAnimalID = "wolf"
+        storeA.selectedAnimalID = "foghorn"
 
         let storeB = CatalogStore(defaults: defaults)
-        #expect(storeB.selectedAnimalID == "wolf")
+        #expect(storeB.selectedAnimalID == "foghorn")
     }
 
     @Test("Store restores persisted sensitivity on re-init")

@@ -16,7 +16,8 @@ public final class CatalogStore {
     /// All animals from catalog.json, in catalog order.
     public private(set) var animals: [Animal] = []
 
-    /// The ID of the currently selected animal. Defaults to "dog".
+    /// The ID of the currently selected sound. Defaults to "siren"
+    /// (SOUND_CATALOG_CHANGE.md §2 — global default for clap + touch alert).
     public var selectedAnimalID: String {
         didSet { defaults.set(selectedAnimalID, forKey: Keys.selectedAnimalID) }
     }
@@ -52,7 +53,7 @@ public final class CatalogStore {
         self.defaults = defaults
 
         // Restore persisted preferences (fallback to safe defaults).
-        let storedID = defaults.string(forKey: Keys.selectedAnimalID) ?? "dog"
+        let storedID = defaults.string(forKey: Keys.selectedAnimalID) ?? "siren"
         let storedSensRaw = defaults.string(forKey: Keys.sensitivity) ?? ""
         let storedSens = Sensitivity(rawValue: storedSensRaw) ?? .medium
 
