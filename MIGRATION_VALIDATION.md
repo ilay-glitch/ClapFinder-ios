@@ -152,3 +152,19 @@ notification-action button.
 | 3 | Silent-switch override | Ringer off → trigger → alert still plays | ⏳ | |
 | 4 | Siren is default | Fresh install → siren is the pre-selected sound | ⏳ | |
 | 5 | Grid layout | 4×4, no clipping, animals + alerts both legible | ⏳ | |
+
+---
+
+## Device QA pass — PR-15 clap recognition (SoundAnalysis)
+
+⚠️ Real recognition accuracy is device-only (no mic in simulator).
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| 1 | Clap fires (near) | Listen → double-clap at ~1 m → animal/alert plays | ⏳ | |
+| 2 | Clap fires (distant) | Double-clap at ~3–5 m → fires (raise sensitivity if needed) | ⏳ | |
+| 3 | Speech does NOT fire | Talk loudly near the phone while listening → no trigger | ⏳ | The whole point |
+| 4 | Door/bang does NOT fire | Slam a door / knock → no trigger | ⏳ | |
+| 5 | Sensitivity affects reach | Low needs a clear close clap; High catches softer/distant | ⏳ | Tune 0.75/0.55/0.40 |
+| 6 | Latency acceptable | Time from double-clap to response feels responsive (<~1.5 s) | ⏳ | SoundAnalysis window |
+| 7 | Battery | A few minutes of continuous listening — note drain | ⏳ | Pre-gate if excessive |

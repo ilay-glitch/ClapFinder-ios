@@ -7,6 +7,23 @@ options:
   defaultConfig: Debug
   createIntermediateGroups: true
 
+# Explicit, shared ClapFinder scheme so the app is always the obvious /
+# default run target. The widget extension is NOT runnable on its own
+# (selecting its scheme fails with "Failed to show Widget") — run ClapFinder.
+schemes:
+  ClapFinder:
+    build:
+      targets:
+        ClapFinder: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
 packages:
   ClapFinderKit:
     path: ClapFinderKit
