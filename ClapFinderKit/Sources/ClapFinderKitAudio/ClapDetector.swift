@@ -131,15 +131,22 @@ public final class ClapDetector {
         let inputNode = engine.inputNode
         let format = inputNode.inputFormat(forBus: 0)
 
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
-            guard self != nil else { return }
-            let rms = Self.rmsAmplitude(buffer: buffer)
+        // The tap block is invoked by AVFoundation on a real-time AUDIO thread,
+        // never on the main actor. It MUST be `@Sendable` (hence nonisolated):
+        // if Swift 6 infers main-actor isolation here (e.g. by capturing `self`
+        // synchronously), it inserts an executor precondition that traps with
+        // `_dispatch_assert_queue_fail` the instant the tap fires. So we touch
+        // only nonisolated work synchronously and hop to the main actor for
+        // anything involving `self`.
+        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
+            let rms = ClapDetector.rmsAmplitude(buffer: buffer)
             // Clamp rms to avoid log10(0) → -∞
             let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
-            Task { @MainActor [weak self] in
+            Task { @MainActor in
                 self?.processSample(dBFS: dBFS)
             }
         }
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format, block: onBuffer)
     }
 
     private func tearDown() {
