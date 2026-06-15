@@ -100,9 +100,11 @@ struct ResponseCoordinatorTests {
         let cat = Animal(id: "cat", name: "Cat", emoji: "🐈", soundFile: "cat_meow.caf")
         coord.startForTesting(animal: cat, sensitivity: .medium)
 
-        // Simulate double-clap via the internal hook
-        coord.detector.processSample(dBFS: -20)
-        coord.detector.processSample(dBFS: -20)
+        // Simulate a real double-clap: two separate transients with a release.
+        let base = Date(timeIntervalSince1970: 1_750_000_000)
+        coord.detector.processSample(dBFS: -20, at: base)
+        coord.detector.processSample(dBFS: -60, at: base.addingTimeInterval(0.05))
+        coord.detector.processSample(dBFS: -20, at: base.addingTimeInterval(0.15))
 
         #expect(coord.lastTriggeredAnimal?.id == "cat")
     }
