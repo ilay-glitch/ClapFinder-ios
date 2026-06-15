@@ -139,6 +139,16 @@ struct SensitivityTests {
         #expect(Sensitivity.high.threshold == -50.0)
     }
 
+    @Test("Clap confidence threshold: Low strictest, High most forgiving")
+    func clapConfidenceThresholds() {
+        #expect(Sensitivity.low.clapConfidenceThreshold == 0.75)
+        #expect(Sensitivity.medium.clapConfidenceThreshold == 0.55)
+        #expect(Sensitivity.high.clapConfidenceThreshold == 0.40)
+        // Higher sensitivity must require *less* confidence (more forgiving).
+        #expect(Sensitivity.high.clapConfidenceThreshold < Sensitivity.medium.clapConfidenceThreshold)
+        #expect(Sensitivity.medium.clapConfidenceThreshold < Sensitivity.low.clapConfidenceThreshold)
+    }
+
     @Test("All cases have non-empty display names")
     func allCasesHaveDisplayNames() {
         for s in Sensitivity.allCases {

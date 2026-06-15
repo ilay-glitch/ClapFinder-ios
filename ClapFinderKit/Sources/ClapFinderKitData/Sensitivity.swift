@@ -17,11 +17,24 @@ public enum Sensitivity: String, CaseIterable, Codable, Sendable {
     case high
 
     /// Detection threshold in dBFS. More-negative = more sensitive.
+    /// (Legacy energy path; clap mode now uses the classifier — see
+    /// `clapConfidenceThreshold`. Kept for reference / potential pre-gate.)
     public var threshold: Float {
         switch self {
         case .low:    return -30.0
         case .medium: return -40.0
         case .high:   return -50.0
+        }
+    }
+
+    /// Minimum SoundAnalysis confidence for a clap-family classification to
+    /// count as a clap event (SOUND_RECOGNITION_DESIGN.md §2). Lower = more
+    /// forgiving (catches distant/soft claps). QA-calibrated defaults.
+    public var clapConfidenceThreshold: Double {
+        switch self {
+        case .low:    return 0.75
+        case .medium: return 0.55
+        case .high:   return 0.40
         }
     }
 

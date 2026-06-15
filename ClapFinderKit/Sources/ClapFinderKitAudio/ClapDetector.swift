@@ -65,6 +65,10 @@ public final class ClapDetector {
     // there is no real data race — the annotation opts out of the compiler check.
     nonisolated(unsafe) private let engine = AVAudioEngine()
 
+    /// On-device clap recognition (SoundAnalysis). Supplies the confidence
+    /// stream that feeds the gesture machine (SOUND_RECOGNITION_DESIGN.md).
+    private let classifier = ClapClassifier()
+
     // MARK: - Private — detection state
 
     private var firstClapTime: Date?
@@ -99,8 +103,9 @@ public final class ClapDetector {
     public func start(sensitivity: Sensitivity = .medium) throws {
         guard !isListening else { return }
 
-        currentThreshold = sensitivity.threshold
-        Self.logger.debug("Starting — threshold \(sensitivity.threshold) dBFS")
+        // Clap mode now thresholds classifier confidence, not energy.
+        currentThreshold = Float(sensitivity.clapConfidenceThreshold)
+        Self.logger.debug("Starting — clap confidence threshold \(sensitivity.clapConfidenceThreshold)")
 
 #if os(iOS)
         do {
@@ -138,25 +143,26 @@ public final class ClapDetector {
         let inputNode = engine.inputNode
         let format = inputNode.inputFormat(forBus: 0)
 
-        // The tap block is invoked by AVFoundation on a real-time AUDIO thread,
-        // never on the main actor. It MUST be `@Sendable` (hence nonisolated):
-        // if Swift 6 infers main-actor isolation here (e.g. by capturing `self`
-        // synchronously), it inserts an executor precondition that traps with
-        // `_dispatch_assert_queue_fail` the instant the tap fires. So we touch
-        // only nonisolated work synchronously and hop to the main actor for
-        // anything involving `self`.
-        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
-            let rms = ClapDetector.rmsAmplitude(buffer: buffer)
-            // Clamp rms to avoid log10(0) → -∞
-            let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
-            Task { @MainActor in
-                self?.processSample(dBFS: dBFS)
-            }
+        // Start the classifier and route its confidence stream into the
+        // gesture machine. onClap already hops to the main actor.
+        classifier.start(format: format)
+        classifier.onClap = { [weak self] confidence, when in
+            self?.processSample(dBFS: Float(confidence), at: when)
+        }
+
+        // The tap block runs on a real-time AUDIO thread — must be `@Sendable`
+        // (nonisolated) or Swift 6 traps with `_dispatch_assert_queue_fail`.
+        // It only forwards buffers to the classifier (a nonisolated call).
+        let classifier = self.classifier
+        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { buffer, when in
+            classifier.analyze(buffer, at: when)
         }
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: format, block: onBuffer)
     }
 
     private func tearDown() {
+        classifier.onClap = nil
+        classifier.stop()
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         interruptionTask?.cancel()
