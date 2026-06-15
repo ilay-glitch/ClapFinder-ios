@@ -54,6 +54,7 @@
 		DC05314BEC28A75ED9DD8EC7 /* TouchAlertHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */; };
 		E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */ = {isa = PBXBuildFile; fileRef = B65BA16DD4368B32B8468E5F /* cat_meow.caf */; };
 		E1915D5B3A7348DD170D7A6A /* ClapFinderKitDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 69C77123E4DF5BCFB53F973E /* ClapFinderKitDesign */; };
+		FE6E08279EA95F3C7705A8FD /* ClapCalibrationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DE6D2C09E19FA0D4B1B681 /* ClapCalibrationSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,7 @@
 		C1762A4281DB585C456AAB3D /* duck_quack.caf */ = {isa = PBXFileReference; path = duck_quack.caf; sourceTree = "<group>"; };
 		C4FD638F38EA5721F09B12AA /* rooster_crow.caf */ = {isa = PBXFileReference; path = rooster_crow.caf; sourceTree = "<group>"; };
 		C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityControlView.swift; sourceTree = "<group>"; };
+		C8DE6D2C09E19FA0D4B1B681 /* ClapCalibrationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapCalibrationSheet.swift; sourceTree = "<group>"; };
 		E0D88AE8FD753F2261A16E61 /* pig_oink.caf */ = {isa = PBXFileReference; path = pig_oink.caf; sourceTree = "<group>"; };
 		E74184C03D15468A78881BFC /* ModeSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSwitcherView.swift; sourceTree = "<group>"; };
 		EB3BE45C0E37148764DFEEF2 /* ClapListeningLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapListeningLiveActivity.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 			children = (
 				A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */,
 				F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */,
+				C8DE6D2C09E19FA0D4B1B681 /* ClapCalibrationSheet.swift */,
 				508FBC43B8DDEEAACD96A34B /* HomeView.swift */,
 				A38E87AFC4E016356FE91103 /* ListeningToggleView.swift */,
 				E74184C03D15468A78881BFC /* ModeSwitcherView.swift */,
@@ -400,6 +403,7 @@
 				B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */,
 				D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */,
 				A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */,
+				FE6E08279EA95F3C7705A8FD /* ClapCalibrationSheet.swift in Sources */,
 				A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */,
 				24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */,
 				63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */,

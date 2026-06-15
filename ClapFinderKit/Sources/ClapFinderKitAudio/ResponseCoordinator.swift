@@ -90,11 +90,13 @@ public final class ResponseCoordinator {
 
     /// Starts clap detection for the given animal and sensitivity.
     ///
+    /// - Parameter crestOverride: Personalised crest threshold from calibration
+    ///   (nil = use the sensitivity-derived value).
     /// - Throws: `ClapDetectorError` if the audio session or engine cannot start.
-    public func start(animal: Animal, sensitivity: Sensitivity = .medium) throws {
+    public func start(animal: Animal, sensitivity: Sensitivity = .medium, crestOverride: Float? = nil) throws {
         guard !isActive else { return }
         wireDetector(for: animal)
-        try detector.start(sensitivity: sensitivity)
+        try detector.start(sensitivity: sensitivity, crestOverride: crestOverride)
         isActive = true
 
         // Live Activity Stop button → this coordinator.

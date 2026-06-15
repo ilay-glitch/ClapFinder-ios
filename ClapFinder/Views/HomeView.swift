@@ -29,6 +29,8 @@ struct HomeView: View {
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
     @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
     @State private var showNotifExplainer = false
+    @State private var calibrator = ClapCalibrationController()
+    @State private var showCalibration = false
 
     private let gridColumns = Array(repeating: GridItem(.fixed(80), spacing: CFSpacing.sm), count: 4)
 
@@ -63,7 +65,14 @@ struct HomeView: View {
 
                     sensitivitySection
                         .padding(.top, CFSpacing.lg)
-                        .padding(.bottom, CFSpacing.xxl)
+
+                    if mode == .clap {
+                        calibrateSection
+                            .padding(.top, CFSpacing.md)
+                            .padding(.bottom, CFSpacing.xxl)
+                    } else {
+                        Color.clear.frame(height: CFSpacing.xxl)
+                    }
                 }
                 .padding(.horizontal, CFSpacing.md)
             }
@@ -120,6 +129,19 @@ struct HomeView: View {
         } message: {
             Text(NSLocalizedString("touch.notifExplainer.body", comment: ""))
         }
+        .sheet(isPresented: $showCalibration, onDismiss: { calibrator.cancel() }, content: {
+            ClapCalibrationSheet(
+                calibrator: calibrator,
+                onCalibrated: { threshold in
+                    catalogStore.calibratedClapCrest = threshold
+                    showCalibration = false
+                },
+                onReset: {
+                    catalogStore.calibratedClapCrest = nil
+                    showCalibration = false
+                }
+            )
+        })
     }
 
     // MARK: Sections
@@ -235,6 +257,32 @@ struct HomeView: View {
         return SensitivityControlView(sensitivity: $store.sensitivity)
     }
 
+    private var calibrateSection: some View {
+        VStack(spacing: CFSpacing.xs) {
+            Button {
+                calibrator.reset()
+                showCalibration = true
+            } label: {
+                Label(
+                    NSLocalizedString("calibrate.button", comment: ""),
+                    systemImage: "hand.tap"
+                )
+                .font(CFFont.callout())
+                .foregroundStyle(CFColor.textPrimary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, CFSpacing.sm)
+                .background(CFColor.surfaceCard, in: Capsule())
+            }
+            .disabled(coordinator.isActive)
+
+            if catalogStore.calibratedClapCrest != nil {
+                Text(NSLocalizedString("calibrate.active", comment: ""))
+                    .font(CFFont.caption())
+                    .foregroundStyle(CFColor.listeningActive)
+            }
+        }
+    }
+
     // MARK: Actions
 
     private func toggleListening() {
@@ -250,7 +298,11 @@ struct HomeView: View {
         } else {
             guard let animal = catalogStore.selectedAnimal else { return }
             do {
-                try coordinator.start(animal: animal, sensitivity: catalogStore.sensitivity)
+                try coordinator.start(
+                    animal: animal,
+                    sensitivity: catalogStore.sensitivity,
+                    crestOverride: catalogStore.calibratedClapCrest
+                )
                 interstitials.recordUse()   // D1: a use = a listening session start
             } catch {
                 startError = error.localizedDescription
