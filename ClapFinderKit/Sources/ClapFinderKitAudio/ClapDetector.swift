@@ -52,6 +52,9 @@ public final class ClapDetector {
 
     /// Two peaks must occur within this window (seconds) to count as a double-clap.
     public let clapWindowSeconds: TimeInterval = 0.5
+    /// The two claps must be at least this far apart (seconds). Rejects two
+    /// consecutive buffers of one continuous sound being read as a double-clap.
+    public let minClapGapSeconds: TimeInterval = 0.08
     /// After a double-clap fires, detection is suppressed for this long (seconds).
     public let cooldownSeconds: TimeInterval = 1.0
 
@@ -65,6 +68,10 @@ public final class ClapDetector {
     // MARK: - Private — detection state
 
     private var firstClapTime: Date?
+    /// `true` once the signal has dropped below threshold after the first clap.
+    /// A second clap only counts after such a "release" — so one sustained
+    /// sound (speech, the engine-start transient) can't fake a double-clap.
+    private var releasedSinceFirstClap = false
     private var inCooldown = false
     private var currentThreshold: Float = Sensitivity.medium.threshold
     /// Retained so we can cancel notification observers when the detector stops.
@@ -163,34 +170,63 @@ public final class ClapDetector {
     // MARK: - Core detection state machine
 
     /// Core detection state machine — must be called on the main actor.
-    func processSample(dBFS: Float) {
+    ///
+    /// A double-clap requires two *separate* transients: after the first clap
+    /// the signal must drop below threshold (a "release") and at least
+    /// `minClapGapSeconds` must pass before a second above-threshold sample
+    /// counts. Without this, two consecutive ~23 ms buffers of one continuous
+    /// sound — speech, ambient noise, the engine-start pop — were read as a
+    /// double-clap and fired the instant listening began.
+    func processSample(dBFS: Float, at now: Date = Date()) {
         guard isListening, !inCooldown else { return }
-        guard dBFS > currentThreshold else { return }
 
-        let now = Date()
-
-        if let first = firstClapTime, now.timeIntervalSince(first) <= clapWindowSeconds {
-            // ✅ Second clap within window
-            let delta = now.timeIntervalSince(first)
-            Self.logger.debug("Double-clap detected (Δt \(delta, format: .fixed(precision: 3))s)")
-            reset()
-            inCooldown = true
-            onClapDetected?()
-
-            Task { @MainActor [weak self] in
-                guard let self else { return }
-                try? await Task.sleep(for: .seconds(self.cooldownSeconds))
-                self.inCooldown = false
+        // Below threshold: this is the gap between claps. Mark the release.
+        guard dBFS > currentThreshold else {
+            if firstClapTime != nil {
+                releasedSinceFirstClap = true
             }
-        } else {
-            // First clap (or stale window — treat as a fresh first clap)
+            return
+        }
+
+        // Above threshold from here on.
+        guard let first = firstClapTime else {
+            // First clap of a potential pair.
             Self.logger.debug("First clap registered (dBFS \(dBFS, format: .fixed(precision: 1)))")
             firstClapTime = now
+            releasedSinceFirstClap = false
+            return
+        }
+
+        let delta = now.timeIntervalSince(first)
+
+        // Stale window — restart with this sample as a fresh first clap.
+        guard delta <= clapWindowSeconds else {
+            firstClapTime = now
+            releasedSinceFirstClap = false
+            return
+        }
+
+        // Same continuous sound, or claps too close together — not a real pair.
+        guard releasedSinceFirstClap, delta >= minClapGapSeconds else {
+            return
+        }
+
+        // ✅ Genuine second clap.
+        Self.logger.debug("Double-clap detected (Δt \(delta, format: .fixed(precision: 3))s)")
+        reset()
+        inCooldown = true
+        onClapDetected?()
+
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(for: .seconds(self.cooldownSeconds))
+            self.inCooldown = false
         }
     }
 
     private func reset() {
         firstClapTime = nil
+        releasedSinceFirstClap = false
     }
 
 #if os(iOS)
