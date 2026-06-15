@@ -9,5 +9,6 @@ import WidgetKit
 struct ClapFinderWidgetsBundle: WidgetBundle {
     var body: some Widget {
         TouchAlertLiveActivity()
+        ClapListeningLiveActivity()
     }
 }

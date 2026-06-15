@@ -45,6 +45,7 @@
 		B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */; };
 		BFB6BBF31223387440231A33 /* parrot_hello.caf in Resources */ = {isa = PBXBuildFile; fileRef = 7A9BDC0F59F38A7BA8C642D3 /* parrot_hello.caf */; };
 		C11B2EB3034F179F44136C21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D28B7DB120999EAE3ABFF13 /* Assets.xcassets */; };
+		C91C0BFE6B4E6B4B84259ADC /* ClapListeningLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3BE45C0E37148764DFEEF2 /* ClapListeningLiveActivity.swift */; };
 		C9E8DF59BF10D74CA8304CB7 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = E1674C54C715190CF85BF37C /* ClapFinderKitActivity */; };
 		D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */; };
 		D123C8874ED735250D6B2EE6 /* frog_ribbit.caf in Resources */ = {isa = PBXBuildFile; fileRef = 94D97DABA693A338ECA53390 /* frog_ribbit.caf */; };
@@ -114,6 +115,7 @@
 		C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityControlView.swift; sourceTree = "<group>"; };
 		E0D88AE8FD753F2261A16E61 /* pig_oink.caf */ = {isa = PBXFileReference; path = pig_oink.caf; sourceTree = "<group>"; };
 		E74184C03D15468A78881BFC /* ModeSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSwitcherView.swift; sourceTree = "<group>"; };
+		EB3BE45C0E37148764DFEEF2 /* ClapListeningLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapListeningLiveActivity.swift; sourceTree = "<group>"; };
 		F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */ = {isa = PBXFileReference; path = sheep_baa.caf; sourceTree = "<group>"; };
 		F86F503BAEA217D482BE9627 /* ClapFinderWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapFinderWidgetsBundle.swift; sourceTree = "<group>"; };
 		F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimalCardView.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				F86F503BAEA217D482BE9627 /* ClapFinderWidgetsBundle.swift */,
+				EB3BE45C0E37148764DFEEF2 /* ClapListeningLiveActivity.swift */,
 				AD8116237551BE69D5D912DF /* Localizable.strings */,
 				9E9911E009298BAA6F4004B6 /* TouchAlertLiveActivity.swift */,
 			);
@@ -415,6 +418,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F0E6917F566DFF47C9E4603 /* ClapFinderWidgetsBundle.swift in Sources */,
+				C91C0BFE6B4E6B4B84259ADC /* ClapListeningLiveActivity.swift in Sources */,
 				7FE52FF73E2B71F85959495E /* TouchAlertLiveActivity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
