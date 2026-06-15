@@ -13,7 +13,8 @@ let package = Package(
         .library(name: "ClapFinderKitData", targets: ["ClapFinderKitData"]),
         .library(name: "ClapFinderKitAds", targets: ["ClapFinderKitAds"]),
         .library(name: "ClapFinderKitLocalization", targets: ["ClapFinderKitLocalization"]),
-        .library(name: "ClapFinderKitMotion", targets: ["ClapFinderKitMotion"])
+        .library(name: "ClapFinderKitMotion", targets: ["ClapFinderKitMotion"]),
+        .library(name: "ClapFinderKitActivity", targets: ["ClapFinderKitActivity"])
     ],
     targets: [
         // Design tokens — the only module where hex color literals are permitted.
@@ -48,12 +49,22 @@ let package = Package(
         // Touch/Motion alert — CoreMotion detection + alarm coordination.
         .target(
             name: "ClapFinderKitMotion",
-            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData"],
+            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData", "ClapFinderKitActivity"],
             path: "Sources/ClapFinderKitMotion"
+        ),
+        // Live Activity shared types — imported by BOTH the app and the
+        // widget extension so the ActivityAttributes match exactly.
+        .target(
+            name: "ClapFinderKitActivity",
+            dependencies: ["ClapFinderKitData"],
+            path: "Sources/ClapFinderKitActivity"
         ),
         .testTarget(
             name: "ClapFinderKitTests",
-            dependencies: ["ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData", "ClapFinderKitMotion"],
+            dependencies: [
+                "ClapFinderKitAds", "ClapFinderKitAudio", "ClapFinderKitData",
+                "ClapFinderKitMotion", "ClapFinderKitActivity"
+            ],
             path: "Tests/ClapFinderKitTests"
         )
     ]

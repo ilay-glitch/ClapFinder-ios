@@ -120,3 +120,22 @@ frequency-cap timing require device QA.
 | 3 | Never during detection | No interstitial appears while listening or mid-alarm; none on arm/disarm | ⏳ | |
 | 4 | Dismiss path | Interstitial dismiss returns to Home with detection off, app responsive | ⏳ | |
 | 5 | Counter persistence | Force-quit between uses: counter survives relaunch | ⏳ | |
+
+---
+
+## Device QA pass — PR-13 Touch-Alert Live Activity
+
+⚠️ Live Activities render only on a real device's Lock Screen / Dynamic
+Island — not exercisable in the simulator. **Also verifies the free-account
+extension constraint** (LIVE_ACTIVITY_DESIGN.md §5.1): if the widget
+extension fails to sign/install on the personal team, fall back to the
+notification-action button.
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| 1 | Extension installs | App + widget extension install on device with the personal team | ⏳ | Free-account App-ID limit check |
+| 2 | Activity appears on arm | Arm shield → Live Activity card shows on Lock Screen + Dynamic Island | ⏳ | |
+| 3 | Reflects state | Card shows grace countdown → "Armed" → "Motion detected!" on trigger | ⏳ | |
+| 4 | Disarm from Lock Screen | Tap Disarm on the Lock Screen card → sound + flash + vibration all stop | ⏳ | The core feature |
+| 5 | Disarm from Dynamic Island | Expand island → Disarm → alarm stops | ⏳ | |
+| 6 | Activity ends | In-app disarm also removes the Live Activity | ⏳ | |

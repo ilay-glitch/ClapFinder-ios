@@ -44,6 +44,7 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_STRICT_CONCURRENCY: complete
         CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 59FH4WW82C
         TARGETED_DEVICE_FAMILY: "1,2"
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
     dependencies:
@@ -59,5 +60,35 @@ targets:
         product: ClapFinderKitLocalization
       - package: ClapFinderKit
         product: ClapFinderKitMotion
+      - package: ClapFinderKit
+        product: ClapFinderKitActivity
       - package: GoogleMobileAds
         product: GoogleMobileAds
+      - target: ClapFinderWidgets   # embed the widget extension in the app
+
+  # Widget extension — hosts the touch-alert Live Activity (LIVE_ACTIVITY_DESIGN.md).
+  ClapFinderWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ClapFinderWidgets
+        excludes:
+          - Info.plist
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.appcentral.clapfinder.widgets
+        INFOPLIST_FILE: ClapFinderWidgets/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_STRICT_CONCURRENCY: complete
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 59FH4WW82C
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../../Frameworks"
+    dependencies:
+      - package: ClapFinderKit
+        product: ClapFinderKitActivity
+      - package: ClapFinderKit
+        product: ClapFinderKitDesign

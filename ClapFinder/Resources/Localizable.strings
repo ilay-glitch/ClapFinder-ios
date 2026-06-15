@@ -56,3 +56,8 @@
 "a11y.animal.unselected"  = "%@, %@. Not selected.";
 "a11y.touch.armed"        = "Touch alert armed. Tap to disarm.";
 "a11y.touch.disarmed"     = "Touch alert off. Tap to arm.";
+
+/* MARK: - Live Activity (PR-13) */
+"liveactivity.status.grace"     = "Arming — %d…";
+"liveactivity.status.armed"     = "Armed — don't touch 🛡️";
+"liveactivity.status.alarming"  = "Motion detected!";
