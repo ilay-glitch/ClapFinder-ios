@@ -124,29 +124,14 @@ struct CatalogStoreTests {
 
 struct SensitivityTests {
 
-    @Test("Low threshold is -30 dBFS")
-    func lowThreshold() {
-        #expect(Sensitivity.low.threshold == -30.0)
-    }
-
-    @Test("Medium threshold is -40 dBFS")
-    func mediumThreshold() {
-        #expect(Sensitivity.medium.threshold == -40.0)
-    }
-
-    @Test("High threshold is -50 dBFS")
-    func highThreshold() {
-        #expect(Sensitivity.high.threshold == -50.0)
-    }
-
-    @Test("Clap confidence threshold: Low strictest, High most forgiving")
-    func clapConfidenceThresholds() {
-        #expect(Sensitivity.low.clapConfidenceThreshold == 0.75)
-        #expect(Sensitivity.medium.clapConfidenceThreshold == 0.55)
-        #expect(Sensitivity.high.clapConfidenceThreshold == 0.40)
-        // Higher sensitivity must require *less* confidence (more forgiving).
-        #expect(Sensitivity.high.clapConfidenceThreshold < Sensitivity.medium.clapConfidenceThreshold)
-        #expect(Sensitivity.medium.clapConfidenceThreshold < Sensitivity.low.clapConfidenceThreshold)
+    @Test("Clap crest threshold: Low strictest, High most forgiving, all below a real clap (~3.3)")
+    func clapCrestThresholds() {
+        #expect(Sensitivity.low.clapCrestThreshold == 3.5)
+        #expect(Sensitivity.medium.clapCrestThreshold == 2.8)
+        #expect(Sensitivity.high.clapCrestThreshold == 2.2)
+        // Higher sensitivity = lower crest bar (catches softer/farther claps).
+        #expect(Sensitivity.high.clapCrestThreshold < Sensitivity.medium.clapCrestThreshold)
+        #expect(Sensitivity.medium.clapCrestThreshold < Sensitivity.low.clapCrestThreshold)
     }
 
     @Test("All cases have non-empty display names")

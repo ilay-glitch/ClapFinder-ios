@@ -8,32 +8,17 @@ import OSLog
 
 /// Detects a double-clap using the device microphone.
 ///
-/// ## Algorithm
-/// 1. A 1024-sample input tap fires ~23ms callbacks (44 100 Hz).
-/// 2. Each buffer is reduced to an RMS value, then converted to dBFS:
-///    `dBFS = 20 × log10(rms)`.
-/// 3. If `dBFS > threshold`, a "peak" is registered.
-/// 4. Two peaks within `clapWindowSeconds` (0.5 s) trigger `onClapDetected`.
-/// 5. A `cooldownSeconds` (1.0 s) lockout prevents duplicate fires.
+/// A 1024-sample input tap (~23 ms) yields per-buffer energy (dBFS) and crest
+/// factor (peak ÷ RMS). A clap "peak" is loud (dBFS > threshold) AND impulsive
+/// (crest > `minCrestFactor`); two such peaks, separated by a release and
+/// `minClapGapSeconds`, within `clapWindowSeconds` fire `onClapDetected`, then
+/// a `cooldownSeconds` lockout prevents duplicates. The crest test is what
+/// distinguishes a clap from loud-but-flat sounds (speech, sustained noise).
 ///
-/// ## Background operation
-/// Requires `UIBackgroundModes = ["audio"]` in `Info.plist`. When that key is
-/// present the engine keeps running with the screen off or the app backgrounded.
-/// The detector automatically stops and restarts around AVAudioSession
-/// interruptions (phone calls, Siri) using async notification streams.
-///
-/// ## Usage
-/// ```swift
-/// let detector = ClapDetector()
-/// detector.onClapDetected = { … }
-/// try detector.start(sensitivity: .medium)
-/// // … later …
-/// detector.stop()
-/// ```
-///
-/// ## Concurrency
-/// All public methods and `@Observable` properties are `@MainActor`.
-/// AVAudioEngine callbacks are bridged to `@MainActor` via `Task { @MainActor in }`.
+/// Background: requires `UIBackgroundModes = ["audio"]`; auto-stops/restarts
+/// around AVAudioSession interruptions via async notification streams.
+/// Concurrency: all public API + `@Observable` state are `@MainActor`; the tap
+/// runs on the audio thread and hops to the main actor per buffer.
 @Observable
 @MainActor
 public final class ClapDetector {
@@ -57,6 +42,10 @@ public final class ClapDetector {
     public let minClapGapSeconds: TimeInterval = 0.08
     /// After a double-clap fires, detection is suppressed for this long (seconds).
     public let cooldownSeconds: TimeInterval = 1.0
+    /// Fixed loudness floor (dBFS) — only rejects near-silence (where crest is
+    /// meaningless). Far above this, the crest factor decides. NOT a loudness
+    /// gate for distance: a far clap (~−50 dBFS) is well above this floor.
+    public let dBFloor: Float = -55.0
 
     // MARK: - Private — AVFoundation (non-Sendable, main-actor access only)
 
@@ -64,10 +53,6 @@ public final class ClapDetector {
     // All accesses to `engine` happen on the main actor (start / stop), so
     // there is no real data race — the annotation opts out of the compiler check.
     nonisolated(unsafe) private let engine = AVAudioEngine()
-
-    /// On-device clap recognition (SoundAnalysis). Supplies the confidence
-    /// stream that feeds the gesture machine (SOUND_RECOGNITION_DESIGN.md).
-    private let classifier = ClapClassifier()
 
     // MARK: - Private — detection state
 
@@ -77,7 +62,7 @@ public final class ClapDetector {
     /// sound (speech, the engine-start transient) can't fake a double-clap.
     private var releasedSinceFirstClap = false
     private var inCooldown = false
-    private var currentThreshold: Float = Sensitivity.medium.threshold
+    private var currentCrestThreshold: Float = Sensitivity.medium.clapCrestThreshold
     /// Retained so we can cancel notification observers when the detector stops.
     /// Both tasks are cancelled in `tearDown()` (called by `stop()`).
     private var interruptionTask: Task<Void, Never>?
@@ -103,9 +88,8 @@ public final class ClapDetector {
     public func start(sensitivity: Sensitivity = .medium) throws {
         guard !isListening else { return }
 
-        // Clap mode now thresholds classifier confidence, not energy.
-        currentThreshold = Float(sensitivity.clapConfidenceThreshold)
-        Self.logger.debug("Starting — clap confidence threshold \(sensitivity.clapConfidenceThreshold)")
+        currentCrestThreshold = sensitivity.clapCrestThreshold
+        Self.logger.debug("Starting — min crest \(sensitivity.clapCrestThreshold), floor \(self.dBFloor) dBFS")
 
 #if os(iOS)
         do {
@@ -143,26 +127,23 @@ public final class ClapDetector {
         let inputNode = engine.inputNode
         let format = inputNode.inputFormat(forBus: 0)
 
-        // Start the classifier and route its confidence stream into the
-        // gesture machine. onClap already hops to the main actor.
-        classifier.start(format: format)
-        classifier.onClap = { [weak self] confidence, when in
-            self?.processSample(dBFS: Float(confidence), at: when)
-        }
-
         // The tap block runs on a real-time AUDIO thread — must be `@Sendable`
         // (nonisolated) or Swift 6 traps with `_dispatch_assert_queue_fail`.
-        // It only forwards buffers to the classifier (a nonisolated call).
-        let classifier = self.classifier
-        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { buffer, when in
-            classifier.analyze(buffer, at: when)
+        // We compute energy (dBFS) + crest factor (peak ÷ RMS) here — both
+        // nonisolated static work — then hop to the main actor with the result.
+        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
+            let rms = ClapDetector.rmsAmplitude(buffer: buffer)
+            let peak = ClapDetector.peakAmplitude(buffer: buffer)
+            let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
+            let crest = peak / max(rms, Float(1e-10))
+            Task { @MainActor in
+                self?.processSample(dBFS: dBFS, crest: crest)
+            }
         }
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: format, block: onBuffer)
     }
 
     private func tearDown() {
-        classifier.onClap = nil
-        classifier.stop()
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         interruptionTask?.cancel()
@@ -177,27 +158,35 @@ public final class ClapDetector {
 
     /// Core detection state machine — must be called on the main actor.
     ///
-    /// A double-clap requires two *separate* transients: after the first clap
-    /// the signal must drop below threshold (a "release") and at least
-    /// `minClapGapSeconds` must pass before a second above-threshold sample
-    /// counts. Without this, two consecutive ~23 ms buffers of one continuous
-    /// sound — speech, ambient noise, the engine-start pop — were read as a
-    /// double-clap and fired the instant listening began.
-    func processSample(dBFS: Float, at now: Date = Date()) {
+    /// A clap "peak" is a buffer that is both **loud** (dBFS > threshold) and
+    /// **impulsive** (crest factor > `minCrestFactor`). The impulsive test is
+    /// the clap-vs-noise discriminator: a clap is a sharp spike (high crest),
+    /// while speech / sustained sounds are flatter (low crest) and are ignored
+    /// even when loud.
+    ///
+    /// A double-clap requires two *separate* clap peaks: after the first, the
+    /// signal must drop below threshold (a "release") and at least
+    /// `minClapGapSeconds` must pass before the second counts.
+    /// `crest` defaults to a clearly-impulsive value so gesture unit tests
+    /// (which exercise timing, not the impulse gate) can omit it.
+    func processSample(dBFS: Float, crest: Float = 100, at now: Date = Date()) {
         guard isListening, !inCooldown else { return }
 
-        // Below threshold: this is the gap between claps. Mark the release.
-        guard dBFS > currentThreshold else {
+        // A clap peak = above the silence floor AND impulsive (sharp crest).
+        // Loudness is NOT the discriminator (it falls off with distance);
+        // crest is. Anything that isn't a peak — quiet OR loud-but-flat
+        // (speech, sustained noise) — counts as the "release" gap between claps.
+        let isPeak = dBFS > dBFloor && crest > currentCrestThreshold
+        guard isPeak else {
             if firstClapTime != nil {
                 releasedSinceFirstClap = true
             }
             return
         }
 
-        // Above threshold from here on.
+        // A clap peak from here on.
         guard let first = firstClapTime else {
-            // First clap of a potential pair.
-            Self.logger.debug("First clap registered (dBFS \(dBFS, format: .fixed(precision: 1)))")
+            Self.logger.debug("First clap (crest \(crest, format: .fixed(precision: 1)))")
             firstClapTime = now
             releasedSinceFirstClap = false
             return
@@ -359,13 +348,13 @@ public final class ClapDetector {
 
     // MARK: - Testing support
 
-    /// ⚠️ TEST-ONLY. Sets `isListening` and `currentThreshold` directly
+    /// ⚠️ TEST-ONLY. Sets `isListening` and the crest threshold directly
     /// without starting the AVAudioEngine. SPI-gated: callers must use
     /// `@_spi(Testing) import ClapFinderKitAudio`.
     @_spi(Testing)
     public func setListeningForTesting(_ listening: Bool, sensitivity: Sensitivity) {
         isListening = listening
-        currentThreshold = sensitivity.threshold
+        currentCrestThreshold = sensitivity.clapCrestThreshold
     }
 
     // MARK: - Static DSP helpers
@@ -383,5 +372,18 @@ public final class ClapDetector {
         var meanSquare: Float = 0
         vDSP_measqv(data[0], 1, &meanSquare, vDSP_Length(buffer.frameLength))
         return sqrt(meanSquare)
+    }
+
+    /// Peak absolute amplitude of channel 0 in `buffer` (for crest factor).
+    /// Returns 0 when the buffer is empty or has no float data.
+    nonisolated static func peakAmplitude(buffer: AVAudioPCMBuffer) -> Float {
+        guard
+            let data = buffer.floatChannelData,
+            buffer.frameLength > 0
+        else { return 0 }
+
+        var peak: Float = 0
+        vDSP_maxmgv(data[0], 1, &peak, vDSP_Length(buffer.frameLength))
+        return peak
     }
 }
