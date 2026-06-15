@@ -5,3 +5,5 @@
 "liveactivity.status.grace"     = "Arming — %d…";
 "liveactivity.status.armed"     = "Armed — don't touch 🛡️";
 "liveactivity.status.alarming"  = "Motion detected!";
+"liveactivity.clap.listening"   = "Listening — clap to find";
+"liveactivity.clap.stop"        = "STOP";

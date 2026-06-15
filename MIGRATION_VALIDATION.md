@@ -12,9 +12,10 @@ Result values: ✅ pass / ❌ fail (link issue) / ⏳ not yet run
 > 1. All QA blocks below filled in ONE consolidated device pass —
 >    PR-9 block, PR-10 block, and the touch-alert block including
 >    threshold calibration.
-> 2. Real audio for all 16 animals (8 are synthesized stand-ins:
->    lion, elephant, monkey, fox, wolf, parrot, dolphin, bee — the
->    other 8 are company-owned assets from Boomr's funny-animals pack).
+> 2. Real audio for the 8 alert sounds (siren, alarm_clock, air_horn,
+>    bell, whistle, beep, doorbell, foghorn) — currently generated
+>    synthesized placeholders. The 8 animals are real Boomr audio.
+>    (The earlier 8 synthesized *animal* stand-ins were removed in PR-14.)
 > 3. Production AdMob IDs (app ID + ad unit ID — placeholders are
 >    marked in Info.plist and AppOpenAdLoader).
 > 4. Final app icon (current icon is a solid-color placeholder).
@@ -139,3 +140,15 @@ notification-action button.
 | 4 | Disarm from Lock Screen | Tap Disarm on the Lock Screen card → sound + flash + vibration all stop | ⏳ | The core feature |
 | 5 | Disarm from Dynamic Island | Expand island → Disarm → alarm stops | ⏳ | |
 | 6 | Activity ends | In-app disarm also removes the Live Activity | ⏳ | |
+
+---
+
+## Device QA pass — PR-14 real-world alert sounds
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| 1 | All 8 alerts play (clap) | Select each: siren, alarm_clock, air_horn, bell, whistle, beep, doorbell, foghorn → clap → plays at full volume | ⏳ | |
+| 2 | All 8 alerts play (touch) | Arm touch alert on each alert sound → trigger → alarm loops the sound | ⏳ | |
+| 3 | Silent-switch override | Ringer off → trigger → alert still plays | ⏳ | |
+| 4 | Siren is default | Fresh install → siren is the pre-selected sound | ⏳ | |
+| 5 | Grid layout | 4×4, no clipping, animals + alerts both legible | ⏳ | |

@@ -131,8 +131,8 @@ struct ResponseCoordinatorTests {
     @Test("Clap below threshold does not set lastTriggeredAnimal")
     func clapBelowThresholdNoResponse() {
         let coord = ResponseCoordinator()
-        let lion = Animal(id: "lion", name: "Lion", emoji: "🦁", soundFile: "lion_roar.caf")
-        coord.startForTesting(animal: lion, sensitivity: .low)   // threshold = -30 dBFS
+        let bell = Animal(id: "bell", name: "Bell", emoji: "🔔", soundFile: "bell.caf")
+        coord.startForTesting(animal: bell, sensitivity: .low)   // threshold = -30 dBFS
 
         // Send two samples that are BELOW threshold
         coord.detector.processSample(dBFS: -40)
