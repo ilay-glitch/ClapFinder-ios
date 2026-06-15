@@ -1,7 +1,12 @@
+import ClapFinderKitActivity
 import ClapFinderKitData
 import Foundation
 import Observation
 import OSLog
+
+#if os(iOS)
+import ActivityKit
+#endif
 
 // MARK: - ResponseCoordinator
 
@@ -45,6 +50,11 @@ public final class ResponseCoordinator {
     /// inject a custom bundle in tests.
     public var soundBundle: Bundle
 
+#if os(iOS)
+    // Non-Sendable, main-actor-only — same escape hatch as ClapDetector's engine.
+    nonisolated(unsafe) private var listeningActivity: Activity<ClapListeningActivityAttributes>?
+#endif
+
     // MARK: Logging
 
     nonisolated private static let logger = Logger(
@@ -86,6 +96,11 @@ public final class ResponseCoordinator {
         wireDetector(for: animal)
         try detector.start(sensitivity: sensitivity)
         isActive = true
+
+        // Live Activity Stop button → this coordinator.
+        ClapListeningControl.register { [weak self] in self?.stop() }
+        startLiveActivity(animal: animal)
+
         Self.logger.info("Started — animal: \(animal.name), sensitivity: \(sensitivity.rawValue)")
     }
 
@@ -95,8 +110,45 @@ public final class ResponseCoordinator {
         detector.stop()
         soundPlayer.stop()
         isActive = false
+
+        endLiveActivity()
+        ClapListeningControl.clear()
+
         Self.logger.info("Stopped")
     }
+
+    // MARK: Live Activity (clap "Listening…" card)
+
+#if os(iOS)
+    private struct ActivityBox: @unchecked Sendable {
+        let activity: Activity<ClapListeningActivityAttributes>
+    }
+
+    private func startLiveActivity(animal: Animal) {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        do {
+            listeningActivity = try Activity.request(
+                attributes: ClapListeningActivityAttributes(animalName: animal.name),
+                content: .init(
+                    state: ClapListeningActivityAttributes.ContentState(animalEmoji: animal.emoji),
+                    staleDate: nil
+                )
+            )
+        } catch {
+            Self.logger.error("Clap Live Activity start failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func endLiveActivity() {
+        guard let live = listeningActivity else { return }
+        listeningActivity = nil
+        let box = ActivityBox(activity: live)
+        Task { await box.activity.end(nil, dismissalPolicy: .immediate) }
+    }
+#else
+    private func startLiveActivity(animal: Animal) {}
+    private func endLiveActivity() {}
+#endif
 
     // MARK: Private
 

@@ -25,7 +25,7 @@ let package = Package(
         // Audio engine: clap detection, sound playback, flashlight, response coordination.
         .target(
             name: "ClapFinderKitAudio",
-            dependencies: ["ClapFinderKitDesign", "ClapFinderKitData"],
+            dependencies: ["ClapFinderKitDesign", "ClapFinderKitData", "ClapFinderKitActivity"],
             path: "Sources/ClapFinderKitAudio"
         ),
         // Data: Animal model, catalog, preferences, Sensitivity enum.
