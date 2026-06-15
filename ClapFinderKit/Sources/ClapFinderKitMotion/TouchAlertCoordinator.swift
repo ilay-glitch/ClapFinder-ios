@@ -1,3 +1,4 @@
+import ClapFinderKitActivity
 import ClapFinderKitAds
 @_spi(Testing) import ClapFinderKitAudio
 import ClapFinderKitData
@@ -7,6 +8,10 @@ import OSLog
 
 #if canImport(UserNotifications)
 import UserNotifications
+#endif
+
+#if os(iOS)
+import ActivityKit
 #endif
 
 // MARK: - TouchAlertCoordinator
@@ -51,6 +56,13 @@ public final class TouchAlertCoordinator {
     private var logic = MotionAlertLogic()
     private var graceTask: Task<Void, Never>?
 
+#if os(iOS)
+    // `Activity` is not Sendable in this SDK; all access is main-actor-only
+    // (start/update/end), so there is no real race — same escape hatch as
+    // ClapDetector's AVAudioEngine.
+    nonisolated(unsafe) private var activity: Activity<TouchAlertActivityAttributes>?
+#endif
+
     nonisolated private static let logger = Logger(
         subsystem: "com.appcentral.clapfinder",
         category: "TouchAlertCoordinator"
@@ -94,6 +106,10 @@ public final class TouchAlertCoordinator {
         startGraceCountdown()
         requestNotificationPermissionIfNeeded()
 
+        // Live Activity disarm button → this coordinator (LIVE_ACTIVITY_DESIGN §2).
+        TouchAlertControl.register { [weak self] in self?.disarm() }
+        startLiveActivity(animal: animal)
+
         analytics.log(TouchAlertAnalytics.armed(sensitivity: sensitivity.rawValue))
         Self.logger.info("Armed — \(animal.name), sensitivity \(sensitivity.rawValue)")
     }
@@ -114,6 +130,9 @@ public final class TouchAlertCoordinator {
         graceTask = nil
         graceRemaining = 0
         armedAnimal = nil
+
+        endLiveActivity()
+        TouchAlertControl.clear()
 
         analytics.log(TouchAlertAnalytics.disarmed(
             sensitivity: sensitivity.rawValue,
@@ -148,6 +167,7 @@ public final class TouchAlertCoordinator {
         ))
         Self.logger.info("Motion alarm triggered — \(animal.name)")
         responder.startAlarm(animal: animal, in: soundBundle)
+        updateLiveActivity(phase: .alarming)
     }
 
     private func startGraceCountdown() {
@@ -155,12 +175,70 @@ public final class TouchAlertCoordinator {
         graceTask?.cancel()
         graceTask = Task { @MainActor [weak self] in
             while let self, self.graceRemaining > 0, !Task.isCancelled {
+                self.updateLiveActivity(phase: .grace)
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
                 self.graceRemaining = max(self.graceRemaining - 1, 0)
             }
+            // Grace finished — reflect the armed/monitoring state.
+            if let self, self.logic.state != .alarming {
+                self.updateLiveActivity(phase: .armed)
+            }
         }
     }
+
+    // MARK: Private — Live Activity (LIVE_ACTIVITY_DESIGN.md §3)
+
+#if os(iOS)
+    private func startLiveActivity(animal: Animal) {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let attributes = TouchAlertActivityAttributes(animalName: animal.name)
+        let state = TouchAlertActivityAttributes.ContentState(
+            phase: .grace,
+            animalEmoji: animal.emoji,
+            graceRemaining: Int(logic.gracePeriod.rounded())
+        )
+        do {
+            activity = try Activity.request(
+                attributes: attributes,
+                content: .init(state: state, staleDate: nil)
+            )
+        } catch {
+            Self.logger.error("Live Activity start failed: \(error.localizedDescription)")
+        }
+    }
+
+    /// Box so a non-Sendable `Activity` handle can cross into a detached Task.
+    /// Safe: each box is used by exactly one task that owns the async call.
+    private struct ActivityBox: @unchecked Sendable {
+        let activity: Activity<TouchAlertActivityAttributes>
+    }
+
+    private func updateLiveActivity(phase: TouchAlertActivityPhase) {
+        guard let live = activity, let animal = armedAnimal else { return }
+        let box = ActivityBox(activity: live)
+        let content = ActivityContent(
+            state: TouchAlertActivityAttributes.ContentState(
+                phase: phase,
+                animalEmoji: animal.emoji,
+                graceRemaining: graceRemaining
+            ),
+            staleDate: nil
+        )
+        Task { await box.activity.update(content) }
+    }
+
+    private func endLiveActivity() {
+        guard let live = activity else { return }
+        activity = nil
+        let box = ActivityBox(activity: live)
+        Task { await box.activity.end(nil, dismissalPolicy: .immediate) }
+    }
+#else
+    private func startLiveActivity(animal: Animal) {}
+    private func updateLiveActivity(phase: TouchAlertActivityPhase) {}
+    private func endLiveActivity() {}
+#endif
 
     // MARK: Private — notifications (§4.2)
 

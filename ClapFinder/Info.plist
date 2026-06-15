@@ -133,6 +133,10 @@
         <string>LaunchBackground</string>
     </dict>
 
+    <!-- ── Live Activities (touch-alert Lock Screen disarm) ──────── -->
+    <key>NSSupportsLiveActivities</key>
+    <true/>
+
     <!-- ── Appearance ────────────────────────────────────────────── -->
     <key>UIUserInterfaceStyle</key>
     <string>Dark</string>

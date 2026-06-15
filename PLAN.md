@@ -22,17 +22,18 @@ Ad network: **AdMob** (PM decision, locked in PR-10 — app open is the anchor p
 
 | PR | Scope | Status |
 |----|-------|--------|
-| PR-10 | Splash screen + AdMob App Open Ad (SPLASH_DESIGN.md, EVENTS.md created) | In progress |
-| PR-11 | Touch/Motion Alert: arm/disarm, CoreMotion detection, alarm loop (TOUCH_ALERT_DESIGN.md) | In progress |
-| PR-12 | Ad integration: banner (home bottom) + interstitial (3–5 uses, never during detection) | Pending |
-| PR-13 | Firebase Analytics + Adjust attribution. Includes extracting `AnalyticsClient` from ClapFinderKitAds into its own module — removes the Motion→Ads dependency edge (acknowledged debt from PR-11) | Pending |
-| PR-14 | Remote Config: sensitivity thresholds, interstitial frequency, A/B hooks | Pending |
-| PR-15 | Polish: confetti/star animation on find, final app icon, TestFlight regression build | Pending |
+| PR-10 | Splash screen + AdMob App Open Ad (SPLASH_DESIGN.md, EVENTS.md created) | Done |
+| PR-11 | Touch/Motion Alert: arm/disarm, CoreMotion detection, alarm loop (TOUCH_ALERT_DESIGN.md) | Done |
+| PR-12 | Ad integration: banner (home bottom) + interstitial (3–5 uses, never during detection) | Done |
+| PR-13 | Touch-alert Live Activity: Lock Screen + Dynamic Island disarm (LIVE_ACTIVITY_DESIGN.md) | In progress |
+| PR-14 | Firebase Analytics + Adjust attribution. Includes extracting `AnalyticsClient` from ClapFinderKitAds into its own module — removes the Motion→Ads dependency edge (acknowledged debt from PR-11) | Pending |
+| PR-15 | Remote Config: sensitivity thresholds, interstitial frequency, A/B hooks | Pending |
+| PR-16 | Polish: confetti/star animation on find, final app icon, TestFlight regression build | Pending |
 
-> Numbering: PR-9 (Xcode project) shifted Phase 2 by one; the splash
-> PR took PR-10. Touch alert takes PR-11 — core-feature completeness
-> before the second ad layer (PM ruling 2026-06-11) — pushing
-> ads/analytics/config/polish to PR-12–15 and Phase 3 to PR-16/17.
+> Numbering: PR-9 (Xcode project) shifted Phase 2 by one; splash took
+> PR-10, touch alert PR-11, ads PR-12. The touch-alert Live Activity
+> takes PR-13 (PM ruling 2026-06-11), pushing analytics/config/polish to
+> PR-14–16 and Phase 3 to PR-17/18.
 >
 > GitHub PR mapping (GitHub numbers PRs and issues in one sequence, so
 > they drift from logical PR numbers): logical PR-9 = GitHub #9,
@@ -42,5 +43,5 @@ Ad network: **AdMob** (PM decision, locked in PR-10 — app open is the anchor p
 
 | PR | Scope | Status |
 |----|-------|--------|
-| PR-16 | App Store assets: icon, screenshots (6.5", 5.5", iPad 12.9") + metadata + privacy policy | Pending |
-| PR-17 | Submission build + App Store review | Pending |
+| PR-17 | App Store assets: icon, screenshots (6.5", 5.5", iPad 12.9") + metadata + privacy policy | Pending |
+| PR-18 | Submission build + App Store review | Pending |
