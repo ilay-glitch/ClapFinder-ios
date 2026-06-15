@@ -59,7 +59,7 @@ deterrence.
 |---|---|
 | Arm | Big arm button (hero area, Touch mode). Arming starts a **5 s grace period** — countdown shown, no detection, lets the user put the phone down. |
 | Detect | After grace: device-motion magnitude above the sensitivity threshold (§5) → trigger. |
-| Alarm | Selected animal sound **looped** at volume 1.0 (silent-switch override via the existing `.playAndRecord` session) + flashlight pulsing continuously. Screen shows a full-screen alarm state. |
+| Alarm | Selected animal sound **looped** at volume 1.0 (silent-switch override via the existing `.playAndRecord` session) + flashlight pulsing continuously + **continuous device vibration** (full-motor buzz on a repeating loop, like a ringing phone). Screen shows a full-screen alarm state. All three stop on disarm. |
 | Stop | **Only** the in-app disarm button stops the alarm (D2: no auth gate in v1). Disarming also stops detection. |
 | Re-arm | Manual — no auto re-arm after an alarm in v1. |
 | Sensitivity | Reuses the existing Low / Medium / High control; thresholds in §5. |

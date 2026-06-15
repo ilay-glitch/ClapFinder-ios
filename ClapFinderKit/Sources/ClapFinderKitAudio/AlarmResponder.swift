@@ -26,6 +26,7 @@ public final class AlarmResponder {
 
     public let soundPlayer: SoundPlayer
     public let flashlight: FlashlightController
+    public let haptics: HapticController
 
     // MARK: Logging
 
@@ -36,9 +37,14 @@ public final class AlarmResponder {
 
     // MARK: Init
 
-    public init(soundPlayer: SoundPlayer, flashlight: FlashlightController) {
+    public init(
+        soundPlayer: SoundPlayer,
+        flashlight: FlashlightController,
+        haptics: HapticController = HapticController()
+    ) {
         self.soundPlayer = soundPlayer
         self.flashlight = flashlight
+        self.haptics = haptics
     }
 
     // MARK: One-shot response (clap detection)
@@ -59,6 +65,7 @@ public final class AlarmResponder {
         Self.logger.info("Alarm started — \(animal.name)")
         soundPlayer.play(animal: animal, in: bundle, loop: true)
         flashlight.startContinuousPulse()
+        haptics.startContinuous()
     }
 
     /// Stops the alarm immediately. Always wins, safe to call repeatedly.
@@ -68,5 +75,6 @@ public final class AlarmResponder {
         Self.logger.info("Alarm stopped")
         soundPlayer.stop()
         flashlight.stopContinuousPulse()
+        haptics.stop()
     }
 }
