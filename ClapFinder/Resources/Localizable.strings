@@ -35,6 +35,19 @@
 /* Animal picker section header */
 "animals.header"          = "Choose a sound";
 
+/* Clap calibration (SOUND_RECOGNITION_DESIGN.md §5) */
+"calibrate.button"        = "Calibrate my clap";
+"calibrate.active"        = "✓ Tuned to your clap";
+"calibrate.title"         = "Calibrate your clap";
+"calibrate.instructions"  = "Hold your phone where you usually leave it, then clap twice — a few times — during the countdown. We'll tune detection to your clap.";
+"calibrate.start"         = "Start";
+"calibrate.listening"     = "Listening… clap twice, a few times";
+"calibrate.success"       = "All set! Detection is now tuned to your clap.";
+"calibrate.done"          = "Done";
+"calibrate.failed"        = "Didn't catch enough claps. Try again, a bit louder.";
+"calibrate.retry"         = "Try again";
+"calibrate.useDefault"    = "Use default sensitivity";
+
 /* MARK: - Touch Alert (PR-11) */
 "mode.clap"                    = "Clap";
 "mode.touch"                   = "Touch Alert";

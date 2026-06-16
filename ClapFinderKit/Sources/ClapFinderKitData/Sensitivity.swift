@@ -2,39 +2,29 @@
 
 /// Clap-detection sensitivity level.
 ///
-/// The `threshold` value is expressed in **dBFS** (decibels relative to full scale).
-/// A higher (less-negative) value means the mic must hear a louder sound before
-/// a clap is registered. Lower (more-negative) values pick up quieter claps.
+/// Clap mode keys off **crest factor** (impulsiveness), not loudness, because
+/// crest is distance-stable while loudness isn't.
 ///
-/// | Level  | Threshold | Best for                          |
-/// |--------|-----------|-----------------------------------|
-/// | low    | −30 dBFS  | Quiet rooms, close claps          |
-/// | medium | −40 dBFS  | General use (default)             |
-/// | high   | −50 dBFS  | Noisy environments, distant claps |
+/// | Level  | Min crest | Best for              |
+/// |--------|-----------|-----------------------|
+/// | low    | 3.5       | Sharp / close claps   |
+/// | medium | 2.8       | General use (default) |
+/// | high   | 2.2       | Far / soft claps      |
 public enum Sensitivity: String, CaseIterable, Codable, Sendable {
     case low
     case medium
     case high
 
-    /// Detection threshold in dBFS. More-negative = more sensitive.
-    /// (Legacy energy path; clap mode now uses the classifier — see
-    /// `clapConfidenceThreshold`. Kept for reference / potential pre-gate.)
-    public var threshold: Float {
+    /// Minimum crest factor (peak ÷ RMS) for a buffer to count as a clap.
+    /// This is the clap discriminator — and it's **distance-stable** (a real
+    /// clap measures ~3.3+ near or far), unlike loudness which drops with
+    /// distance. Lower = catches softer / farther claps. The detector also
+    /// applies a fixed low dB floor only to reject silence.
+    public var clapCrestThreshold: Float {
         switch self {
-        case .low:    return -30.0
-        case .medium: return -40.0
-        case .high:   return -50.0
-        }
-    }
-
-    /// Minimum SoundAnalysis confidence for a clap-family classification to
-    /// count as a clap event (SOUND_RECOGNITION_DESIGN.md §2). Lower = more
-    /// forgiving (catches distant/soft claps). QA-calibrated defaults.
-    public var clapConfidenceThreshold: Double {
-        switch self {
-        case .low:    return 0.75
-        case .medium: return 0.55
-        case .high:   return 0.40
+        case .low:    return 3.5   // sharp, clear claps only
+        case .medium: return 2.8   // default — catches room-distance claps
+        case .high:   return 2.2   // soft / far claps
         }
     }
 

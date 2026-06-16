@@ -1,88 +1,64 @@
-# SOUND_RECOGNITION_DESIGN.md — Real clap recognition (SoundAnalysis)
+# SOUND_RECOGNITION_DESIGN.md — Clap detection
 
-**Version:** v1 — PM delegated decisions ("do what's best") 2026-06-15
-**PR:** logical PR-15 `phase2/pr-15-clap-recognition`
-**Goal:** Detect claps from a distance **and** distinguish a clap from other
-loud sounds (door, speech, cough). Pure energy thresholding can't do both;
-Apple's on-device sound classifier judges *identity*, not just loudness.
+**Version:** v2 — energy + crest-factor DSP (SoundAnalysis approach reverted)
+**PR:** logical PR-16 `phase2/pr-16-clap-energy-detection`
+**Goal:** Detect a double-clap from across a room **and** distinguish it from
+other loud sounds (speech, doors), reliably and with low latency.
 
 ---
 
-## 1. Approach
+## 1. Why not the ML classifier (SoundAnalysis / YAMNet)
 
-Feed the existing AVAudioEngine input tap into Apple's **SoundAnalysis**
-built-in classifier (`SNAudioStreamAnalyzer` + `SNClassifySoundRequest`
-with `classifierIdentifier: .version1`, iOS 15+). The classifier emits a
-per-window confidence for each known sound label. When a clap-family label
-crosses the confidence threshold, that's one **clap event**.
+PR-15 used Apple's on-device SoundAnalysis built-in classifier (`.version1`,
+YAMNet) keyed on the `clapping` / `applause` labels. On-device testing showed
+its **per-clap confidence is low and inconsistent** (a clear clap classified
+at ~0.4–0.7, often missing), and its ~1 s analysis windows add latency. A
+short competitor-research pass confirmed YAMNet is the same model behind the
+recommended MediaPipe path, so switching frameworks wouldn't fix it. The
+research equally endorsed a **DSP onset/amplitude + pattern** approach (à la
+TarsosDSP / aubio / detect_clap_sound_flutter) — which is what this PR uses.
 
-**The "clap twice" gesture is preserved.** Two clap events, separated by a
-release + minimum gap and within the window, still trigger — identical state
-machine to the current detector. Only the *input* changes: from RMS-dBFS
-crossings to classifier-confidence crossings. This keeps the app's identity
-(clap twice) and stops a single TV-applause burst from firing.
+## 2. Approach — energy + crest factor
 
-## 2. Decisions (PM-delegated — agent's call)
+The AVAudioEngine tap yields, per ~23 ms buffer:
+- **energy** (dBFS) — loudness
+- **crest factor** (peak ÷ RMS) — *impulsiveness*
 
-1. **Sensitivity now maps to a confidence threshold** for clap mode
-   (touch-alert motion sensitivity is unchanged):
-   | Sensitivity | Confidence required |
-   |---|---|
-   | Low | 0.75 (very sure) |
-   | Medium | 0.55 |
-   | High | 0.40 (forgiving — catches distant/soft claps) |
-   Starting defaults; calibrated on device in QA.
-2. **The classifier drives detection; RMS energy thresholding is removed.**
-   Clap sessions are short (press-listen → clap → found), so continuous
-   classification's battery cost is acceptable here. A cheap RMS pre-gate
-   (only wake the classifier on a transient) is a documented future option
-   if device QA shows drain.
-3. **The clap label is resolved at runtime**, not hard-coded: read
-   `SNClassifySoundRequest(classifierIdentifier: .version1).knownClassifications`
-   and match clap-family labels actually present (e.g. `clapping`,
-   `applause`, `hands`). Authoritative, no guessed string.
+A **clap peak** = above a fixed silence floor (−55 dBFS) **and** crest >
+threshold. Crest is the discriminator and — critically — it's **distance-
+stable**: a real clap measures crest ~3.3+ near or far, while loudness falls
+off with distance. So loudness only rejects silence; crest identifies claps.
 
-## 3. Architecture
+A **double-clap** = two clap peaks with a non-impulsive "release" buffer
+between them, ≥ `minClapGapSeconds` (0.08 s) apart, within `clapWindowSeconds`
+(0.5 s), then a `cooldownSeconds` (1 s) lockout. A sustained/flat loud sound
+(speech) never produces peaks (low crest); a single bang produces only one.
 
-| Unit | Module | Responsibility |
+**Sensitivity → crest threshold** (distance-stable, calibrated on device):
+| Level | Min crest | For |
 |---|---|---|
-| `ClapClassifier` | `ClapFinderKitAudio` (iOS; macOS stub) | Wraps `SNAudioStreamAnalyzer`; receives tap buffers; emits `(confidence, time)` for clap-family labels via a callback. `SNResultsObserving`. |
-| `ClapDetector` | `ClapFinderKitAudio` | Owns the engine + tap; routes buffers to `ClapClassifier`; the existing two-events-in-window gesture machine consumes confidence crossings (threshold = sensitivity's confidence). RMS path removed. |
-| `Sensitivity` | `ClapFinderKitData` | Adds `clapConfidenceThreshold` alongside the existing motion/dBFS values. |
+| Low | 3.5 | sharp / close claps |
+| Medium | 2.8 | default — room distance |
+| High | 2.2 | soft / far claps |
 
-The gesture state machine (`processSample(level:at:)` — release + min-gap +
-window + cooldown) is unchanged and stays CLI-unit-testable. The
-SoundAnalysis wrapper is iOS-only (`#if os(iOS)`), with a macOS stub so
-`swift test` keeps working.
+## 3. Why not temporal smoothing
 
-## 4. Risks (honest)
+Smoothing the signal across windows (a classifier-confidence technique) would
+**smear the clap impulse** and cause misses — wrong for onset detection. The
+DSP robustness tools that *do* apply are all present: crest peak detection,
+minimum inter-clap gap, refractory cooldown, and the double-clap FSM.
 
-- **Battery/CPU:** continuous classification > RMS. Bounded here because clap
-  listening sessions are short. Pre-gate is the fallback.
-- **Latency:** analysis windows are ~0.5–1 s, so response is slightly slower
-  than instantaneous energy detection.
-- **Single sharp clap** may classify at lower confidence than sustained
-  applause (the classifier leans toward applause/crowd). Mitigation: accept
-  the whole clap-family label set; tune thresholds in device QA.
-- iOS 15+ (target is 17 — fine).
+## 4. Testing
 
-## 5. Files + diff estimate
+- Unit (CLI): peak = floor + crest gate; release = non-peak; double-clap
+  timing (gap / window / release); crest sensitivity (Low rejects a crest-3.0
+  clap, High accepts it); silence floor; cooldown.
+- Device QA: clap near and far fires; speech / door does not; sensitivity
+  changes reach; calibrate the crest thresholds.
 
-| File | ~LOC |
-|---|---|
-| `SOUND_RECOGNITION_DESIGN.md` | 70 |
-| `ClapClassifier.swift` (new, iOS + stub) | 130 |
-| `ClapDetector.swift` (route via classifier; drop RMS) | 70 |
-| `Sensitivity.swift` (confidence threshold) | 15 |
-| tests (gesture unchanged; confidence-threshold mapping) | 50 |
-| `MIGRATION_VALIDATION.md` (distance / accuracy / battery QA rows) | 15 |
+## 5. Future option (if QA shows it's needed)
 
-**≈ 350 LOC.** No UI change. Pure gesture logic stays testable on CLI;
-real recognition accuracy is device QA.
-
-## 6. Testing
-
-- Unit: two-events-in-window gesture (reuses existing tests, fed confidence
-  values); sensitivity → confidence-threshold mapping.
-- Device QA: clap at 1/3/5 m and confirm fire; speech / door slam / cough do
-  NOT fire; battery over a few minutes of listening; tune thresholds.
+A one-time **clap calibration** (user double-claps once; record their actual
+crest and set the threshold per device/user) is the robust next step — the
+research's "device-specific calibration." Not built yet; sensitivity levels
+cover it for now.

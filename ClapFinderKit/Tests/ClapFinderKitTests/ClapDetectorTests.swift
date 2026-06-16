@@ -19,8 +19,8 @@ struct ClapDetectorTests {
     private let t0 = Date(timeIntervalSince1970: 1_750_000_000)
     private func at(_ offset: TimeInterval) -> Date { t0.addingTimeInterval(offset) }
 
-    private let loud: Float = -20    // above medium threshold (-40)
-    private let quiet: Float = -60   // below threshold (a release)
+    private let loud: Float = -20    // above the -55 dB floor (a clap peak, with default impulsive crest)
+    private let quiet: Float = -60   // below the floor → not a peak (a release)
 
     // MARK: Single clap — no fire
 
@@ -40,6 +40,18 @@ struct ClapDetectorTests {
         detector.processSample(dBFS: quiet, at: at(0.05))   // release
         detector.processSample(dBFS: loud, at: at(0.15))    // clap 2 → fire
         #expect(fired.value)
+    }
+
+    // MARK: Crest-factor gate — loud-but-flat sounds are not claps
+
+    @Test("Loud but non-impulsive sound (low crest) does NOT fire — clap-vs-noise gate")
+    func loudButFlatDoesNotFire() {
+        let (detector, fired) = makeDetector()
+        // Two loud samples with a release between, but low crest (e.g. speech).
+        detector.processSample(dBFS: loud, crest: 1.5, at: at(0.00))
+        detector.processSample(dBFS: quiet, crest: 1.0, at: at(0.05))
+        detector.processSample(dBFS: loud, crest: 1.5, at: at(0.15))
+        #expect(!fired.value, "Flat (non-impulsive) loud sound was treated as a clap")
     }
 
     // MARK: THE regression — continuous sound must not fire
@@ -85,31 +97,33 @@ struct ClapDetectorTests {
         #expect(fired.count == firstCount)
     }
 
-    // MARK: Below threshold — no fire
+    // MARK: Below the silence floor — no fire
 
-    @Test("Samples below threshold are ignored")
-    func belowThresholdIgnored() {
+    @Test("Samples below the dB floor are ignored (silence isn't a clap)")
+    func belowFloorIgnored() {
         let (detector, fired) = makeDetector(sensitivity: .medium)
-        detector.processSample(dBFS: -50, at: at(0.00))
-        detector.processSample(dBFS: -50, at: at(0.15))
+        // −60 dB is below the −55 floor → never a peak, even at high crest.
+        detector.processSample(dBFS: -60, crest: 8, at: at(0.00))
+        detector.processSample(dBFS: -60, crest: 8, at: at(0.15))
         #expect(!fired.value)
     }
 
-    @Test("Threshold respects sensitivity level")
-    func thresholdRespectsSensitivity() {
-        // low sensitivity = threshold -30 dBFS; -35 is below it → never fires
+    @Test("Sensitivity sets the crest bar: Low rejects a soft clap, High accepts it")
+    func crestSensitivity() {
+        // A soft/distant clap with crest 3.0.
+        // Low requires crest > 3.5 → rejected.
         let (detectorLow, firedLow) = makeDetector(sensitivity: .low)
-        detectorLow.processSample(dBFS: -35, at: at(0.00))
-        detectorLow.processSample(dBFS: -60, at: at(0.05))
-        detectorLow.processSample(dBFS: -35, at: at(0.15))
-        #expect(!firedLow.value, "Low sensitivity should ignore -35 dBFS")
+        detectorLow.processSample(dBFS: -30, crest: 3.0, at: at(0.00))
+        detectorLow.processSample(dBFS: -30, crest: 1.0, at: at(0.05))   // release
+        detectorLow.processSample(dBFS: -30, crest: 3.0, at: at(0.15))
+        #expect(!firedLow.value, "Low should reject a crest-3.0 clap")
 
-        // high sensitivity = threshold -50 dBFS; -45 is above it → fires on a real pair
+        // High requires crest > 2.2 → accepted (with release + gap).
         let (detectorHigh, firedHigh) = makeDetector(sensitivity: .high)
-        detectorHigh.processSample(dBFS: -45, at: at(0.00))
-        detectorHigh.processSample(dBFS: -60, at: at(0.05))
-        detectorHigh.processSample(dBFS: -45, at: at(0.15))
-        #expect(firedHigh.value, "High sensitivity should detect -45 dBFS")
+        detectorHigh.processSample(dBFS: -30, crest: 3.0, at: at(0.00))
+        detectorHigh.processSample(dBFS: -30, crest: 1.0, at: at(0.05))  // release
+        detectorHigh.processSample(dBFS: -30, crest: 3.0, at: at(0.15))
+        #expect(firedHigh.value, "High should accept a crest-3.0 clap")
     }
 
     // MARK: Window expiry — stale first clap resets

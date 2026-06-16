@@ -27,6 +27,18 @@ public final class CatalogStore {
         didSet { defaults.set(sensitivity.rawValue, forKey: Keys.sensitivity) }
     }
 
+    /// Personalised clap crest threshold from calibration, or `nil` if the
+    /// user hasn't calibrated (then the `sensitivity` crest map is used).
+    public var calibratedClapCrest: Float? {
+        didSet {
+            if let value = calibratedClapCrest {
+                defaults.set(value, forKey: Keys.calibratedCrest)
+            } else {
+                defaults.removeObject(forKey: Keys.calibratedCrest)
+            }
+        }
+    }
+
     // MARK: Derived
 
     /// The currently selected `Animal`, or `nil` if the catalog is empty.
@@ -43,6 +55,7 @@ public final class CatalogStore {
     private enum Keys {
         static let selectedAnimalID = "cf_selectedAnimalID"
         static let sensitivity      = "cf_sensitivity"
+        static let calibratedCrest  = "cf_calibratedClapCrest"
     }
 
     // MARK: Init
@@ -59,6 +72,9 @@ public final class CatalogStore {
 
         self.selectedAnimalID = storedID
         self.sensitivity = storedSens
+        // 0 (absent) → nil; any stored positive value is the calibrated crest.
+        let storedCrest = defaults.float(forKey: Keys.calibratedCrest)
+        self.calibratedClapCrest = storedCrest > 0 ? storedCrest : nil
 
         loadCatalog()
     }
