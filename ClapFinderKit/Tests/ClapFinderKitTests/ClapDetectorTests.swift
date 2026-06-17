@@ -158,7 +158,7 @@ struct ClapDetectorTests {
         let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1)!
         let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 0)!
         buffer.frameLength = 0
-        let rms = ClapDetector.rmsAmplitude(buffer: buffer)
+        let rms = ClapDSP.rmsAmplitude(buffer: buffer)
         #expect(rms == 0)
     }
 
@@ -173,7 +173,7 @@ struct ClapDetectorTests {
         let samples = buffer.floatChannelData![0]
         for i in 0..<Int(frameCount) { samples[i] = 0.5 }
 
-        let rms = ClapDetector.rmsAmplitude(buffer: buffer)
+        let rms = ClapDSP.rmsAmplitude(buffer: buffer)
         #expect(abs(rms - 0.5) < 1e-5)
     }
 
@@ -188,7 +188,7 @@ struct ClapDetectorTests {
         let samples = buffer.floatChannelData![0]
         for i in 0..<Int(frameCount) { samples[i] = 0 }
 
-        let rms = ClapDetector.rmsAmplitude(buffer: buffer)
+        let rms = ClapDSP.rmsAmplitude(buffer: buffer)
         #expect(rms == 0)
     }
 }

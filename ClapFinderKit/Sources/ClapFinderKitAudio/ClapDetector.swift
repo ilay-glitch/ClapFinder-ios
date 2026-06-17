@@ -67,6 +67,13 @@ public final class ClapDetector {
     private var interruptionTask: Task<Void, Never>?
     private var routeChangeTask: Task<Void, Never>?
 
+#if DEBUG
+    /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md). DEBUG-only; absent
+    /// from Release. Observes the decision path, never alters it. The `diag(_:)`
+    /// emit helper + test hook live in `ClapDetector+Diagnostics.swift`.
+    let diagnostics = ClapDiagnostics.Session()
+#endif
+
     // MARK: - Logging
 
     nonisolated private static let logger = Logger(
@@ -89,6 +96,9 @@ public final class ClapDetector {
         currentCrestThreshold = crestOverride ?? sensitivity.clapCrestThreshold
         let calibrated = crestOverride != nil
         Self.logger.debug("Starting — min crest \(self.currentCrestThreshold) (calibrated: \(calibrated))")
+#if DEBUG
+        diagnostics.configure(threshold: currentCrestThreshold, calibrated: calibrated, sensitivity: sensitivity)
+#endif
 
         try activateEngine()
         isListening = true
@@ -158,15 +168,24 @@ public final class ClapDetector {
         // or Swift 6 traps. Compute dBFS + crest (nonisolated static), then hop
         // to the main actor with the result.
         let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
-            let rms = ClapDetector.rmsAmplitude(buffer: buffer)
-            let peak = ClapDetector.peakAmplitude(buffer: buffer)
+            let rms = ClapDSP.rmsAmplitude(buffer: buffer)
+            let peak = ClapDSP.peakAmplitude(buffer: buffer)
             let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
             let crest = peak / max(rms, Float(1e-10))
+#if DEBUG
+            // Sample-resolution transient shape for diagnostics (no effect on
+            // the decision path). Computed here so the audio thread does the
+            // one scan; the result rides along to the main actor below.
+            let shape = ClapDiagnostics.transientShape(buffer: buffer)
+#endif
             Task { @MainActor in
                 guard let self else { return }
                 if let capture = self.calibrationHandler {
                     if dBFS > self.dBFloor { capture(crest) }
                 } else {
+#if DEBUG
+                    self.diagnostics.stage(rms: rms, peak: peak, shape: shape)
+#endif
                     self.processSample(dBFS: dBFS, crest: crest)
                 }
             }
@@ -203,6 +222,7 @@ public final class ClapDetector {
             if firstClapTime != nil {
                 releasedSinceFirstClap = true
             }
+            if dBFS > dBFloor { diag(.lowCrest, dBFS, crest) }
             return
         }
 
@@ -211,6 +231,7 @@ public final class ClapDetector {
             Self.logger.debug("First clap (crest \(crest, format: .fixed(precision: 1)))")
             firstClapTime = now
             releasedSinceFirstClap = false
+            diag(.firstClap, dBFS, crest)
             return
         }
 
@@ -220,16 +241,19 @@ public final class ClapDetector {
         guard delta <= clapWindowSeconds else {
             firstClapTime = now
             releasedSinceFirstClap = false
+            diag(.staleWindow, dBFS, crest, dtMs: delta * 1000)
             return
         }
 
         // Same continuous sound, or claps too close together — not a real pair.
         guard releasedSinceFirstClap, delta >= minClapGapSeconds else {
+            diag(releasedSinceFirstClap ? .tooClose : .noRelease, dBFS, crest, dtMs: delta * 1000)
             return
         }
 
         // ✅ Genuine second clap.
         Self.logger.debug("Double-clap detected (Δt \(delta, format: .fixed(precision: 3))s)")
+        diag(.accept, dBFS, crest, dtMs: delta * 1000)
         reset()
         inCooldown = true
         onClapDetected?()
@@ -366,35 +390,9 @@ public final class ClapDetector {
     public func setListeningForTesting(_ listening: Bool, sensitivity: Sensitivity) {
         isListening = listening
         currentCrestThreshold = sensitivity.clapCrestThreshold
+#if DEBUG
+        diagnostics.configure(threshold: currentCrestThreshold, calibrated: false, sensitivity: sensitivity)
+#endif
     }
 
-    // MARK: - Static DSP helpers
-
-    /// Computes the root-mean-square amplitude of channel 0 in `buffer`.
-    ///
-    /// Uses `vDSP_measqv` (mean square) so only one `sqrt` is needed.
-    /// Returns 0 when the buffer is empty or has no float data.
-    nonisolated static func rmsAmplitude(buffer: AVAudioPCMBuffer) -> Float {
-        guard
-            let data = buffer.floatChannelData,
-            buffer.frameLength > 0
-        else { return 0 }
-
-        var meanSquare: Float = 0
-        vDSP_measqv(data[0], 1, &meanSquare, vDSP_Length(buffer.frameLength))
-        return sqrt(meanSquare)
-    }
-
-    /// Peak absolute amplitude of channel 0 in `buffer` (for crest factor).
-    /// Returns 0 when the buffer is empty or has no float data.
-    nonisolated static func peakAmplitude(buffer: AVAudioPCMBuffer) -> Float {
-        guard
-            let data = buffer.floatChannelData,
-            buffer.frameLength > 0
-        else { return 0 }
-
-        var peak: Float = 0
-        vDSP_maxmgv(data[0], 1, &peak, vDSP_Length(buffer.frameLength))
-        return peak
-    }
 }
