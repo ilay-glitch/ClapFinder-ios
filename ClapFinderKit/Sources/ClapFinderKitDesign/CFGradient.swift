@@ -6,29 +6,29 @@ import SwiftUI
 /// Source of truth: DESIGN.md
 public enum CFGradient {
 
-    /// Primary brand gradient: violet → pink → orange.
+    /// Primary brand "gradient": flat solid `ctaBlue` (v-next, DESIGN.md §6).
     /// Use for: toggle active fill, selected animal border, buttons.
     public static let brand = LinearGradient(
-        colors: [CFColor.gradientStart, CFColor.gradientMid, CFColor.gradientEnd],
+        colors: [CFColor.ctaBlue, CFColor.ctaBlue],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
-    /// Simplified gradient for pulse ring strokes: violet → orange.
+    /// Pulse / radar ring strokes: skyTint → ctaBlue.
     public static let pulse = LinearGradient(
-        colors: [CFColor.gradientStart, CFColor.gradientEnd],
+        colors: [CFColor.skyTint, CFColor.ctaBlue],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
-    /// Horizontal variant for sensitivity control active segment.
+    /// Horizontal variant for sensitivity control active segment: sky → cta.
     public static let brandHorizontal = LinearGradient(
-        colors: [CFColor.gradientStart, CFColor.gradientMid],
+        colors: [CFColor.skyPrimary, CFColor.ctaBlue],
         startPoint: .leading,
         endPoint: .trailing
     )
 
-    // MARK: Splash (SPLASH_DESIGN.md §3 — splash-screen-only tokens)
+    // MARK: Splash (deprecated: redesign v-next — removed when Part B rebuilds the splash)
 
     /// Splash night-scene background. 5 stops at 0/30/55/78/100 %.
     /// Use ONLY on the splash screen — app chrome keeps `brand`.

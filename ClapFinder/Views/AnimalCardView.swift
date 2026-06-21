@@ -33,7 +33,7 @@ struct AnimalCardView: View {
                         RoundedRectangle(cornerRadius: CFRadius.animalCard)
                             .fill(
                                 isSelected
-                                    ? CFColor.gradientStart.opacity(0.3)
+                                    ? CFColor.skyTint.opacity(0.5)
                                     : .clear
                             )
                     )

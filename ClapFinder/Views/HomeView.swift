@@ -37,7 +37,7 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             // ── Background ──────────────────────────────────────────────
-            CFColor.backgroundPrimary.ignoresSafeArea()
+            CFColor.skyPrimary.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 0) {

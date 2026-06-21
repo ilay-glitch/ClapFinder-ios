@@ -21,43 +21,56 @@ extension Color {
 /// Source of truth: DESIGN.md
 public enum CFColor {
 
-    // MARK: Backgrounds
-    /// Deep purple-black. Primary screen background.
-    public static let backgroundPrimary  = Color(cfHex: 0x0D0818)
-    /// Elevated surface. Nav bar, ad container, sheets.
-    public static let backgroundElevated = Color(cfHex: 0x1A0F2E)
+    // MARK: Sky (v-next primary palette — DESIGN.md §2)
+    /// Sky blue. Primary screen background (ambient field). Character art is
+    /// normalised to this value.
+    public static let skyPrimary = Color(cfHex: 0x5BB8FF)
+    /// Lighter sky. Ring gradients, section tints.
+    public static let skyTint    = Color(cfHex: 0xA8DCFF)
+    /// White. Cards, sheets, nav, ad container.
+    public static let surface    = Color(cfHex: 0xFFFFFF)
+    /// Warm cream. Alt cards, callouts.
+    public static let cream      = Color(cfHex: 0xF5EEE0)
+    /// Strong CTA blue. Primary buttons / Continue (flat, solid).
+    public static let ctaBlue    = Color(cfHex: 0x2D7FF9)
+
+    // MARK: Backgrounds (deprecated: redesign v-next — use skyPrimary / surface)
+    /// - deprecated: use `skyPrimary`.
+    public static let backgroundPrimary  = skyPrimary
+    /// - deprecated: use `surface`.
+    public static let backgroundElevated = surface
 
     // MARK: Surfaces
-    /// Frosted card background. rgba(255,255,255,0.07).
-    public static let surfaceCard   = Color(.sRGB, red: 1, green: 1, blue: 1, opacity: 0.07)
-    /// Subtle border. rgba(255,255,255,0.10).
-    public static let borderSubtle  = Color(.sRGB, red: 1, green: 1, blue: 1, opacity: 0.10)
+    /// Card background (white on the light theme).
+    public static let surfaceCard   = surface
+    /// Subtle border/divider. Navy at 10%.
+    public static let borderSubtle  = Color(cfHex: 0x14233D, opacity: 0.10)
 
-    // MARK: Brand gradient anchors
-    /// Violet — gradient start.
+    // MARK: Brand gradient anchors (deprecated: redesign v-next — kept for one release)
+    /// - deprecated: violet anchor, no longer referenced.
     public static let gradientStart = Color(cfHex: 0x8B5CF6)
-    /// Pink — gradient mid.
+    /// - deprecated: pink anchor, no longer referenced.
     public static let gradientMid   = Color(cfHex: 0xEC4899)
-    /// Orange — gradient end.
+    /// - deprecated: orange anchor, no longer referenced.
     public static let gradientEnd   = Color(cfHex: 0xF97316)
 
-    // MARK: Text
-    /// Full white.
-    public static let textPrimary   = Color(.sRGB, red: 1, green: 1, blue: 1, opacity: 1.00)
-    /// 65% white.
-    public static let textSecondary = Color(.sRGB, red: 1, green: 1, blue: 1, opacity: 0.65)
-    /// 40% white. Placeholders, tertiary labels.
-    public static let textTertiary  = Color(.sRGB, red: 1, green: 1, blue: 1, opacity: 0.40)
+    // MARK: Text (navy on light surfaces — AA/AAA, DESIGN.md §8)
+    /// Navy. Primary text. 15.7:1 on white, 13.6:1 on cream.
+    public static let textPrimary   = Color(cfHex: 0x14233D, opacity: 1.00)
+    /// Navy 60%. Secondary text.
+    public static let textSecondary = Color(cfHex: 0x14233D, opacity: 0.60)
+    /// Navy 40%. Placeholders, tertiary labels.
+    public static let textTertiary  = Color(cfHex: 0x14233D, opacity: 0.40)
 
     // MARK: Semantic
     /// Green. "Listening" active indicator dot.
     public static let listeningActive  = Color(cfHex: 0x22C55E)
     /// Cyan. "Found!" celebration state flash.
     public static let celebrationCyan  = Color(cfHex: 0x22D3EE)
-    /// Ad container background. Same as backgroundElevated.
-    public static let adContainer      = Color(cfHex: 0x1A0F2E)
+    /// Ad container background (white on the light theme).
+    public static let adContainer      = surface
 
-    // MARK: Splash (LOADING_SCREEN_MOCKUP.html — splash-screen-only, DESIGN.md)
+    // MARK: Splash (deprecated: redesign v-next — removed when Part B rebuilds the splash)
 
     /// Splash moon radial center.
     public static let splashMoonCore   = Color(cfHex: 0xFFF8D6)
