@@ -17,12 +17,18 @@ public enum ClapCalibration {
     /// At least this many clap candidates are needed for a valid calibration.
     public static let minCandidates = 2
 
-    /// Margin below the user's weakest calibration clap (so real claps clear
-    /// the threshold comfortably).
-    public static let margin: Float = 0.7
+    /// Margin below the user's weakest calibration clap. Was 0.7 (30 % below),
+    /// which drove the threshold down into the inter-clap "release" band — the
+    /// crest gate then saw almost everything as a peak and the double-clap FSM
+    /// starved for releases (device session: 218/301 noRelease). 0.85 keeps the
+    /// threshold just under the weakest clap so releases survive. See
+    /// SOUND_RECOGNITION_DESIGN.md §7.
+    public static let margin: Float = 0.85
 
-    /// Clamp range for the derived threshold (never absurdly low/high).
-    public static let range: ClosedRange<Float> = 2.0...5.0
+    /// Clamp range for the derived threshold. Floor raised 2.0 → 2.5 so
+    /// calibration can never derive a value down in the release/noise band
+    /// (reach is worthless if the FSM can't pair the two claps).
+    public static let range: ClosedRange<Float> = 2.5...5.0
 
     /// Derives a personalised crest threshold from captured buffer crests,
     /// or `nil` if too few claps were heard (calibration should be retried).
