@@ -16,9 +16,9 @@ struct AlarmOverlayView: View {
 
     var body: some View {
         ZStack {
-            // Red-tinted urgency wash over the dark background
+            // Dim scrim + red-tinted urgency wash for the alarm state
+            Color.black.opacity(0.55).ignoresSafeArea()
             Color.red.opacity(0.32).ignoresSafeArea()
-            CFColor.backgroundPrimary.opacity(0.6).ignoresSafeArea()
 
             VStack(spacing: CFSpacing.xl) {
                 Spacer()

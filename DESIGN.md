@@ -1,143 +1,126 @@
-# ClapFinder — Visual & UX System
-**Status:** v3 | Signed off
-**Audit history:** see bottom
+# DESIGN.md — ClapFinder visual system
+
+**Version:** v-next (sky-blue redesign) — **LOCKED 2026-06-21**
+**Supersedes:** v3 (dark purple→pink→orange). See §10 change log.
 
 ---
 
-## Brand direction
-Vibrant, energetic, family-friendly. NOT pastel. Dark background with bold gradient pops. Big emoji, big type, clear hierarchy. The app should feel delightful — kids should want to clap for it.
+## 1. Brand direction
 
----
+Bright, cheerful, trustworthy. A sunny **sky-blue** stage for a friendly 3D
+detective-dog mascot. Content lives on **white / cream cards**; sky-blue is the
+ambient backdrop and accent only — text never sits directly on the sky-blue.
+Typeface stays **SF Rounded**. Flat, solid CTAs (no gradients).
 
-## Color tokens
+> **Inverts v3.** v3 was dark-on-dark (white text on near-black). v-next is
+> dark-on-light: navy text on white/cream surfaces, over a sky-blue field.
 
-| Swift name | Hex / Value | Usage |
-|------------|-------------|-------|
-| `CFColor.backgroundPrimary` | `#0D0818` | Screen background |
-| `CFColor.backgroundElevated` | `#1A0F2E` | Elevated surfaces, nav bar |
-| `CFColor.surfaceCard` | `rgba(255,255,255,0.07)` | Cards, list rows |
-| `CFColor.borderSubtle` | `rgba(255,255,255,0.10)` | Card borders, dividers |
-| `CFColor.gradientStart` | `#8B5CF6` | Violet — gradient anchor |
-| `CFColor.gradientMid` | `#EC4899` | Pink — gradient mid |
-| `CFColor.gradientEnd` | `#F97316` | Orange — gradient end |
-| `CFColor.textPrimary` | `#FFFFFF` | Primary labels |
-| `CFColor.textSecondary` | `rgba(255,255,255,0.65)` | Secondary labels |
-| `CFColor.textTertiary` | `rgba(255,255,255,0.40)` | Placeholders, captions |
-| `CFColor.listeningActive` | `#22C55E` | "Listening" green dot |
-| `CFColor.celebrationCyan` | `#22D3EE` | "Found!" success state |
-| `CFColor.adContainer` | `#1A0F2E` | Banner ad background |
-| `CFColor.splashMoonCore` | `#FFF8D6` | Splash moon radial center |
-| `CFColor.splashMoonEdge` | `#FFD96B` | Splash moon edge, glow, sound-wave arcs |
-| `CFColor.splashHillBack` | `#5C2475` | Splash back hill |
-| `CFColor.splashHillFront` | `#471D62` | Splash front hill |
-| `CFColor.splashBarGlow` | `#FF8A5C` | Splash progress-bar glow (0.8 opacity) |
+## 2. Color tokens
 
-**Rule:** Hex literals only in `ClapFinderKitDesign`. All other modules reference `CFColor.*` tokens.
-
----
-
-## Typography
-
-Font: SF Rounded — `.system(size:weight:design: .rounded)` in SwiftUI
-
-| Swift name | Size | Weight | Usage |
-|------------|------|--------|-------|
-| `CFFont.display()` | 34pt | Bold | App title |
-| `CFFont.title1()` | 28pt | Bold | Section headers |
-| `CFFont.title2()` | 22pt | Semibold | Card titles |
-| `CFFont.headline()` | 17pt | Semibold | Animal name (selected) |
-| `CFFont.body()` | 16pt | Regular | Body copy |
-| `CFFont.callout()` | 15pt | Regular | Supporting text |
-| `CFFont.caption()` | 12pt | Regular | Animal grid labels |
-
----
-
-## Shape tokens
+Hex literals live **only** in `ClapFinderKitDesign`. All other modules reference
+`CFColor.*`. Because views consume tokens (not raw hex), re-pointing the tokens
+re-skins the app — only two views hold direct raw-anchor refs (see §10).
 
 | Swift name | Value | Usage |
 |------------|-------|-------|
-| `CFRadius.card` | 20pt | Cards, sheets |
-| `CFRadius.button` | 16pt | Buttons, chips |
-| `CFRadius.animalCard` | 14pt | Animal grid items |
-| `CFRadius.toggle` | 36pt | Listening toggle |
+| `CFColor.skyPrimary` | `#5BB8FF` | **Screen background** (ambient field) — the value all full-scene character art is normalised to (§9) |
+| `CFColor.skyTint` | `#A8DCFF` | Lighter sky — ring gradients, section tints |
+| `CFColor.surface` | `#FFFFFF` | Cards, sheets, nav, ad container |
+| `CFColor.cream` | `#F5EEE0` | Warm accent surface (alt cards, callouts) |
+| `CFColor.ctaBlue` | `#2D7FF9` | Primary buttons / Continue (flat, solid) |
+| `CFColor.surfaceCard` | `#FFFFFF` | Card fill; pair with a soft shadow |
+| `CFColor.borderSubtle` | navy `#14233D` @ 0.10 | Dividers, card borders on light |
+| `CFColor.textPrimary` | navy `#14233D` | Primary text on light surfaces (AA/AAA, §8) |
+| `CFColor.textSecondary` | navy @ 0.60 | Secondary text |
+| `CFColor.textTertiary` | navy @ 0.40 | Placeholders |
+| `CFColor.listeningActive` | `#22C55E` | "Listening" green (unchanged) |
+| `CFColor.celebrationCyan` | `#22D3EE` | "Found!" flash (unchanged) |
+| `CFColor.adContainer` | `#FFFFFF` | Banner container on light bg |
 
----
+**Deprecated (kept defined, not deleted; unreferenced after the full redesign):**
+`backgroundPrimary` → use `skyPrimary`; `backgroundElevated` → use `surface`;
+`gradientStart` `#8B5CF6`, `gradientMid` `#EC4899`, `gradientEnd` `#F97316`; and
+all `splash*` tokens. Each carries a `// deprecated: redesign v-next` comment.
+(The splash still references `splash*` until Part B rebuilds it — those refs are
+removed there, not here.)
 
-## Spacing (8pt base grid)
+### Legibility rule (PM ruling a)
+Body and interactive content **never** sit directly on `skyPrimary` — always on
+`surface` (white) or `cream`. Sky-blue is backdrop + accents only.
 
-| Swift name | Value |
-|------------|-------|
-| `CFSpacing.xs` | 4pt |
-| `CFSpacing.sm` | 8pt |
-| `CFSpacing.md` | 16pt |
-| `CFSpacing.lg` | 24pt |
-| `CFSpacing.xl` | 32pt |
-| `CFSpacing.xxl` | 48pt |
+## 3. Typography (unchanged — SF Rounded)
 
----
+| Token | Size | Weight | Usage |
+|-------|------|--------|-------|
+| `CFFont.display()` | 34 | Bold | App title |
+| `CFFont.title1()` | 28 | Bold | Section headers |
+| `CFFont.title2()` | 22 | Semibold | Card titles |
+| `CFFont.headline()` | 17 | Semibold | Row labels, selected name |
+| `CFFont.body()` | 16 | Regular | Body copy |
+| `CFFont.callout()` | 15 | Regular | Hints |
+| `CFFont.caption()` | 12 | Regular | Grid labels |
 
-## Gradients
+## 4. Shape tokens (unchanged)
 
-| Swift name | Colors | Usage |
-|------------|--------|-------|
-| `CFGradient.brand` | gradientStart → gradientMid → gradientEnd | Buttons, toggle active, selected borders |
-| `CFGradient.pulse` | gradientStart → gradientEnd | Pulse ring strokes |
-| `CFGradient.splashNight` | `#2B1055 → #4A1A6B → #7B2D8B → #C44B8C → #F0735A`, stops 0/30/55/78/100% | Splash background ONLY (SPLASH_DESIGN.md §3) |
-| `CFGradient.titleGold` | `#FFD96B → #FF9D6B → #FF6BB5` | Splash title text ONLY |
-| `CFGradient.splashBar` | `#FFD96B → #FF8A5C → #FF5CA8` | Splash progress fill ONLY |
+`CFRadius`: card 20 · button 16 · animalCard 14 · toggle 36.
 
-**Splash scope rule:** `splash*` and `titleGold` tokens are splash-screen-only.
-Buttons, toggles, and selected states keep `CFGradient.brand` — the splash
-night palette must not leak into app chrome. Hex values are verbatim from
-`LOADING_SCREEN_MOCKUP.html` (visual source of truth).
+## 5. Spacing (unchanged — 8 pt grid)
 
----
+`CFSpacing`: xs 4 · sm 8 · md 16 · lg 24 · xl 32 · xxl 48.
 
-## Key components
+## 6. Gradients
 
-### Listening toggle
-- Diameter: 72pt circle
-- Active: `CFGradient.brand` radial fill, white mic icon
-- Inactive: white border (2pt), transparent fill, gray mic icon
-- Tap: spring animation scale 0.95 → 1.0
+Brand gradients are **redefined** to the blue family; consumers (toggle,
+selected card border, sensitivity, mode switcher, alarm button, touch hero,
+pulse rings) inherit the new look with no view edits.
 
-### Pulse rings (listening state)
-- 3 concentric rings, `CFGradient.pulse` stroke
-- Animation: scale 1.0 → 2.4, opacity 0.7 → 0, 2s ease-out
-- Stagger: ring 2 delay 0.5s, ring 3 delay 1.0s
-- Rings stop when toggle is off
+| Token | v-next composition | Usage |
+|-------|--------------------|-------|
+| `CFGradient.brand` | **solid `ctaBlue`** (1-stop) | Buttons, active states, selected borders |
+| `CFGradient.pulse` | `skyTint`→`ctaBlue` | Pulse / radar rings |
+| `CFGradient.brandHorizontal` | `skyPrimary`→`ctaBlue` (leading→trailing) | Sensitivity active segment |
+| `CFGradient.splashNight` / `titleGold` / `splashBar` | **DEPRECATED** | Splash rebuilt (Part B) |
 
-### Animal card (grid item)
-- Size: 80 × 90pt
-- Background: `CFColor.surfaceCard` + `CFColor.borderSubtle` border
-- Emoji: 36pt centered
-- Label: `CFFont.caption()`, `CFColor.textSecondary`
-- Selected: `CFGradient.brand` border (2pt), inner glow (`CFColor.gradientStart` at 0.3 opacity)
+> CTA ruling (b): **flat solid `ctaBlue`**. `brand` is kept as a token for the
+> active-state consumers but resolves to solid `ctaBlue`.
 
-### Sensitivity control
-- Segmented: Low / Medium / High
-- Active segment: `CFGradient.brand` fill
+## 7. Key components (re-skin only — behaviour unchanged)
 
-### Banner ad container
-- Height: 50pt, full width, bottom-anchored
-- Background: `CFColor.adContainer`
-- Visual separation from app content — not blended into gradient
+- **Listening toggle:** white circle on the sky field; active = `ctaBlue` fill,
+  `pulse` radar rings. Mascot wave accent (~64 pt) may sit top-trailing on Home.
+- **Animal grid card:** `surface` white card, `borderSubtle`; selected =
+  `ctaBlue` border + faint `skyTint` inner glow (replaces the violet glow at the
+  `AnimalCardView` raw-anchor ref).
+- **Sensitivity / mode switcher:** active segment `ctaBlue`; track `cream`/white.
+- **Banner ad:** 50 pt, full width, bottom-anchored, `adContainer` white to sit
+  cleanly on the light field (ADS_DESIGN.md D3 layout unchanged).
 
----
+## 8. Accessibility
 
-## Accessibility
-- Minimum contrast 4.5:1 on body text against `backgroundPrimary`
-- Animal grid: `accessibilityLabel = "[animal name], [sound type]. [Selected/not selected]."`
-- Listening toggle: `accessibilityLabel = "Clap detection [on/off]"`
-- Support Dynamic Type on all text elements
-- Reduce Motion: disable pulse ring animation, use static opacity instead
+- **Contrast (validated, ruling b — kids/All-Ages, no flex):** `textPrimary`
+  `#14233D` measures **15.70:1 on white**, **13.60:1 on cream** — both AA & AAA.
+  (7.29:1 even on sky, though content never sits there.)
+- `accessibilityReduceMotion` still gates splash/pulse animation.
+- Mascot art is decorative → `.accessibilityHidden(true)`; labels carry meaning.
 
----
+## 9. Character assets — one standardised blue (PM ruling c)
 
-## Audit history
+Five 1254² PNGs. Sampling their baked backgrounds showed the blues **do not
+cluster** (`_searching` `#4BACFC`, `_phone` `#51ADFC`, `_wave` `#59B3FD`; `_icon`
+& `_avatar` have opaque **black** corners). Locked handling:
 
-| Date | Rev | Summary |
-|------|-----|---------|
-| 2026-06-07 | v1 | Initial draft — kickoff artifact |
-| 2026-06-09 | v2 | Swift token names added (CFColor, CFFont, CFRadius, CFSpacing, CFGradient) |
-| 2026-06-09 | v3 | Signed off — ready for implementation |
+| Asset | Handling |
+|-------|----------|
+| `_searching`, `_phone`, `_wave` | **flood-normalise background to `skyPrimary` `#5BB8FF`** (flat-region replace, not a fur cutout) |
+| `_icon` | flood-fill black corners → `skyPrimary`, full-bleed, opaque → **App Icon** (Part A) |
+| `_avatar` | circle-mask (clips black corners); deeper interior reads as an intentional badge |
+
+`skyPrimary` = `#5BB8FF` is **locked**; all three full-scene blues normalise to
+it. No fur-edge cutouts anywhere.
+
+## 10. Change log
+
+| Date | Version | Change |
+|------|---------|--------|
+| 2026-06-09 | v3 | Dark purple→pink→orange system signed off. |
+| 2026-06-21 | v-next | **Sky-blue redesign — LOCKED.** Light theme, dark-on-light text (`#14233D`, AA/AAA verified), flat `ctaBlue` CTAs, detective-dog mascot. Brand gradients re-pointed to blue; `backgroundPrimary`/`backgroundElevated`/violet-pink-orange/splash tokens deprecated. Two direct raw-anchor refs repointed (`AnimalCardView`, `ClapCalibrationSheet`). |

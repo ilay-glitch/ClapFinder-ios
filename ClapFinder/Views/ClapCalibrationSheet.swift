@@ -37,7 +37,7 @@ struct ClapCalibrationSheet: View {
         .padding(.horizontal, CFSpacing.lg)
         .padding(.bottom, CFSpacing.lg)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(CFColor.backgroundElevated.ignoresSafeArea())
+        .background(CFColor.surface.ignoresSafeArea())
         .presentationDetents([.medium])
     }
 
@@ -135,11 +135,7 @@ struct ClapCalibrationSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, CFSpacing.md)
                 .background(
-                    LinearGradient(
-                        colors: [CFColor.gradientStart, CFColor.gradientMid],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
+                    CFGradient.brand,
                     in: RoundedRectangle(cornerRadius: CFRadius.button, style: .continuous)
                 )
         }
