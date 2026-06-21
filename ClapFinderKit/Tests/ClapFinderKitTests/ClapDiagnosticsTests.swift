@@ -50,7 +50,7 @@ struct ClapDiagnosticsTests {
     func csvLineMatchesHeader() {
         let candidate = ClapDiagnostics.Candidate(
             seq: 7,
-            rms: 0.1, peak: 0.4, dBFS: -20, crest: 4.0,
+            rms: 0.1, peak: 0.4, dBFS: -20, crest: 4.0, hfr: 0.55, sfm: 0.42,
             shape: .init(attackMs: 0.3, decayDbPerMs: 12.5, peakAtEdge: true),
             threshold: 2.8, calibrated: false, sensitivity: .medium,
             gate: .accept, dtMs: 150.0
@@ -61,14 +61,15 @@ struct ClapDiagnosticsTests {
         #expect(cols.count == headerCols.count)
         #expect(line.contains("ACCEPT"))
         #expect(line.contains("medium"))
-        #expect(cols[7] == "1")        // peakAtEdge
-        #expect(cols[9] == "0")        // calibrated
+        #expect(cols[5] == "0.550")    // hfr
+        #expect(cols[9] == "1")        // peakAtEdge
+        #expect(cols[11] == "0")       // calibrated
     }
 
     @Test("dtMs renders empty when not part of a pair")
     func csvLineEmptyDt() {
         let candidate = ClapDiagnostics.Candidate(
-            seq: 1, rms: 0, peak: 0, dBFS: -30, crest: 1.5, shape: .none,
+            seq: 1, rms: 0, peak: 0, dBFS: -30, crest: 1.5, hfr: -1, sfm: -1, shape: .none,
             threshold: 2.8, calibrated: false, sensitivity: .low, gate: .lowCrest, dtMs: -1
         )
         let cols = ClapDiagnostics.csvLine(candidate).split(separator: ",", omittingEmptySubsequences: false)

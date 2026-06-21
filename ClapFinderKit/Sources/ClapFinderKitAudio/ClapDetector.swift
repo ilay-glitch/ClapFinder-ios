@@ -8,17 +8,14 @@ import OSLog
 
 /// Detects a double-clap using the device microphone.
 ///
-/// A 1024-sample input tap (~23 ms) yields per-buffer energy (dBFS) and crest
-/// factor (peak ÷ RMS). A clap "peak" is loud (dBFS > threshold) AND impulsive
-/// (crest > `minCrestFactor`); two such peaks, separated by a release and
-/// `minClapGapSeconds`, within `clapWindowSeconds` fire `onClapDetected`, then
-/// a `cooldownSeconds` lockout prevents duplicates. The crest test is what
-/// distinguishes a clap from loud-but-flat sounds (speech, sustained noise).
-///
-/// Background: requires `UIBackgroundModes = ["audio"]`; auto-stops/restarts
-/// around AVAudioSession interruptions via async notification streams.
-/// Concurrency: all public API + `@Observable` state are `@MainActor`; the tap
-/// runs on the audio thread and hops to the main actor per buffer.
+/// A 1024-sample tap yields per-buffer energy (dBFS) + crest (peak ÷ RMS). A
+/// clap peak is loud AND impulsive (crest > threshold), then confirmed by a
+/// reject-only spectral stage that vetoes knocks/speech
+/// (SOUND_RECOGNITION_DESIGN.md v3). Two confirmed peaks — a release and
+/// `minClapGapSeconds` apart, within `clapWindowSeconds` — fire `onClapDetected`,
+/// then a `cooldownSeconds` lockout. Requires `UIBackgroundModes = ["audio"]`.
+/// Concurrency: public API + `@Observable` state are `@MainActor`; the tap runs
+/// on the audio thread and hops to the main actor per buffer.
 @Observable
 @MainActor
 public final class ClapDetector {
@@ -37,19 +34,17 @@ public final class ClapDetector {
 
     /// Two peaks must occur within this window (seconds) to count as a double-clap.
     public let clapWindowSeconds: TimeInterval = 0.5
-    /// The two claps must be at least this far apart (seconds). Rejects two
-    /// consecutive buffers of one continuous sound being read as a double-clap.
+    /// The two claps must be at least this far apart (seconds), rejecting one
+    /// continuous sound read across consecutive buffers as a double-clap.
     public let minClapGapSeconds: TimeInterval = 0.08
     /// After a double-clap fires, detection is suppressed for this long (seconds).
     public let cooldownSeconds: TimeInterval = 1.0
-    /// Loudness floor (dBFS) — only rejects near-silence (where crest is
-    /// meaningless); above it, crest decides. A far clap (~−50 dBFS) clears it.
+    /// Loudness floor (dBFS) — rejects only near-silence; above it crest decides.
     public let dBFloor: Float = -55.0
 
     // MARK: - Private — AVFoundation (non-Sendable, main-actor access only)
 
-    // All `engine` access is on the main actor, so `nonisolated(unsafe)` (which
-    // opts out of the Swift 6 check) is safe here.
+    // All `engine` access is on the main actor → `nonisolated(unsafe)` is safe.
     nonisolated(unsafe) private let engine = AVAudioEngine()
 
     // MARK: - Private — detection state
@@ -67,10 +62,14 @@ public final class ClapDetector {
     private var interruptionTask: Task<Void, Never>?
     private var routeChangeTask: Task<Void, Never>?
 
+    /// Stage-2 spectral confirm (v3). Immutable after init → audio-tap safe.
+    private let spectralAnalyzer = ClapSpectralAnalyzer()
+    /// `false` on Bluetooth/non-built-in mics → crest-only fallback (§11).
+    var routeAllowsSpectral = true
+
 #if DEBUG
-    /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md). DEBUG-only; absent
-    /// from Release. Observes the decision path, never alters it. The `diag(_:)`
-    /// emit helper + test hook live in `ClapDetector+Diagnostics.swift`.
+    /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md). DEBUG-only, additive.
+    /// Emit helper + test hook live in `ClapDetector+Diagnostics.swift`.
     let diagnostics = ClapDiagnostics.Session()
 #endif
 
@@ -101,6 +100,7 @@ public final class ClapDetector {
 #endif
 
         try activateEngine()
+        updateSpectralRouteEligibility()
         isListening = true
         Self.logger.info("Listening started")
     }
@@ -114,8 +114,8 @@ public final class ClapDetector {
 
     // MARK: - Calibration capture
 
-    /// Starts the mic and forwards each above-floor buffer's crest to `onCrest`
-    /// (no detection) to learn the user's clap. Call `stopCalibration()` when done.
+    /// Forwards each above-floor buffer's crest to `onCrest` (no detection) to
+    /// learn the user's clap. Call `stopCalibration()` when done.
     public func startCalibration(onCrest: @escaping @MainActor (Float) -> Void) throws {
         guard !isListening && calibrationHandler == nil else { return }
         calibrationHandler = onCrest
@@ -164,18 +164,19 @@ public final class ClapDetector {
         let inputNode = engine.inputNode
         let format = inputNode.inputFormat(forBus: 0)
 
-        // The tap block runs on a real-time AUDIO thread — must be `@Sendable`
-        // or Swift 6 traps. Compute dBFS + crest (nonisolated static), then hop
-        // to the main actor with the result.
+        // The tap runs on a real-time AUDIO thread — must be `@Sendable`. Compute
+        // features here, then hop to the main actor with the results.
+        let analyzer = spectralAnalyzer
         let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
             let rms = ClapDSP.rmsAmplitude(buffer: buffer)
             let peak = ClapDSP.peakAmplitude(buffer: buffer)
             let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
             let crest = peak / max(rms, Float(1e-10))
+            // Stage-2 features only when impulsive (rare); −1 = not measured.
+            let (hfr, sfm): (Float, Float) = crest > ClapSpectral.preCheckCrest
+                ? analyzer.features(buffer: buffer) : (-1, -1)
 #if DEBUG
-            // Sample-resolution transient shape for diagnostics (no effect on
-            // the decision path). Computed here so the audio thread does the
-            // one scan; the result rides along to the main actor below.
+            // Sample-resolution transient shape for diagnostics (no decision effect).
             let shape = ClapDiagnostics.transientShape(buffer: buffer)
 #endif
             Task { @MainActor in
@@ -186,7 +187,7 @@ public final class ClapDetector {
 #if DEBUG
                     self.diagnostics.stage(rms: rms, peak: peak, shape: shape)
 #endif
-                    self.processSample(dBFS: dBFS, crest: crest)
+                    self.processSample(dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm)
                 }
             }
         }
@@ -206,32 +207,31 @@ public final class ClapDetector {
 
     // MARK: - Core detection state machine
 
-    /// Core detection state machine — must be called on the main actor.
-    ///
-    /// A clap "peak" is a buffer above the silence floor AND impulsive (crest >
-    /// threshold). Crest — not loudness, which falls off with distance — is the
-    /// clap-vs-noise discriminator: claps spike, speech/sustained sounds are flat.
-    /// A double-clap needs two *separate* peaks: after the first, the signal must
-    /// drop to a non-peak ("release") and at least `minClapGapSeconds` must pass.
-    /// `crest` defaults high so timing-only unit tests can omit it.
-    func processSample(dBFS: Float, crest: Float = 100, at now: Date = Date()) {
+    /// Core detection state machine — main actor only. A peak is loud + impulsive
+    /// (crest > threshold) then spectrally confirmed; two peaks with a release and
+    /// `minClapGapSeconds` gap within `clapWindowSeconds` fire. `crest`/`hfr`/`sfm`
+    /// default clap-like so timing-only tests can omit them (confirm passes through).
+    func processSample(dBFS: Float, crest: Float = 100, hfr: Float = 1, sfm: Float = 1, at now: Date = Date()) {
         guard isListening, !inCooldown else { return }
 
         let isPeak = dBFS > dBFloor && crest > currentCrestThreshold
-        guard isPeak else {
+        // Stage 2 (additive, reject-only): confirm the crest peak isn't knock/speech.
+        let confirmed = ClapSpectral.confirm(
+            crestPeak: isPeak, hfr: hfr, sfm: sfm, routeAllowsSpectral: routeAllowsSpectral
+        )
+        guard confirmed else {
             if firstClapTime != nil {
                 releasedSinceFirstClap = true
             }
-            if dBFS > dBFloor { diag(.lowCrest, dBFS, crest) }
+            if dBFS > dBFloor { diag(isPeak ? .spectralVeto : .lowCrest, dBFS, crest, hfr: hfr, sfm: sfm) }
             return
         }
 
-        // A clap peak from here on.
         guard let first = firstClapTime else {
             Self.logger.debug("First clap (crest \(crest, format: .fixed(precision: 1)))")
             firstClapTime = now
             releasedSinceFirstClap = false
-            diag(.firstClap, dBFS, crest)
+            diag(.firstClap, dBFS, crest, hfr: hfr, sfm: sfm)
             return
         }
 
@@ -241,19 +241,19 @@ public final class ClapDetector {
         guard delta <= clapWindowSeconds else {
             firstClapTime = now
             releasedSinceFirstClap = false
-            diag(.staleWindow, dBFS, crest, dtMs: delta * 1000)
+            diag(.staleWindow, dBFS, crest, hfr: hfr, sfm: sfm, dtMs: delta * 1000)
             return
         }
 
         // Same continuous sound, or claps too close together — not a real pair.
         guard releasedSinceFirstClap, delta >= minClapGapSeconds else {
-            diag(releasedSinceFirstClap ? .tooClose : .noRelease, dBFS, crest, dtMs: delta * 1000)
+            diag(releasedSinceFirstClap ? .tooClose : .noRelease, dBFS, crest, hfr: hfr, sfm: sfm, dtMs: delta * 1000)
             return
         }
 
         // ✅ Genuine second clap.
         Self.logger.debug("Double-clap detected (Δt \(delta, format: .fixed(precision: 3))s)")
-        diag(.accept, dBFS, crest, dtMs: delta * 1000)
+        diag(.accept, dBFS, crest, hfr: hfr, sfm: sfm, dtMs: delta * 1000)
         reset()
         inCooldown = true
         onClapDetected?()
@@ -345,6 +345,8 @@ public final class ClapDetector {
             let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
             let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
         else { return }
+
+        updateSpectralRouteEligibility()   // built-in ↔ BT may have swapped
 
         switch reason {
         case .oldDeviceUnavailable:
