@@ -55,7 +55,12 @@ struct ClapSpectralTests {
     private let sampleRate = 48_000.0
     private let frames = 1024
 
-    @Test("Broadband burst (clap-like) → high HFR and high SFM, not vetoed")
+    // ⚠️ WHITE-NOISE ONLY — NOT representative of real mic buffers. White noise
+    // is the one input whose every bin is ~equal, so the geomean SFM can't
+    // collapse. On-device, band-limited real claps drive SFM → ~0 (geomean
+    // dominated by near-zero HF bins). This test passing does NOT prove the
+    // spectral feature works on the device. See SOUND_RECOGNITION_DESIGN.md §8.
+    @Test("Broadband white noise → high HFR and high SFM (synthetic only)")
     func broadbandIsClapLike() {
         // Deterministic white-ish noise via a small LCG (no Math.random).
         var state: UInt32 = 22_222

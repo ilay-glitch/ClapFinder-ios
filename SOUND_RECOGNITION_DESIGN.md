@@ -1,9 +1,10 @@
 # SOUND_RECOGNITION_DESIGN.md — Clap detection
 
 **Version:** v3 — hybrid: crest onset gate → lightweight spectral confirm
-**Status:** Design APPROVED 2026-06-17 (PM rulings folded, §9). Implementation
-pending a separate shape-note redline — no code until then.
-**PR:** logical PR-18 (proposed) `phase2/pr-18-hybrid-spectral`
+**Status:** Implemented & merged (#31), then **spectral veto DISABLED** (#33,
+`spectralVetoEnabled = false`) after the device tuning session exposed a feature
+bug — see **§13**. The veto stays OFF; round-two redesign deferred.
+**PR:** logical PR-18 → merged as #31.
 **Supersedes:** v2 (crest factor alone).
 
 > Numbering note: the brief called this "round two / v2"; the file was already
@@ -209,3 +210,68 @@ doc — §3's values are starting points.
 No change to the crest gate, distant-clap reach, the double-clap FSM, or
 calibration semantics. The spectral confirm is **purely additive** — a veto
 layered on the v2 detector, tunable from data, removable by route.
+
+---
+
+## 13. Device tuning session findings (2026-06-21)
+
+After #31 shipped the veto with the **never-tuned guess thresholds**
+(`hfr 0.20` / `sfm 0.15`), a build from main detected **no claps**. We disabled
+the veto (#33, `spectralVetoEnabled = false`, crest-only) and ran a labeled
+device session — real claps only, 301 candidate rows pulled off-device via the
+file-logger + `devicectl copy`. Two findings.
+
+### 13.1 The spectral veto rejected 100 % of real claps — `sfm` is a broken feature
+
+- **0 / 301** real-clap rows passed `hfr ≥ 0.20 AND sfm ≥ 0.15` → with the veto
+  on, every clap is vetoed. That *is* the no-detection regression.
+- **`sfm` is pinned**: 0.000–0.030 across all 301 frames (81 exactly `0.000`),
+  while `hfr` varied ~800× (0.001–0.831). Even the strongest claps (crest > 8)
+  read `sfm` ≈ 0 → it tracks nothing.
+
+**Mechanism — geometric-mean collapse.** `sfm = geomean / mean` over 511 bins,
+geomean = `exp(mean(log(power)))` with a `max(power, 1e-20)` floor. The geomean
+is **dominated by the smallest bins** (`ln(1e-20) ≈ −46`). A real clap through a
+phone mic is **band-limited** (HF rolloff, room colour), so a large block of
+high bins sit near zero → hit the floor → drag `logMean` hugely negative →
+geomean → ~0 → **`sfm` pins near zero regardless of the signal.**
+
+**Why the unit test masked it.** `ClapSpectralTests.broadbandIsClapLike` feeds
+*uniform white noise* — the one input whose every bin is ~equal, so the geomean
+can't collapse and SFM reads high. White noise is unrepresentative of real mic
+buffers; the test is now annotated as such and must **not** be read as proof the
+feature works on-device.
+
+**Verdict:** a computation/feature-design fragility (artifact), compounded by an
+optimistic v3 assumption (real single-frame claps are *not* spectrally flat). As
+built, `sfm` cannot discriminate anything. **The veto stays OFF.**
+
+### 13.2 Calibration drove the crest threshold too low (fixed here)
+
+Live calibrated threshold was **2.07** (`2.07 ÷ 0.7 margin = 2.96` weakest clap
+— **not** floor-clamped). With operational median crest 3.50, almost every
+buffer read as a peak → **218/301 `noRelease`** → the double-clap FSM starved
+for releases → a 139-row dead zone of missed claps ("broke partway through").
+**Fix:** `margin 0.7 → 0.85` (threshold sits just under the weakest clap) and
+raise the clamp **floor**. Reach is worthless if the FSM can't pair the claps.
+
+**Floor iteration (device-measured, not guessed):**
+- `2.0 → 2.5`: still starved — noRelease 70 %, only **11/208** buffers fell
+  below threshold (releases).
+- `2.5 → 3.0`: the session crest distribution put inter-clap gaps at **p25 ≈
+  2.88** and clap peaks at the **3.51 median**; 3.0 sits in the valley between
+  them, turning **~62/208** buffers into releases. **Caveat:** the weakest
+  calibration clap (~2.94) nearly overlaps the gap ceiling (~2.88) — crest-only
+  separation is *narrow* for this mic/room. If 3.0 still starves or starts
+  dropping real claps, that is evidence crest-only is at its limit → input to
+  the crest-vs-spectral (round-two) decision.
+
+### 13.3 Open question for round two — the next measurement
+
+`hfr` *varied* meaningfully with the signal (~800×), so it may carry real
+discriminative power — **but Session 1 was claps-only**, so we cannot yet say
+`hfr` separates claps from knocks / speech. That is the **next measurement**: a
+claps-vs-noise labeled session (the file-logger + `devicectl copy` pipeline is
+in place). Round-two direction (HFR-only + a different speech discriminator, a
+robust flatness estimator, or a longer analysis window) is **deferred** until
+that data exists — not a decision now.
