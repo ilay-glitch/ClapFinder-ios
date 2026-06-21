@@ -149,12 +149,33 @@ public enum ClapDiagnostics {
             category: "ClapDiagnostics"
         )
 
+        /// `Documents/clapdiag.csv` — pulled off-device via `devicectl copy`
+        /// (os_log device streaming needs root). DEBUG-only.
+        private let fileURL = FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("clapdiag.csv")
+
+        /// Truncates the CSV + writes the header (fresh file per listen session).
+        private func startFile() {
+            guard let url = fileURL else { return }
+            try? Data((ClapDiagnostics.csvHeader + "\n").utf8).write(to: url)
+        }
+
+        /// Appends one line to the CSV.
+        private func appendLine(_ line: String) {
+            guard let url = fileURL, let handle = try? FileHandle(forWritingTo: url) else { return }
+            defer { try? handle.close() }
+            _ = try? handle.seekToEnd()
+            try? handle.write(contentsOf: Data((line + "\n").utf8))
+        }
+
         /// Called at listen-start with the thresholds actually in effect.
         func configure(threshold: Float, calibrated: Bool, sensitivity: Sensitivity) {
             self.threshold = threshold
             self.calibrated = calibrated
             self.sensitivity = sensitivity
             headerEmitted = false
+            startFile()
         }
 
         /// Stages the current buffer's measurements (called just before
@@ -178,7 +199,9 @@ public enum ClapDiagnostics {
                 shape: shape, threshold: threshold, calibrated: calibrated, sensitivity: sensitivity,
                 gate: gate, dtMs: dtMs
             )
-            Self.logger.notice("\(ClapDiagnostics.csvLine(candidate), privacy: .public)")
+            let line = ClapDiagnostics.csvLine(candidate)
+            Self.logger.notice("\(line, privacy: .public)")
+            appendLine(line)
             onEmit?(candidate)
         }
     }
