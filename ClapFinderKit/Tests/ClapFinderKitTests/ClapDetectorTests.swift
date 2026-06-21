@@ -156,6 +156,7 @@ struct ClapDetectorTests {
     @Test("A crest peak that is spectrally dull/tonal is vetoed — does not fire")
     func spectralVetoBlocksFire() {
         let (detector, fired) = makeDetector()
+        detector.spectralVetoEnabled = true
         // Two clap-strength crest peaks with a release, but knock-like spectrum
         // (low HFR) → spectral stage vetoes both → no double-clap.
         detector.processSample(dBFS: loud, crest: 5, hfr: 0.02, sfm: 0.5, at: at(0.00))
@@ -167,6 +168,7 @@ struct ClapDetectorTests {
     @Test("Clap-like spectrum passes the veto and fires")
     func spectralPassFires() {
         let (detector, fired) = makeDetector()
+        detector.spectralVetoEnabled = true
         detector.processSample(dBFS: loud, crest: 5, hfr: 0.6, sfm: 0.5, at: at(0.00))
         detector.processSample(dBFS: quiet, crest: 1, hfr: -1, sfm: -1, at: at(0.05))
         detector.processSample(dBFS: loud, crest: 5, hfr: 0.6, sfm: 0.5, at: at(0.15))
@@ -176,12 +178,22 @@ struct ClapDetectorTests {
     @Test("On a non-built-in route the veto is disabled — crest-only fires")
     func routeFallbackFires() {
         let (detector, fired) = makeDetector()
+        detector.spectralVetoEnabled = true
         detector.routeAllowsSpectral = false   // simulate Bluetooth mic
         // Spectrally these would be vetoed, but the route falls back to crest.
         detector.processSample(dBFS: loud, crest: 5, hfr: 0.01, sfm: 0.01, at: at(0.00))
         detector.processSample(dBFS: quiet, crest: 1, hfr: -1, sfm: -1, at: at(0.05))
         detector.processSample(dBFS: loud, crest: 5, hfr: 0.01, sfm: 0.01, at: at(0.15))
         #expect(fired.value, "BT fallback should let crest decide")
+    }
+
+    @Test("Veto is OFF by default — spectrally dull peaks still fire (crest-only stopgap)")
+    func vetoDisabledByDefaultFires() {
+        let (detector, fired) = makeDetector()   // spectralVetoEnabled defaults false
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.01, sfm: 0.01, at: at(0.00))
+        detector.processSample(dBFS: quiet, crest: 1, hfr: -1, sfm: -1, at: at(0.05))
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.01, sfm: 0.01, at: at(0.15))
+        #expect(fired.value, "with the veto off, detection must not depend on spectral features")
     }
 
     // MARK: rmsAmplitude helper

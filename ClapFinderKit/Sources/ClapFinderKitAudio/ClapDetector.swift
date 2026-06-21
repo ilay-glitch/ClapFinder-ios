@@ -64,12 +64,13 @@ public final class ClapDetector {
 
     /// Stage-2 spectral confirm (v3). Immutable after init → audio-tap safe.
     private let spectralAnalyzer = ClapSpectralAnalyzer()
+    /// Veto master switch — OFF until thresholds are tuned (then flip true).
+    var spectralVetoEnabled = false
     /// `false` on Bluetooth/non-built-in mics → crest-only fallback (§11).
     var routeAllowsSpectral = true
 
 #if DEBUG
-    /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md). DEBUG-only, additive.
-    /// Emit helper + test hook live in `ClapDetector+Diagnostics.swift`.
+    /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md), DEBUG-only/additive.
     let diagnostics = ClapDiagnostics.Session()
 #endif
 
@@ -215,10 +216,9 @@ public final class ClapDetector {
         guard isListening, !inCooldown else { return }
 
         let isPeak = dBFS > dBFloor && crest > currentCrestThreshold
-        // Stage 2 (additive, reject-only): confirm the crest peak isn't knock/speech.
-        let confirmed = ClapSpectral.confirm(
-            crestPeak: isPeak, hfr: hfr, sfm: sfm, routeAllowsSpectral: routeAllowsSpectral
-        )
+        let confirmed = spectralVetoEnabled   // stage 2 veto (reject-only); off → crest-only
+            ? ClapSpectral.confirm(crestPeak: isPeak, hfr: hfr, sfm: sfm, routeAllowsSpectral: routeAllowsSpectral)
+            : isPeak
         guard confirmed else {
             if firstClapTime != nil {
                 releasedSinceFirstClap = true
