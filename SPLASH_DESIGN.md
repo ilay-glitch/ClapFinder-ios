@@ -1,10 +1,18 @@
 # SPLASH_DESIGN.md — Splash / Loading Screen + App Open Ad
 
-**Version:** v2 (PM redlines folded — approved for implementation)
-**PR:** PR-10 `phase2/pr-10-splash-app-open-ad`
-**Status:** Approved 2026-06-10. Redline log: §6.5 late-ad-discard
-approved; §5 weighting approved; §8 `ad_skip_reason` added to
-`splash_completed`; mockup reference canonical.
+**Version:** v3 (visual reskin — sky-blue redesign Part B)
+**PR:** PR-10 (logic) `phase2/pr-10-splash-app-open-ad`; reskin
+`phase3/pr-23-splash-reskin`
+**Status:** Approved 2026-06-10 (logic); reskinned 2026-06-21.
+
+> **v3 reskin note:** the §2 *visual* spec below (night gradient, moon,
+> hills, `titleGold`) is **superseded** by the sky-blue redesign
+> (DESIGN.md v-next): `skyPrimary` background, `detective_dog_phone`
+> hero, `ctaBlue` radar rings + progress bar, navy title. **Only the
+> view changed** — all timing/ad/state-machine/ATT logic (§4–§10) is
+> byte-for-byte unchanged, and `CFGradient.splashNight` / `titleGold` /
+> `splashBar` (+ `splashMoon*`/`splashHill*`) are now deprecated &
+> unreferenced. §2 is retained as historical record.
 
 ---
 
