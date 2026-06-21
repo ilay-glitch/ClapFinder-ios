@@ -14,10 +14,10 @@ struct ClapCalibrationTests {
 
     @Test("Derives threshold from the weakest clap, with margin")
     func derivesFromWeakest() {
-        // Candidates ≥ 2.5: 4.0, 5.0, 3.0 → weakest 3.0 × 0.85 = 2.55.
-        let result = ClapCalibration.threshold(fromCrests: [4.0, 5.0, 3.0])
+        // Weakest qualifying 5.0 × 0.85 = 4.25 (above the 3.0 floor, so margin shows).
+        let result = ClapCalibration.threshold(fromCrests: [6.0, 8.0, 5.0])
         #expect(result != nil)
-        #expect(abs((result ?? 0) - 2.55) < 0.0001)
+        #expect(abs((result ?? 0) - 4.25) < 0.0001)
     }
 
     @Test("Ignores sub-candidate crests (ambient / speech)")
@@ -42,7 +42,7 @@ struct ClapCalibrationTests {
         let high = ClapCalibration.threshold(fromCrests: [10.0, 12.0])
         #expect(high == ClapCalibration.range.upperBound)
 
-        // Barely-qualifying claps derive 2.5 × 0.85 = 2.125 → clamped to floor 2.5.
+        // Barely-qualifying claps derive 2.5 × 0.85 = 2.125 → clamped to floor (3.0).
         let low = ClapCalibration.threshold(fromCrests: [2.5, 2.5])
         #expect(low == ClapCalibration.range.lowerBound)
     }

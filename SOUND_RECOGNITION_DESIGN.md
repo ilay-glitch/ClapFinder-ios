@@ -252,9 +252,19 @@ Live calibrated threshold was **2.07** (`2.07 ÷ 0.7 margin = 2.96` weakest clap
 — **not** floor-clamped). With operational median crest 3.50, almost every
 buffer read as a peak → **218/301 `noRelease`** → the double-clap FSM starved
 for releases → a 139-row dead zone of missed claps ("broke partway through").
-**Fix (this PR):** `margin 0.7 → 0.85` (threshold sits just under the weakest
-clap) and clamp **floor `2.0 → 2.5`** (never derive a value down in the
-release/noise band). Reach is worthless if the FSM can't pair the two claps.
+**Fix:** `margin 0.7 → 0.85` (threshold sits just under the weakest clap) and
+raise the clamp **floor**. Reach is worthless if the FSM can't pair the claps.
+
+**Floor iteration (device-measured, not guessed):**
+- `2.0 → 2.5`: still starved — noRelease 70 %, only **11/208** buffers fell
+  below threshold (releases).
+- `2.5 → 3.0`: the session crest distribution put inter-clap gaps at **p25 ≈
+  2.88** and clap peaks at the **3.51 median**; 3.0 sits in the valley between
+  them, turning **~62/208** buffers into releases. **Caveat:** the weakest
+  calibration clap (~2.94) nearly overlaps the gap ceiling (~2.88) — crest-only
+  separation is *narrow* for this mic/room. If 3.0 still starves or starts
+  dropping real claps, that is evidence crest-only is at its limit → input to
+  the crest-vs-spectral (round-two) decision.
 
 ### 13.3 Open question for round two — the next measurement
 
