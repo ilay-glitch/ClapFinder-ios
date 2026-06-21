@@ -23,7 +23,7 @@ public enum ClapDiagnostics {
 
     /// Which `processSample` branch decided a candidate buffer.
     public enum Gate: String, Sendable {
-        case lowCrest, firstClap, staleWindow, tooClose, noRelease
+        case lowCrest, spectralVeto, firstClap, staleWindow, tooClose, noRelease
         case accept = "ACCEPT"
     }
 
@@ -44,6 +44,9 @@ public enum ClapDiagnostics {
     public struct Candidate: Sendable {
         public let seq: Int
         public let rms, peak, dBFS, crest: Float
+        /// Spectral features (v3). `-1` when not measured (crest below the
+        /// pre-check, so the FFT was skipped — the buffer can't be a peak).
+        public let hfr, sfm: Float
         public let shape: TransientShape
         public let threshold: Float
         public let calibrated: Bool
@@ -54,7 +57,7 @@ public enum ClapDiagnostics {
     }
 
     public static let csvHeader =
-        "seq,rms,peak,dBFS,crest,attackMs,decayDbPerMs,peakAtEdge,threshold,calibrated,sens,gate,dtMs"
+        "seq,rms,peak,dBFS,crest,hfr,sfm,attackMs,decayDbPerMs,peakAtEdge,threshold,calibrated,sens,gate,dtMs"
 
     /// Formats one candidate as a single CSV row matching `csvHeader`.
     public static func csvLine(_ row: Candidate) -> String {
@@ -62,6 +65,7 @@ public enum ClapDiagnostics {
         return [
             String(row.seq),
             fmt(row.rms, 5), fmt(row.peak, 5), fmt(row.dBFS, 1), fmt(row.crest, 2),
+            fmt(row.hfr, 3), fmt(row.sfm, 3),
             fmt(row.shape.attackMs, 2), fmt(row.shape.decayDbPerMs, 2),
             row.shape.peakAtEdge ? "1" : "0",
             fmt(row.threshold, 2),
@@ -162,7 +166,7 @@ public enum ClapDiagnostics {
         }
 
         /// Emits one CSV row for the branch the FSM took.
-        func emit(_ gate: Gate, dBFS: Float, crest: Float, dtMs: Double = -1) {
+        func emit(_ gate: Gate, dBFS: Float, crest: Float, hfr: Float, sfm: Float, dtMs: Double = -1) {
             guard ClapDiagnostics.isEnabled else { return }
             if !headerEmitted {
                 Self.logger.notice("\(ClapDiagnostics.csvHeader, privacy: .public)")
@@ -170,8 +174,8 @@ public enum ClapDiagnostics {
             }
             seq += 1
             let candidate = Candidate(
-                seq: seq, rms: rms, peak: peak, dBFS: dBFS, crest: crest, shape: shape,
-                threshold: threshold, calibrated: calibrated, sensitivity: sensitivity,
+                seq: seq, rms: rms, peak: peak, dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm,
+                shape: shape, threshold: threshold, calibrated: calibrated, sensitivity: sensitivity,
                 gate: gate, dtMs: dtMs
             )
             Self.logger.notice("\(ClapDiagnostics.csvLine(candidate), privacy: .public)")

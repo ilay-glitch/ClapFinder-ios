@@ -1,4 +1,5 @@
 import Accelerate
+import AVFoundation
 import Foundation
 
 // MARK: - ClapSpectral (decision logic — pure, FFT-free)
@@ -17,6 +18,12 @@ public enum ClapSpectral {
     public static let hfrThreshold: Float = 0.20
     /// Below this spectral flatness a candidate is "tonal" → speech. (Starting value.)
     public static let sfmThreshold: Float = 0.15
+
+    /// The FFT runs only when crest clears this (the lowest crest any threshold
+    /// — incl. calibration's 2.0 clamp — could call a peak), so it is evaluated
+    /// rarely, not every buffer. A buffer below this can never be a peak, so its
+    /// spectral features are never consulted.
+    public static let preCheckCrest: Float = 2.0
 
     /// `true` ⇒ reject as a non-clap. Permissive: only clearly dull OR clearly
     /// tonal candidates are vetoed; anything ambiguous passes.
@@ -52,9 +59,10 @@ public enum ClapSpectral {
 /// reused vDSP real FFT. Holds the FFT setup + Hann window so the hot path
 /// allocates nothing structural; created once per detector.
 ///
-/// Not `Sendable` — the FFT setup is a raw pointer. Confine to one thread
-/// (the audio tap), like `AVAudioEngine`.
-public final class ClapSpectralAnalyzer {
+/// `@unchecked Sendable`: the instance is immutable after `init` (FFT setup +
+/// window are read-only) and `features` allocates only local buffers — it
+/// mutates no shared state — so it is safe to call from the audio tap.
+public final class ClapSpectralAnalyzer: @unchecked Sendable {
 
     private let log2n: vDSP_Length
     private let count: Int
@@ -129,5 +137,13 @@ public final class ClapSpectralAnalyzer {
         let sfm = expf(logMean) / mean
 
         return (hfr, sfm)
+    }
+
+    /// Convenience over channel 0 of an audio buffer (the tap's hot path).
+    public func features(buffer: AVAudioPCMBuffer) -> (hfr: Float, sfm: Float) {
+        guard let data = buffer.floatChannelData, buffer.frameLength > 0 else { return (0, 0) }
+        let frames = Int(buffer.frameLength)
+        let samples = Array(UnsafeBufferPointer(start: data[0], count: frames))
+        return features(samples: samples, sampleRate: buffer.format.sampleRate)
     }
 }

@@ -13,8 +13,9 @@ extension ClapDetector {
     /// compiles to an empty call in Release. Reads the same values the gate did —
     /// it never influences the decision.
 #if DEBUG
-    func diag(_ gate: ClapDiagnostics.Gate, _ dBFS: Float, _ crest: Float, dtMs: Double = -1) {
-        diagnostics.emit(gate, dBFS: dBFS, crest: crest, dtMs: dtMs)
+    func diag(_ gate: ClapDiagnostics.Gate, _ dBFS: Float, _ crest: Float,
+              hfr: Float, sfm: Float, dtMs: Double = -1) {
+        diagnostics.emit(gate, dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm, dtMs: dtMs)
     }
 
     /// Test hook — observes each emitted diagnostic candidate.
@@ -25,6 +26,7 @@ extension ClapDetector {
     }
 #else
     @inline(__always)
-    func diag(_ gate: ClapDiagnostics.Gate, _ dBFS: Float, _ crest: Float, dtMs: Double = -1) {}
+    func diag(_ gate: ClapDiagnostics.Gate, _ dBFS: Float, _ crest: Float,
+              hfr: Float, sfm: Float, dtMs: Double = -1) {}
 #endif
 }

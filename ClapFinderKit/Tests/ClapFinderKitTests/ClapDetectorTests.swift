@@ -151,6 +151,39 @@ struct ClapDetectorTests {
         #expect(!fired.value)
     }
 
+    // MARK: Spectral confirm wiring (stage 2)
+
+    @Test("A crest peak that is spectrally dull/tonal is vetoed — does not fire")
+    func spectralVetoBlocksFire() {
+        let (detector, fired) = makeDetector()
+        // Two clap-strength crest peaks with a release, but knock-like spectrum
+        // (low HFR) → spectral stage vetoes both → no double-clap.
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.02, sfm: 0.5, at: at(0.00))
+        detector.processSample(dBFS: quiet, crest: 1, hfr: -1, sfm: -1, at: at(0.05))
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.02, sfm: 0.5, at: at(0.15))
+        #expect(!fired.value, "knock-like (low HFR) peaks should be vetoed")
+    }
+
+    @Test("Clap-like spectrum passes the veto and fires")
+    func spectralPassFires() {
+        let (detector, fired) = makeDetector()
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.6, sfm: 0.5, at: at(0.00))
+        detector.processSample(dBFS: quiet, crest: 1, hfr: -1, sfm: -1, at: at(0.05))
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.6, sfm: 0.5, at: at(0.15))
+        #expect(fired.value)
+    }
+
+    @Test("On a non-built-in route the veto is disabled — crest-only fires")
+    func routeFallbackFires() {
+        let (detector, fired) = makeDetector()
+        detector.routeAllowsSpectral = false   // simulate Bluetooth mic
+        // Spectrally these would be vetoed, but the route falls back to crest.
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.01, sfm: 0.01, at: at(0.00))
+        detector.processSample(dBFS: quiet, crest: 1, hfr: -1, sfm: -1, at: at(0.05))
+        detector.processSample(dBFS: loud, crest: 5, hfr: 0.01, sfm: 0.01, at: at(0.15))
+        #expect(fired.value, "BT fallback should let crest decide")
+    }
+
     // MARK: rmsAmplitude helper
 
     @Test("rmsAmplitude returns 0 for empty buffer")
