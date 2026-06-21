@@ -1,7 +1,7 @@
 # ONBOARDING_DESIGN.md — First-launch onboarding
 
-**Version:** v1 — **LOCKED 2026-06-21** (copy = baseline; tune wording on-device)
-**PR:** logical Part C of the visual redesign
+**Version:** v1 — **IMPLEMENTED 2026-06-21** (redesign Part C,
+`phase3/pr-24-onboarding`). Copy is the baseline; tune wording on-device.
 **Closes:** the deferred-onboarding note in SPLASH_DESIGN.md.
 
 A 3-step, first-launch-only guided intro built around the detective-dog mascot,

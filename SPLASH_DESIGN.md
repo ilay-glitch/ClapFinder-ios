@@ -267,10 +267,12 @@ PLAN.md row) → `chore:` (GMA SDK integration) → `code:` →
 
 ## 11. Deferred / out of scope
 
-- **Onboarding flow** — does not exist yet in this codebase. First
-  launch goes splash → Home. A mic-permission education screen is a
-  separate future PR; when it lands, rule 2's first-launch path
-  becomes splash → onboarding → Home (still no ad).
+- ~~**Onboarding flow** — does not exist yet…~~ **IMPLEMENTED** in
+  redesign Part C (`phase3/pr-24-onboarding`, ONBOARDING_DESIGN.md):
+  first launch is splash → onboarding (3 steps, mic pre-explainer) →
+  Home, still no App Open Ad; gated by a separate `onboarding.hasCompleted`
+  flag (the ad first-launch flag is untouched). ATT relocated to fire on
+  entering Home so it never overlaps the step-2 mic prompt.
 - Warm-resume app open ads (data-driven decision later).
 - Custom (non-emoji) splash illustrations.
 - Banner + interstitial placements (separate PR per PLAN.md).

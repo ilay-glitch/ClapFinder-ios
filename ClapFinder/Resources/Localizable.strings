@@ -13,6 +13,18 @@
 /* Required while an App Open Ad request is in flight */
 "splash.adDisclaimer"     = "This action can contain ads";
 
+/* MARK: - Onboarding (first launch only) */
+"onboarding.progress"      = "STEP %d OF 3";
+"onboarding.step1.title"   = "Hi, I'm on the case!";
+"onboarding.step1.body"    = "To find your phone, just clap twice 👏";
+"onboarding.continue"      = "Continue";
+"onboarding.step2.title"   = "I listen for your clap";
+"onboarding.step2.body"    = "Only listens for claps · Your privacy matters 🔒";
+"onboarding.step2.cta"     = "Enable Microphone";
+"onboarding.step3.title"   = "All set!";
+"onboarding.step3.body"    = "Let's test it — give it a clap.";
+"onboarding.step3.cta"     = "Start";
+
 /* MARK: - Home screen */
 "home.title"              = "ClapFinder";
 "home.subtitle"           = "Clap twice to find your phone";

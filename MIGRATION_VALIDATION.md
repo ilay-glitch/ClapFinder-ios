@@ -168,3 +168,18 @@ notification-action button.
 | 5 | Sensitivity affects reach | Low needs a clear close clap; High catches softer/distant | ⏳ | Tune 0.75/0.55/0.40 |
 | 6 | Latency acceptable | Time from double-clap to response feels responsive (<~1.5 s) | ⏳ | SoundAnalysis window |
 | 7 | Battery | A few minutes of continuous listening — note drain | ⏳ | Pre-gate if excessive |
+
+---
+
+## Device QA pass — PR-24 onboarding (redesign Part C)
+
+⚠️ First-launch flow is device-only (fresh install: delete + reinstall).
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| O1 | Onboarding shows on fresh install | Delete app → reinstall → launch → splash → onboarding step 1 | ⏳ | |
+| O2 | Mic prompt fires at step 2 | Tap "Enable Microphone" → system mic prompt appears once | ⏳ | Pre-explainer first |
+| O3 | **Mic & ATT prompts never overlap** | Fresh install: mic (step 2) then ATT (after step 3 → Home) are two distinct, sequential prompts | ⏳ | The relocation gate |
+| O4 | Onboarding does NOT show on relaunch | Complete onboarding → force-quit → relaunch → splash → Home directly | ⏳ | `onboarding.hasCompleted` |
+| O5 | No App Open Ad on first launch | Fresh install → splash shows no interstitial/app-open ad | ⏳ | Ad fence intact |
+| O6 | Deny mic still completes | Deny at step 2 → onboarding still reaches Home; first listen re-prompts / Settings | ⏳ | Detector lazy-requests |
