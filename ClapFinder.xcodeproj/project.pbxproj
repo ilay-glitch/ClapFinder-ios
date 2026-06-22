@@ -36,6 +36,7 @@
 		8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6C711829C5CE93258C85D182 /* alarm_clock.caf */; };
 		8CE113715A03CB9DDBF86F5D /* duck_quack.caf in Resources */ = {isa = PBXBuildFile; fileRef = C1762A4281DB585C456AAB3D /* duck_quack.caf */; };
 		9465FE5CC21A0DDF1126B99A /* ClapFinderKitAds in Frameworks */ = {isa = PBXBuildFile; productRef = 42963434D09D67693B1489D3 /* ClapFinderKitAds */; };
+		9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710B7A576F28AD33F238327D /* OnboardingView.swift */; };
 		9B99D815E84E6D6CB2F9D23C /* ClapFinderKitMotion in Frameworks */ = {isa = PBXBuildFile; productRef = B6031855CF37D69C82E54CB8 /* ClapFinderKitMotion */; };
 		9C8FA463CD777411D1A687F5 /* foghorn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 034457FB4DC6EBE426A37265 /* foghorn.caf */; };
 		9FB102267116B977253F26BB /* dog_bark.caf in Resources */ = {isa = PBXBuildFile; fileRef = 982F94330D8C525A1BE035DD /* dog_bark.caf */; };
@@ -98,6 +99,7 @@
 		694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseRingsView.swift; sourceTree = "<group>"; };
 		69C7B5BA09DB0E06F71EDAAF /* ClapFinder.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ClapFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C711829C5CE93258C85D182 /* alarm_clock.caf */ = {isa = PBXFileReference; path = alarm_clock.caf; sourceTree = "<group>"; };
+		710B7A576F28AD33F238327D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		72196F65E09891DEC7526178 /* ClapFinderKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ClapFinderKit; path = ClapFinderKit; sourceTree = SOURCE_ROOT; };
 		88EF60ED1B99B45FB9597062 /* beep.caf */ = {isa = PBXFileReference; path = beep.caf; sourceTree = "<group>"; };
 		8D28B7DB120999EAE3ABFF13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				508FBC43B8DDEEAACD96A34B /* HomeView.swift */,
 				A38E87AFC4E016356FE91103 /* ListeningToggleView.swift */,
 				E74184C03D15468A78881BFC /* ModeSwitcherView.swift */,
+				710B7A576F28AD33F238327D /* OnboardingView.swift */,
 				694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */,
 				C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */,
 				1C28A92E42035AFE64CFBED6 /* SplashView.swift */,
@@ -409,6 +412,7 @@
 				63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */,
 				7E5E032275F595B3E2734707 /* ListeningToggleView.swift in Sources */,
 				55B2FBFE23C2FFA31CD6E766 /* ModeSwitcherView.swift in Sources */,
+				9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */,
 				B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */,
 				807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */,
 				39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */,
