@@ -173,12 +173,11 @@ public final class ClapDetector {
             let peak = ClapDSP.peakAmplitude(buffer: buffer)
             let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
             let crest = peak / max(rms, Float(1e-10))
-            // Stage-2 features only when impulsive (rare); −1 = not measured.
-            let (hfr, sfm): (Float, Float) = crest > ClapSpectral.preCheckCrest
-                ? analyzer.features(buffer: buffer) : (-1, -1)
+            // Stage-2 features only when impulsive (rare); .notMeasured = -1s.
+            let feats = crest > ClapSpectral.preCheckCrest
+                ? analyzer.features(buffer: buffer) : .notMeasured
 #if DEBUG
-            // Sample-resolution transient shape for diagnostics (no decision effect).
-            let shape = ClapDiagnostics.transientShape(buffer: buffer)
+            let shape = ClapDiagnostics.transientShape(buffer: buffer)   // diagnostics only
 #endif
             Task { @MainActor in
                 guard let self else { return }
@@ -186,9 +185,9 @@ public final class ClapDetector {
                     if dBFS > self.dBFloor { capture(crest) }
                 } else {
 #if DEBUG
-                    self.diagnostics.stage(rms: rms, peak: peak, shape: shape)
+                    self.diagnostics.stage(rms: rms, peak: peak, shape: shape, spectral: feats)
 #endif
-                    self.processSample(dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm)
+                    self.processSample(dBFS: dBFS, crest: crest, hfr: feats.hfr, sfm: feats.sfm)
                 }
             }
         }

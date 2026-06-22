@@ -68,18 +68,25 @@ struct ClapSpectralTests {
             state = state &* 1_664_525 &+ 1_013_904_223
             return Float(state) / Float(UInt32.max) * 2 - 1
         }
-        let (hfr, sfm) = ClapSpectralAnalyzer().features(samples: samples, sampleRate: sampleRate)
-        #expect(hfr > ClapSpectral.hfrThreshold)
-        #expect(sfm > ClapSpectral.sfmThreshold)
-        #expect(!ClapSpectral.shouldVeto(hfr: hfr, sfm: sfm))
+        let feats = ClapSpectralAnalyzer().features(samples: samples, sampleRate: sampleRate)
+        #expect(feats.hfr > ClapSpectral.hfrThreshold)
+        #expect(feats.sfm > ClapSpectral.sfmThreshold)
+        #expect(!ClapSpectral.shouldVeto(hfr: feats.hfr, sfm: feats.sfm))
+        // v4 diagnostics: broadband → high centroid + high ZCR.
+        #expect(feats.centroidHz > 3000)
+        #expect(feats.zcr > 0.15)
     }
 
-    @Test("Low-frequency tone (knock-like) → low HFR, vetoed")
+    @Test("Low-frequency tone (knock-like) → low HFR + low centroid + low ZCR, vetoed")
     func lowToneIsKnockLike() {
         let samples: [Float] = (0..<frames).map { sinf(2 * .pi * 200 * Float($0) / Float(sampleRate)) }
-        let (hfr, sfm) = ClapSpectralAnalyzer().features(samples: samples, sampleRate: sampleRate)
-        #expect(hfr < ClapSpectral.hfrThreshold)
-        #expect(ClapSpectral.shouldVeto(hfr: hfr, sfm: sfm))
+        let feats = ClapSpectralAnalyzer().features(samples: samples, sampleRate: sampleRate)
+        #expect(feats.hfr < ClapSpectral.hfrThreshold)
+        #expect(ClapSpectral.shouldVeto(hfr: feats.hfr, sfm: feats.sfm))
+        // v4 diagnostics: a 200 Hz tone has a low centroid and very low ZCR —
+        // the separation centroid/ZCR are meant to provide.
+        #expect(feats.centroidHz < 1500)
+        #expect(feats.zcr < 0.05)
     }
 
     @Test("Harmonic stack spanning the band (speech-like) → low SFM, vetoed by flatness")
@@ -94,17 +101,19 @@ struct ClapSpectralTests {
             }
             return value / 10
         }
-        let (hfr, sfm) = ClapSpectralAnalyzer().features(samples: samples, sampleRate: sampleRate)
-        #expect(sfm < ClapSpectral.sfmThreshold)
-        #expect(hfr >= ClapSpectral.hfrThreshold, "harmonics span the band, so SFM — not HFR — should be doing the rejecting")
-        #expect(ClapSpectral.shouldVeto(hfr: hfr, sfm: sfm))
+        let feats = ClapSpectralAnalyzer().features(samples: samples, sampleRate: sampleRate)
+        #expect(feats.sfm < ClapSpectral.sfmThreshold)
+        #expect(feats.hfr >= ClapSpectral.hfrThreshold, "harmonics span the band, so SFM — not HFR — should be doing the rejecting")
+        #expect(ClapSpectral.shouldVeto(hfr: feats.hfr, sfm: feats.sfm))
     }
 
-    @Test("Degenerate input returns a zero feature pair")
+    @Test("Degenerate input returns a zero feature set")
     func degenerateInput() {
         let analyzer = ClapSpectralAnalyzer()
-        #expect(analyzer.features(samples: [], sampleRate: sampleRate) == (0, 0))
-        #expect(analyzer.features(samples: [0.5, 0.5], sampleRate: 0) == (0, 0))
+        let empty = analyzer.features(samples: [], sampleRate: sampleRate)
+        #expect(empty.hfr == 0 && empty.centroidHz == 0 && empty.zcr == 0)
+        let noRate = analyzer.features(samples: [0.5, 0.5], sampleRate: 0)
+        #expect(noRate.hfr == 0 && noRate.centroidHz == 0)
     }
 }
 #endif

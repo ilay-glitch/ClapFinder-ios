@@ -85,14 +85,27 @@ public final class ClapSpectralAnalyzer: @unchecked Sendable {
 
     deinit { vDSP_destroy_fftsetup(setup) }
 
-    /// `(hfr, sfm)` for `samples`, zero-padded / truncated to the FFT size.
-    /// Returns `(0, 0)` for empty input or a non-positive sample rate.
-    ///
-    /// Both features are *ratios*, so the FFT/packing scale factors cancel —
-    /// no normalisation needed.
-    public func features(samples: [Float], sampleRate: Double) -> (hfr: Float, sfm: Float) {
-        guard sampleRate > 0, !samples.isEmpty else { return (0, 0) }
+    /// Per-candidate features. `hfr`/`sfm` drive the (currently OFF) veto;
+    /// `centroidHz`/`rolloffHz`/`zcr` are v4 diagnostics, logged-only for the
+    /// claps-vs-noise tuning session (SOUND_RECOGNITION_DESIGN.md §14.6).
+    /// `-1` = not measured.
+    public struct SpectralFeatures: Sendable {
+        public let hfr, sfm, centroidHz, rolloffHz, zcr: Float
+        public static let zero = SpectralFeatures(hfr: 0, sfm: 0, centroidHz: 0, rolloffHz: 0, zcr: 0)
+        public static let notMeasured = SpectralFeatures(hfr: -1, sfm: -1, centroidHz: -1, rolloffHz: -1, zcr: -1)
+    }
+
+    /// Features for `samples`, zero-padded / truncated to the FFT size.
+    /// Ratios (`hfr`/`sfm`) are scale-free; `centroidHz`/`rolloffHz` are in Hz;
+    /// `zcr` is the time-domain crossing fraction (0…1).
+    public func features(samples: [Float], sampleRate: Double) -> SpectralFeatures {
+        guard sampleRate > 0, !samples.isEmpty else { return .zero }
         let half = count / 2
+
+        // ZCR — time-domain, on the raw (un-windowed) samples.
+        var crossings = 0
+        for idx in 1..<samples.count where (samples[idx - 1] < 0) != (samples[idx] < 0) { crossings += 1 }
+        let zcr = Float(crossings) / Float(max(samples.count - 1, 1))
 
         var windowed = [Float](repeating: 0, count: count)
         let usable = min(samples.count, count)
@@ -115,33 +128,56 @@ public final class ClapSpectralAnalyzer: @unchecked Sendable {
             }
         }
 
-        // Skip bin 0 (DC, and the zrip Nyquist packing) for both features.
+        // Skip bin 0 (DC, and the zrip Nyquist packing).
         let band = Array(power[1..<half])
+        let binHz = Float(sampleRate) / Float(count)
         var total: Float = 0
         vDSP_sve(band, 1, &total, vDSP_Length(band.count))
-        guard total > 0 else { return (0, 0) }
+        guard total > 0 else {
+            return SpectralFeatures(hfr: 0, sfm: 0, centroidHz: 0, rolloffHz: 0, zcr: zcr)
+        }
 
-        let binHz = Float(sampleRate) / Float(count)
         let cutoffBin = max(1, min(half - 1, Int(hfCutoffHz / binHz)))
         var highEnergy: Float = 0
         vDSP_sve(Array(power[cutoffBin..<half]), 1, &highEnergy, vDSP_Length(half - cutoffBin))
         let hfr = highEnergy / total
 
-        // Spectral flatness = geometric mean / arithmetic mean over the band.
+        // Spectral flatness (v3, broken on real claps — kept logged; §13.1).
         var mean: Float = 0
         vDSP_meanv(band, 1, &mean, vDSP_Length(band.count))
-        guard mean > 0 else { return (hfr, 0) }
-        let logs = band.map { logf(max($0, Float(1e-20))) }
-        var logMean: Float = 0
-        vDSP_meanv(logs, 1, &logMean, vDSP_Length(logs.count))
-        let sfm = expf(logMean) / mean
+        var sfm: Float = 0
+        if mean > 0 {
+            let logs = band.map { logf(max($0, Float(1e-20))) }
+            var logMean: Float = 0
+            vDSP_meanv(logs, 1, &logMean, vDSP_Length(logs.count))
+            sfm = expf(logMean) / mean
+        }
 
-        return (hfr, sfm)
+        // Centroid (weighted mean bin — collapse-immune) + 85% rolloff.
+        let (centroidHz, rolloffHz) = Self.centroidAndRolloff(band: band, total: total, binHz: binHz)
+        return SpectralFeatures(hfr: hfr, sfm: sfm, centroidHz: centroidHz, rolloffHz: rolloffHz, zcr: zcr)
+    }
+
+    /// Energy-weighted mean-frequency (centroid) and 85 % rolloff, in Hz, over
+    /// the band (which starts at FFT bin 1).
+    private static func centroidAndRolloff(band: [Float], total: Float, binHz: Float) -> (Float, Float) {
+        var weighted: Float = 0
+        var cumulative: Float = 0
+        var rolloffBin = band.count
+        var rolloffFound = false
+        let target = total * 0.85
+        for bandIdx in 0..<band.count {
+            let bin = bandIdx + 1
+            weighted += Float(bin) * band[bandIdx]
+            cumulative += band[bandIdx]
+            if !rolloffFound && cumulative >= target { rolloffBin = bin; rolloffFound = true }
+        }
+        return ((weighted / total) * binHz, Float(rolloffBin) * binHz)
     }
 
     /// Convenience over channel 0 of an audio buffer (the tap's hot path).
-    public func features(buffer: AVAudioPCMBuffer) -> (hfr: Float, sfm: Float) {
-        guard let data = buffer.floatChannelData, buffer.frameLength > 0 else { return (0, 0) }
+    public func features(buffer: AVAudioPCMBuffer) -> SpectralFeatures {
+        guard let data = buffer.floatChannelData, buffer.frameLength > 0 else { return .zero }
         let frames = Int(buffer.frameLength)
         let samples = Array(UnsafeBufferPointer(start: data[0], count: frames))
         return features(samples: samples, sampleRate: buffer.format.sampleRate)
