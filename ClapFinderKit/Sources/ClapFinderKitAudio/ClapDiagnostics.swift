@@ -44,9 +44,10 @@ public enum ClapDiagnostics {
     public struct Candidate: Sendable {
         public let seq: Int
         public let rms, peak, dBFS, crest: Float
-        /// Spectral features (v3). `-1` when not measured (crest below the
-        /// pre-check, so the FFT was skipped — the buffer can't be a peak).
-        public let hfr, sfm: Float
+        /// Spectral features. `-1` when not measured (crest below the pre-check,
+        /// so the FFT was skipped — the buffer can't be a peak). `hfr`/`sfm` =
+        /// v3; `centroidHz`/`zcr`/`rolloffHz` = v4 logged-only diagnostics (§14.6).
+        public let hfr, sfm, centroidHz, zcr, rolloffHz: Float
         public let shape: TransientShape
         public let threshold: Float
         public let calibrated: Bool
@@ -57,7 +58,8 @@ public enum ClapDiagnostics {
     }
 
     public static let csvHeader =
-        "seq,rms,peak,dBFS,crest,hfr,sfm,attackMs,decayDbPerMs,peakAtEdge,threshold,calibrated,sens,gate,dtMs"
+        "seq,rms,peak,dBFS,crest,hfr,sfm,centroidHz,zcr,rolloffHz," +
+        "attackMs,decayDbPerMs,peakAtEdge,threshold,calibrated,sens,gate,dtMs"
 
     /// Formats one candidate as a single CSV row matching `csvHeader`.
     public static func csvLine(_ row: Candidate) -> String {
@@ -66,6 +68,7 @@ public enum ClapDiagnostics {
             String(row.seq),
             fmt(row.rms, 5), fmt(row.peak, 5), fmt(row.dBFS, 1), fmt(row.crest, 2),
             fmt(row.hfr, 3), fmt(row.sfm, 3),
+            fmt(row.centroidHz, 1), fmt(row.zcr, 3), fmt(row.rolloffHz, 1),
             fmt(row.shape.attackMs, 2), fmt(row.shape.decayDbPerMs, 2),
             row.shape.peakAtEdge ? "1" : "0",
             fmt(row.threshold, 2),
@@ -139,6 +142,9 @@ public enum ClapDiagnostics {
         private var rms: Float = 0
         private var peak: Float = 0
         private var shape: TransientShape = .none
+        private var centroidHz: Float = -1
+        private var zcr: Float = -1
+        private var rolloffHz: Float = -1
         private var headerEmitted = false
 
         /// Test hook — receives each emitted candidate (`@_spi(Testing)`).
@@ -179,11 +185,15 @@ public enum ClapDiagnostics {
         }
 
         /// Stages the current buffer's measurements (called just before
-        /// `processSample`).
-        func stage(rms: Float, peak: Float, shape: TransientShape) {
+        /// `processSample`). `spectral` carries the v4 logged-only features.
+        func stage(rms: Float, peak: Float, shape: TransientShape,
+                   spectral: ClapSpectralAnalyzer.SpectralFeatures) {
             self.rms = rms
             self.peak = peak
             self.shape = shape
+            centroidHz = spectral.centroidHz
+            zcr = spectral.zcr
+            rolloffHz = spectral.rolloffHz
         }
 
         /// Emits one CSV row for the branch the FSM took.
@@ -196,6 +206,7 @@ public enum ClapDiagnostics {
             seq += 1
             let candidate = Candidate(
                 seq: seq, rms: rms, peak: peak, dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm,
+                centroidHz: centroidHz, zcr: zcr, rolloffHz: rolloffHz,
                 shape: shape, threshold: threshold, calibrated: calibrated, sensitivity: sensitivity,
                 gate: gate, dtMs: dtMs
             )
