@@ -57,7 +57,7 @@ public final class ClapDetector {
     private var currentCrestThreshold: Float = Sensitivity.medium.clapCrestThreshold
     /// When set, the tap forwards each above-floor buffer's crest here instead
     /// of running detection — used by calibration capture.
-    private var calibrationHandler: (@MainActor (Float) -> Void)?
+    var calibrationHandler: (@MainActor (Float) -> Void)?   // internal: +Calibration ext
     /// Notification observers, cancelled in `tearDown()`.
     private var interruptionTask: Task<Void, Never>?
     private var routeChangeTask: Task<Void, Never>?
@@ -72,11 +72,14 @@ public final class ClapDetector {
 #if DEBUG
     /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md), DEBUG-only/additive.
     let diagnostics = ClapDiagnostics.Session()
+    /// SoundAnalysis experiment probe — logs alongside crest, never gates
+    /// (SOUND_ANALYSIS_INVESTIGATION.md §5). DEBUG-only.
+    let snProbe = ClapClassifierProbe()
 #endif
 
     // MARK: - Logging
 
-    nonisolated private static let logger = Logger(
+    nonisolated static let logger = Logger(   // internal: extensions log too
         subsystem: "com.appcentral.clapfinder",
         category: "ClapDetector"
     )
@@ -113,32 +116,12 @@ public final class ClapDetector {
         Self.logger.info("Listening stopped")
     }
 
-    // MARK: - Calibration capture
-
-    /// Forwards each above-floor buffer's crest to `onCrest` (no detection) to
-    /// learn the user's clap. Call `stopCalibration()` when done.
-    public func startCalibration(onCrest: @escaping @MainActor (Float) -> Void) throws {
-        guard !isListening && calibrationHandler == nil else { return }
-        calibrationHandler = onCrest
-        do {
-            try activateEngine()
-        } catch {
-            calibrationHandler = nil
-            throw error
-        }
-        Self.logger.info("Calibration capture started")
-    }
-
-    public func stopCalibration() {
-        guard calibrationHandler != nil else { return }
-        calibrationHandler = nil
-        tearDown()
-        Self.logger.info("Calibration capture stopped")
-    }
+    // Calibration capture (startCalibration/stopCalibration) lives in
+    // ClapDetector+Calibration.swift.
 
     // MARK: - Private — engine bring-up
 
-    private func activateEngine() throws {
+    func activateEngine() throws {
 #if os(iOS)
         do {
             try configureAudioSession()
@@ -168,7 +151,14 @@ public final class ClapDetector {
         // The tap runs on a real-time AUDIO thread — must be `@Sendable`. Compute
         // features here, then hop to the main actor with the results.
         let analyzer = spectralAnalyzer
-        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
+#if DEBUG
+        let probe = snProbe   // measurement-only; feeds the same buffers
+        if calibrationHandler == nil { probe.start(format: format) }
+#endif
+        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, when in
+#if DEBUG
+            probe.analyze(buffer, at: when)
+#endif
             let rms = ClapDSP.rmsAmplitude(buffer: buffer)
             let peak = ClapDSP.peakAmplitude(buffer: buffer)
             let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
@@ -194,7 +184,10 @@ public final class ClapDetector {
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: format, block: onBuffer)
     }
 
-    private func tearDown() {
+    func tearDown() {   // internal: +Calibration ext
+#if DEBUG
+        snProbe.stop()
+#endif
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         interruptionTask?.cancel()
