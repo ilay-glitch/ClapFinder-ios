@@ -1,7 +1,7 @@
 #if canImport(Testing)
 import Testing
 import Foundation
-@testable import ClapFinderKitAudio
+@_spi(Testing) @testable import ClapFinderKitAudio
 @testable import ClapFinderKitData
 
 // MARK: - Feedback-loop suppression tests
@@ -83,9 +83,111 @@ struct ResponseSuppressionTests {
         coordinator.handleTrigger(animal: ghost, bundle: bundle, now: at(1.0))
         #expect(coordinator.lastTriggeredAnimal == dog, "trigger in the grace must be ignored")
 
-        // Genuine trigger after the grace → responds again.
-        coordinator.handleTrigger(animal: ghost, bundle: bundle, now: at(2.0))
+        // Genuine trigger after the grace AND the 10 s rate limit → responds.
+        coordinator.handleTrigger(animal: ghost, bundle: bundle, now: at(11.0))
         #expect(coordinator.lastTriggeredAnimal == ghost)
     }
 }
 #endif
+
+// MARK: - Hard feed gate + rate limit (2026-07-02 reconstruction fixes)
+
+@Suite("HardFeedGate")
+struct HardFeedGateTests {
+
+    private let t0 = Date(timeIntervalSince1970: 1_750_000_000)
+    private func at(_ offset: TimeInterval) -> Date { t0.addingTimeInterval(offset) }
+
+    @Test("feedGate=true drops buffers wholesale — a loud pair cannot fire")
+    @MainActor
+    func gateBlocksPairs() {
+        let detector = ClapDetector()
+        var fired = false
+        detector.onClapDetected = { fired = true }
+        detector.setListeningForTesting(true, sensitivity: .medium)
+        detector.feedGate = { true }
+        detector.processSample(dBFS: -20, crest: 5, at: at(0.00))
+        detector.processSample(dBFS: -40, crest: 1, at: at(0.05))
+        detector.processSample(dBFS: -20, crest: 5, at: at(0.15))
+        #expect(!fired, "gated buffers must never reach the FSM")
+    }
+
+    @Test("THE firstClap-seeding leak is closed: gated tail can't pair with a post-gate transient")
+    @MainActor
+    func gatedTailCannotSeedFirstClap() {
+        let detector = ClapDetector()
+        var fired = false
+        detector.onClapDetected = { fired = true }
+        detector.setListeningForTesting(true, sensitivity: .medium)
+        var gateOn = true
+        detector.feedGate = { gateOn }
+        // Bark tail transient while gated — with output-filtering this seeded
+        // firstClap; the gate must drop it entirely.
+        detector.processSample(dBFS: -25, crest: 6, at: at(0.00))
+        gateOn = false
+        // TV transient right after the gate lifts: if firstClap had been
+        // seeded, this would pair → ACCEPT. It must be a fresh firstClap.
+        detector.processSample(dBFS: -40, crest: 1, at: at(0.10))
+        detector.processSample(dBFS: -25, crest: 6, at: at(0.20))
+        #expect(!fired, "post-gate transient must not pair with a gated buffer")
+    }
+
+    @Test("Gated above-floor buffers are visible in diagnostics as .gated")
+    @MainActor
+    func gatedBuffersLogged() {
+        let detector = ClapDetector()
+        detector.setListeningForTesting(true, sensitivity: .medium)
+        detector.feedGate = { true }
+        var gates: [ClapDiagnostics.Gate] = []
+        detector.onDiagnostic = { gates.append($0.gate) }
+        detector.processSample(dBFS: -20, crest: 5, at: at(0))
+        #expect(gates == [.gated])
+    }
+
+    @Test("Engine-start transient grace drops the first second of buffers")
+    @MainActor
+    func startTransientGateDrops() {
+        let detector = ClapDetector()
+        var fired = false
+        detector.onClapDetected = { fired = true }
+        detector.setListeningForTesting(true, sensitivity: .medium)
+        detector.setEngineStartedForTesting(at: at(0))
+        // The fire-on-Start pattern: start transient + TV pair inside 1s.
+        detector.processSample(dBFS: -45, crest: 4, at: at(0.30))
+        detector.processSample(dBFS: -48, crest: 1, at: at(0.45))
+        detector.processSample(dBFS: -44, crest: 4, at: at(0.60))
+        #expect(!fired, "pairs inside the start-transient grace must not fire")
+        // After the grace a genuine pair fires.
+        detector.processSample(dBFS: -20, crest: 5, at: at(1.20))
+        detector.processSample(dBFS: -40, crest: 1, at: at(1.30))
+        detector.processSample(dBFS: -20, crest: 5, at: at(1.45))
+        #expect(fired)
+    }
+}
+
+@Suite("ResponseRateLimit")
+struct ResponseRateLimitTests {
+
+    private let t0 = Date(timeIntervalSince1970: 1_750_000_000)
+    private func at(_ offset: TimeInterval) -> Date { t0.addingTimeInterval(offset) }
+
+    @Test("At most one response per minResponseInterval, regardless of triggers")
+    @MainActor
+    func rateLimitHolds() {
+        let coordinator = ResponseCoordinator()
+        let dog = Animal(id: "dog", name: "Dog", emoji: "🐕", soundFile: "dog_bark.caf")
+        let cat = Animal(id: "cat", name: "Cat", emoji: "🐱", soundFile: "cat.caf")
+        let bundle = Bundle.module
+
+        coordinator.handleTrigger(animal: dog, bundle: bundle, now: at(0))
+        #expect(coordinator.lastTriggeredAnimal == dog)
+
+        // Past the suppression grace but inside the 10 s rate limit → ignored.
+        coordinator.handleTrigger(animal: cat, bundle: bundle, now: at(5))
+        #expect(coordinator.lastTriggeredAnimal == dog, "5 s after a response must be rate-limited")
+
+        // Past the rate limit → responds.
+        coordinator.handleTrigger(animal: cat, bundle: bundle, now: at(10.5))
+        #expect(coordinator.lastTriggeredAnimal == cat)
+    }
+}

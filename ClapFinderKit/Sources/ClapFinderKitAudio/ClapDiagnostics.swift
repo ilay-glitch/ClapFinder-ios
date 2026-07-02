@@ -24,6 +24,9 @@ public enum ClapDiagnostics {
     /// Which `processSample` branch decided a candidate buffer.
     public enum Gate: String, Sendable {
         case lowCrest, spectralVeto, firstClap, staleWindow, tooClose, noRelease
+        /// Buffer dropped by the hard feed gate (response playing/tail, or
+        /// the engine-start transient) — never reached the FSM.
+        case gated
         case accept = "ACCEPT"
     }
 

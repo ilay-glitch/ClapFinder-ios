@@ -393,6 +393,15 @@ data-driven.** Reasoning:
   veto can only *lower* recall. So it is irrelevant to the margin concern (which
   is calibration, §13.2) — another reason it is not v1-critical.
 
+> **MEASURED 2026-07-02 — criterion TRIPPED, decision FLIPPED.** The ambient
+> check ran (TV room, five sessions): **6.7–15.6 ACCEPTs/min** — an alert every
+> ~4–9 s in a TV household. That is a v1 quality blocker; **specificity work is
+> v1-REQUIRED, not post-launch.** Feature direction from the same data (crude
+> loud-vs-quiet labels): claps are NOT centroid-inverted vs ambient (820 Hz vs
+> 311 Hz medians) but the distributions overlap heavily; **hfr separated best
+> (0.117 vs 0.021, 5.6×)** > centroid (2.6×) > zcr (2×). The clean TV-off
+> labeled session decides which feature the veto is built on.
+
 **The one criterion that flips this to "do it for v1":** a quick **ambient
 false-positive check** on device — if normal talking / TV / household noise
 triggers detection *often* (not just deliberate bangs), that is a v1 quality
@@ -409,3 +418,26 @@ the veto post-launch. **Cheap to decide; one listening session in a normal room.
    ambient FP check fails.
 3. If/when we build it: own PR, doc-led, reject-only invariant test retained, and
    the same measure-first gate (session before thresholds).
+
+
+---
+
+## 15. Response-side guards (2026-07-02 — from the loop reconstruction)
+
+Device reconstruction of the "barking forever" bug found **three stacked
+mechanisms**, fixed in order:
+
+1. **Self-feedback** (the alert re-triggering detection): fixed by suppression
+   anchored to `SoundPlayer.lastPlaybackEndedAt` — *proven working on-device*
+   (suppressed ACCEPTs visible inside the grace).
+2. **The firstClap-seeding leak**: output-filtering only suppressed *ACCEPTs*;
+   a bark-tail transient could still seed `firstClap` inside the grace and
+   pair with an ambient transient just past it. Fixed by a **hard feed gate**:
+   while the response plays (+1.5 s tail) — and during the first **1.0 s after
+   engine start** (the fire-on-Start transient) — buffers are dropped *before*
+   the FSM (`gated` rows in diagnostics). Gated buffers cannot seed anything.
+3. **Ambient re-trigger chains** (TV generating fresh ACCEPTs at 6.7–15.6/min):
+   no suppression window can end these — they are independent false positives.
+   Mitigated by a **response rate limit** (`ResponseCoordinator
+   .minResponseInterval = 10 s`, named constant, tunable); *solved* only by the
+   v1-required specificity work (§14.7 measured note).

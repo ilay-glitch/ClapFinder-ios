@@ -96,6 +96,16 @@ public final class ResponseCoordinator {
     public func start(animal: Animal, sensitivity: Sensitivity = .medium, crestOverride: Float? = nil) throws {
         guard !isActive else { return }
         wireDetector(for: animal)
+        // HARD feed gate: while the response plays (+tail grace), the detector
+        // drops buffers before the FSM — playback can't seed or pair anything.
+        detector.feedGate = { [weak self] in
+            guard let self else { return false }
+            return self.suppression.shouldSuppress(
+                isPlaying: self.soundPlayer.isPlaying,
+                playbackEndedAt: self.soundPlayer.lastPlaybackEndedAt,
+                now: Date()
+            )
+        }
         try detector.start(sensitivity: sensitivity, crestOverride: crestOverride)
         isActive = true
 
@@ -165,6 +175,12 @@ public final class ResponseCoordinator {
     /// Feedback-loop guard state (see ResponseSuppression).
     private var suppression = ResponseSuppression()
 
+    /// UX rate limit: at most one response per this interval, regardless of
+    /// how many triggers arrive (a lost phone doesn't need to croak every 4 s).
+    /// Named constant — tunable.
+    static let minResponseInterval: TimeInterval = 10.0
+    private var lastResponseAt = Date.distantPast
+
     /// Feedback-loop guard: a trigger arriving while the response sound plays —
     /// or within the tail grace after it — is the alert re-triggering itself
     /// through the mic, not a user clap. Ignored. `now` injectable for tests.
@@ -178,7 +194,12 @@ public final class ResponseCoordinator {
             Self.logger.info("Trigger suppressed — response playing / tail grace")
             return
         }
+        guard now >= lastResponseAt.addingTimeInterval(Self.minResponseInterval) else {
+            Self.logger.info("Trigger rate-limited — last response < \(Self.minResponseInterval)s ago")
+            return
+        }
         respond(to: animal, bundle: bundle)
+        lastResponseAt = now
         suppression.responseStarted(now: now)
     }
 
