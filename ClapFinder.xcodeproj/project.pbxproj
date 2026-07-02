@@ -34,6 +34,7 @@
 		882448679A5F04F22274DEA5 /* bell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2ACD4ACC57959E4B128A4721 /* bell.caf */; };
 		89336F8D4DCEBC858335A1DC /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F1849F5440D9BD66E9E8C135 /* GoogleMobileAds */; };
 		8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6C711829C5CE93258C85D182 /* alarm_clock.caf */; };
+		8C637C16A705020E3FA9DDCE /* BuildStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33DA923C077EF94E1C4E622 /* BuildStamp.swift */; };
 		8CE113715A03CB9DDBF86F5D /* duck_quack.caf in Resources */ = {isa = PBXBuildFile; fileRef = C1762A4281DB585C456AAB3D /* duck_quack.caf */; };
 		9465FE5CC21A0DDF1126B99A /* ClapFinderKitAds in Frameworks */ = {isa = PBXBuildFile; productRef = 42963434D09D67693B1489D3 /* ClapFinderKitAds */; };
 		9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710B7A576F28AD33F238327D /* OnboardingView.swift */; };
@@ -115,6 +116,7 @@
 		B65BA16DD4368B32B8468E5F /* cat_meow.caf */ = {isa = PBXFileReference; path = cat_meow.caf; sourceTree = "<group>"; };
 		BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapFinderApp.swift; sourceTree = "<group>"; };
 		C1762A4281DB585C456AAB3D /* duck_quack.caf */ = {isa = PBXFileReference; path = duck_quack.caf; sourceTree = "<group>"; };
+		C33DA923C077EF94E1C4E622 /* BuildStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildStamp.swift; sourceTree = "<group>"; };
 		C4FD638F38EA5721F09B12AA /* rooster_crow.caf */ = {isa = PBXFileReference; path = rooster_crow.caf; sourceTree = "<group>"; };
 		C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityControlView.swift; sourceTree = "<group>"; };
 		C8DE6D2C09E19FA0D4B1B681 /* ClapCalibrationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapCalibrationSheet.swift; sourceTree = "<group>"; };
@@ -209,10 +211,19 @@
 			children = (
 				BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */,
 				A9F965084EF7694AC3879FE4 /* Ads */,
+				68B48E6A2180E43BF8390D76 /* Debug */,
 				A60224AFEFDF5C25F3E41BC9 /* Resources */,
 				228BF7C0BCFB12EA75EB49DB /* Views */,
 			);
 			path = ClapFinder;
+			sourceTree = "<group>";
+		};
+		68B48E6A2180E43BF8390D76 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				C33DA923C077EF94E1C4E622 /* BuildStamp.swift */,
+			);
+			path = Debug;
 			sourceTree = "<group>";
 		};
 		A60224AFEFDF5C25F3E41BC9 /* Resources */ = {
@@ -272,6 +283,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F2B5199BD99E40D2D5657E7F /* Build configuration list for PBXNativeTarget "ClapFinder" */;
 			buildPhases = (
+				62D82ADE8F76AF9D90004D04 /* Generate BuildStamp */,
 				4556472A0E4A83C2CB10DF2D /* Sources */,
 				C612F46FDED11B1E63A4094D /* Resources */,
 				30BD22A11B0396C52CBA3B73 /* Frameworks */,
@@ -397,6 +409,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		62D82ADE8F76AF9D90004D04 /* Generate BuildStamp */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate BuildStamp";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "STAMP=\"$(git -C \"$SRCROOT\" rev-parse --short HEAD 2>/dev/null || echo dev) · $(date '+%m-%d %H:%M')\"\ncat > \"$SRCROOT/ClapFinder/Debug/BuildStamp.swift\" <<STAMPEOF\n// GENERATED at build time by the \"Generate BuildStamp\" pre-build script\n// (project.yml). Gitignored — do not edit or commit.\nenum BuildStamp {\n    static let value = \"$STAMP\"\n}\nSTAMPEOF\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4556472A0E4A83C2CB10DF2D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -406,6 +440,7 @@
 				B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */,
 				D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */,
 				A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */,
+				8C637C16A705020E3FA9DDCE /* BuildStamp.swift in Sources */,
 				FE6E08279EA95F3C7705A8FD /* ClapCalibrationSheet.swift in Sources */,
 				A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */,
 				24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */,

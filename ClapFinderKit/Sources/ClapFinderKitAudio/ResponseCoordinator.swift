@@ -169,7 +169,12 @@ public final class ResponseCoordinator {
     /// or within the tail grace after it — is the alert re-triggering itself
     /// through the mic, not a user clap. Ignored. `now` injectable for tests.
     func handleTrigger(animal: Animal, bundle: Bundle, now: Date = Date()) {
-        guard !suppression.shouldSuppress(isPlaying: soundPlayer.isPlaying, now: now) else {
+        let suppressed = suppression.shouldSuppress(
+            isPlaying: soundPlayer.isPlaying,
+            playbackEndedAt: soundPlayer.lastPlaybackEndedAt,
+            now: now
+        )
+        guard !suppressed else {
             Self.logger.info("Trigger suppressed — response playing / tail grace")
             return
         }
