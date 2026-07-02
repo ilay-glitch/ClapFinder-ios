@@ -165,10 +165,19 @@ public enum ClapDiagnostics {
             .urls(for: .documentDirectory, in: .userDomainMask).first?
             .appendingPathComponent("clapdiag.csv")
 
-        /// Truncates the CSV + writes the header (fresh file per listen session).
+        /// APPENDS a header row per listen session (repeated header = session
+        /// delimiter) — start/stop cycles must not destroy earlier data (the
+        /// 2026-06-22 ambient session was lost to per-start truncation).
         private func startFile() {
             guard let url = fileURL else { return }
-            try? Data((ClapDiagnostics.csvHeader + "\n").utf8).write(to: url)
+            let header = Data((ClapDiagnostics.csvHeader + "\n").utf8)
+            if let handle = try? FileHandle(forWritingTo: url) {
+                defer { try? handle.close() }
+                _ = try? handle.seekToEnd()
+                try? handle.write(contentsOf: header)
+            } else {
+                try? header.write(to: url)
+            }
         }
 
         /// Appends one line to the CSV.

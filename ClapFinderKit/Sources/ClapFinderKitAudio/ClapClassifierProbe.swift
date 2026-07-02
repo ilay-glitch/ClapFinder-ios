@@ -85,8 +85,15 @@ private final class ProbeObserver: NSObject, SNResultsObserving, @unchecked Send
     init(clapLabels: Set<String>) {
         self.clapLabels = clapLabels
         super.init()
-        if let url = fileURL {
-            try? Data("t,topLabel,topConf,clapConf\n".utf8).write(to: url)
+        // Append (repeated header = session delimiter) — never truncate.
+        guard let url = fileURL else { return }
+        let header = Data("t,topLabel,topConf,clapConf\n".utf8)
+        if let handle = try? FileHandle(forWritingTo: url) {
+            defer { try? handle.close() }
+            _ = try? handle.seekToEnd()
+            try? handle.write(contentsOf: header)
+        } else {
+            try? header.write(to: url)
         }
     }
 
