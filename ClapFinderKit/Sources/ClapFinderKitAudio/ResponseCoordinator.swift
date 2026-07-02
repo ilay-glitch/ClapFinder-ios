@@ -158,8 +158,23 @@ public final class ResponseCoordinator {
         let capturedAnimal = animal
         let capturedBundle = soundBundle
         detector.onClapDetected = { [weak self] in
-            self?.respond(to: capturedAnimal, bundle: capturedBundle)
+            self?.handleTrigger(animal: capturedAnimal, bundle: capturedBundle)
         }
+    }
+
+    /// Feedback-loop guard state (see ResponseSuppression).
+    private var suppression = ResponseSuppression()
+
+    /// Feedback-loop guard: a trigger arriving while the response sound plays —
+    /// or within the tail grace after it — is the alert re-triggering itself
+    /// through the mic, not a user clap. Ignored. `now` injectable for tests.
+    func handleTrigger(animal: Animal, bundle: Bundle, now: Date = Date()) {
+        guard !suppression.shouldSuppress(isPlaying: soundPlayer.isPlaying, now: now) else {
+            Self.logger.info("Trigger suppressed — response playing / tail grace")
+            return
+        }
+        respond(to: animal, bundle: bundle)
+        suppression.responseStarted(now: now)
     }
 
     private func respond(to animal: Animal, bundle: Bundle) {

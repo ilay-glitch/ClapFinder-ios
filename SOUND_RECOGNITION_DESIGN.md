@@ -336,6 +336,16 @@ data decide whether centroid alone separates, or whether a second feature earns
 its place. Final veto rule (centroid-only vs centroid+ZCR vs centroid+rolloff)
 is **set from the session distributions, not chosen here.**
 
+> ⚠️ **Centroid-inversion warning (device data, 2026-06-22).** In the first
+> on-device window with the centroid columns live, the user's real claps read
+> **LOW centroid (256–527 Hz, hfr 0.01–0.07)** while the played alert's
+> transients read **HIGH centroid (1.7–4.7 kHz)** — the *inverse* of the
+> literature's "claps are bright." Same band-limiting seen in §13.1. If the
+> full labeled claps-vs-noise session confirms this, the veto direction must
+> be **inverted** (veto HIGH-centroid transients) or the centroid plan
+> **killed**. Do not build v4 as-designed until that session decides. Sample
+> was one short window — measure, then build.
+
 ### 14.5 Architecture — unchanged from v3 (reject-only)
 
 ```

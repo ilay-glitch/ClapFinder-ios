@@ -49,7 +49,7 @@ struct ClapDiagnosticsTests {
     @Test("csvLine has one field per header column and renders enums/flags")
     func csvLineMatchesHeader() {
         let candidate = ClapDiagnostics.Candidate(
-            seq: 7,
+            seq: 7, tSec: 12.34,
             rms: 0.1, peak: 0.4, dBFS: -20, crest: 4.0, hfr: 0.55, sfm: 0.42,
             centroidHz: 5000, zcr: 0.4, rolloffHz: 8000,
             shape: .init(attackMs: 0.3, decayDbPerMs: 12.5, peakAtEdge: true),
@@ -62,17 +62,18 @@ struct ClapDiagnosticsTests {
         #expect(cols.count == headerCols.count)
         #expect(line.contains("ACCEPT"))
         #expect(line.contains("medium"))
-        #expect(cols[5] == "0.550")    // hfr
-        #expect(cols[7] == "5000.0")   // centroidHz
-        #expect(cols[8] == "0.400")    // zcr
-        #expect(cols[12] == "1")       // peakAtEdge
-        #expect(cols[14] == "0")       // calibrated
+        #expect(cols[1] == "12.34")    // t
+        #expect(cols[6] == "0.550")    // hfr
+        #expect(cols[8] == "5000.0")   // centroidHz
+        #expect(cols[9] == "0.400")    // zcr
+        #expect(cols[13] == "1")       // peakAtEdge
+        #expect(cols[15] == "0")       // calibrated
     }
 
     @Test("dtMs renders empty when not part of a pair")
     func csvLineEmptyDt() {
         let candidate = ClapDiagnostics.Candidate(
-            seq: 1, rms: 0, peak: 0, dBFS: -30, crest: 1.5, hfr: -1, sfm: -1,
+            seq: 1, tSec: 0.5, rms: 0, peak: 0, dBFS: -30, crest: 1.5, hfr: -1, sfm: -1,
             centroidHz: -1, zcr: -1, rolloffHz: -1, shape: .none,
             threshold: 2.8, calibrated: false, sensitivity: .low, gate: .lowCrest, dtMs: -1
         )

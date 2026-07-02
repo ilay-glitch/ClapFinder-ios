@@ -43,6 +43,9 @@ public enum ClapDiagnostics {
     /// One logged candidate.
     public struct Candidate: Sendable {
         public let seq: Int
+        /// Elapsed seconds since listen-start — joins this log with clapsn.csv
+        /// (the SoundAnalysis probe, SOUND_ANALYSIS_INVESTIGATION.md §5).
+        public let tSec: Double
         public let rms, peak, dBFS, crest: Float
         /// Spectral features. `-1` when not measured (crest below the pre-check,
         /// so the FFT was skipped — the buffer can't be a peak). `hfr`/`sfm` =
@@ -58,7 +61,7 @@ public enum ClapDiagnostics {
     }
 
     public static let csvHeader =
-        "seq,rms,peak,dBFS,crest,hfr,sfm,centroidHz,zcr,rolloffHz," +
+        "seq,t,rms,peak,dBFS,crest,hfr,sfm,centroidHz,zcr,rolloffHz," +
         "attackMs,decayDbPerMs,peakAtEdge,threshold,calibrated,sens,gate,dtMs"
 
     /// Formats one candidate as a single CSV row matching `csvHeader`.
@@ -66,6 +69,7 @@ public enum ClapDiagnostics {
         func fmt(_ value: Float, _ places: Int = 3) -> String { String(format: "%.\(places)f", value) }
         return [
             String(row.seq),
+            String(format: "%.2f", row.tSec),
             fmt(row.rms, 5), fmt(row.peak, 5), fmt(row.dBFS, 1), fmt(row.crest, 2),
             fmt(row.hfr, 3), fmt(row.sfm, 3),
             fmt(row.centroidHz, 1), fmt(row.zcr, 3), fmt(row.rolloffHz, 1),
@@ -161,10 +165,19 @@ public enum ClapDiagnostics {
             .urls(for: .documentDirectory, in: .userDomainMask).first?
             .appendingPathComponent("clapdiag.csv")
 
-        /// Truncates the CSV + writes the header (fresh file per listen session).
+        /// APPENDS a header row per listen session (repeated header = session
+        /// delimiter) — start/stop cycles must not destroy earlier data (the
+        /// 2026-06-22 ambient session was lost to per-start truncation).
         private func startFile() {
             guard let url = fileURL else { return }
-            try? Data((ClapDiagnostics.csvHeader + "\n").utf8).write(to: url)
+            let header = Data((ClapDiagnostics.csvHeader + "\n").utf8)
+            if let handle = try? FileHandle(forWritingTo: url) {
+                defer { try? handle.close() }
+                _ = try? handle.seekToEnd()
+                try? handle.write(contentsOf: header)
+            } else {
+                try? header.write(to: url)
+            }
         }
 
         /// Appends one line to the CSV.
@@ -181,8 +194,12 @@ public enum ClapDiagnostics {
             self.calibrated = calibrated
             self.sensitivity = sensitivity
             headerEmitted = false
+            sessionStart = Date()
             startFile()
         }
+
+        /// Listen-start epoch — `t` in the CSV is seconds since this.
+        private var sessionStart = Date()
 
         /// Stages the current buffer's measurements (called just before
         /// `processSample`). `spectral` carries the v4 logged-only features.
@@ -205,7 +222,8 @@ public enum ClapDiagnostics {
             }
             seq += 1
             let candidate = Candidate(
-                seq: seq, rms: rms, peak: peak, dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm,
+                seq: seq, tSec: Date().timeIntervalSince(sessionStart),
+                rms: rms, peak: peak, dBFS: dBFS, crest: crest, hfr: hfr, sfm: sfm,
                 centroidHz: centroidHz, zcr: zcr, rolloffHz: rolloffHz,
                 shape: shape, threshold: threshold, calibrated: calibrated, sensitivity: sensitivity,
                 gate: gate, dtMs: dtMs
