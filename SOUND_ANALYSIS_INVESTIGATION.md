@@ -145,3 +145,34 @@ separates crest+centroid at an acceptable (~0.5 s) latency.
 - [Identify individual sounds in a live audio buffer — Create with Swift](https://www.createwithswift.com/identify-individual-sounds-in-a-live-audio-buffer/) (windowDuration/overlapFactor API; built-in window range 0.5–15 s)
 - [Discover built-in sound classification in SoundAnalysis — WWDC21](https://developer.apple.com/videos/play/wwdc2021/10036/)
 - [Training Sound Classification Models in Create ML — WWDC19](https://developer.apple.com/videos/play/wwdc2019/425/)
+
+---
+
+## 7. FINAL VERDICT (2026-06-22) — closed: the model fails real claps
+
+The §5 experiment ran on device (probe: built-in `.version1`,
+`windowDuration` 0.5 s, `overlapFactor` 0.8 — the corrected configuration —
+logging alongside crest-only). Result:
+
+- The classifier's **latency was fine** (~0.2–0.3 s to lock onto a sound) and
+  it classified a clearly-audible sound confidently (the played alert at
+  confidence **1.000**) — the pipeline and configuration worked as designed.
+- But on the user's **real double-clap**, the clap-family confidence was
+  **≤ 0.015** across every covering window. As a reject-only confirm at *any*
+  threshold it would have vetoed the real clap.
+
+That is the **second independent on-device strike** — PR-15 (default config,
+0.4–0.7 inconsistent) and now the corrected config (~0.015). §3's fork is
+resolved by evidence: **PR-15's config was wrong AND fixing it doesn't save
+the approach — the built-in model does not recognize this user's real-world
+single claps.** The framework is fine; the model's "clapping/applause"
+classes (applause-trained, crowd-oriented) don't fit close-mic single claps.
+
+**Closed. Do not reopen the built-in-classifier path.** Any future ML attempt
+must be a **custom Create ML model trained on real device-mic clap samples**
+(§2's custom-model option) — an explicitly separate, unexplored track, only if
+the DSP path (crest + parked v4) proves insufficient.
+
+The §5 probe code has served its purpose and can be stripped after the
+remaining ambient/centroid re-run session (it is `#if DEBUG`-gated; nothing
+ships either way).
