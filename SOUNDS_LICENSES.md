@@ -12,10 +12,10 @@ to ≤ 6 s.
 
 | App file | Mixkit title | Source URL |
 |---|---|---|
-| `siren.caf` | Police siren US (#1643) | https://assets.mixkit.co/active_storage/sfx/1643/1643.wav |
-| `alarm_clock.caf` | Morning clock alarm (#1003) | https://assets.mixkit.co/active_storage/sfx/1003/1003.wav |
+| `siren.caf` | Ambulance siren US (#1642) — PM pick round 1, replaces #1643 | https://assets.mixkit.co/active_storage/sfx/1642/1642.wav |
+| `alarm_clock.caf` | Digital clock digital alarm buzzer (#992) — PM pick round 1, replaces #1003 | https://assets.mixkit.co/active_storage/sfx/992/992.wav |
 | `air_horn.caf` | Truck horn (#720) — nearest equivalent; Mixkit has no true air horn. **PM may swap.** | https://assets.mixkit.co/active_storage/sfx/720/720.wav |
-| `bell.caf` | Bell notification (#933) | https://assets.mixkit.co/active_storage/sfx/933/933.wav |
+| `bell.caf` | Church bell calling (#603) — PM pick round 1, replaces #933 | https://assets.mixkit.co/active_storage/sfx/603/603.wav |
 | `whistle.caf` | Police whistle (#614) | https://assets.mixkit.co/active_storage/sfx/614/614.wav |
 | `beep.caf` | Repeating arcade beep (#1084) | https://assets.mixkit.co/active_storage/sfx/1084/1084.wav |
 | `doorbell.caf` | Home standard ding dong (#109) | https://assets.mixkit.co/active_storage/sfx/109/109.wav |
