@@ -32,10 +32,33 @@ struct HomeView: View {
         ZStack {
             CFColor.skyPrimary.ignoresSafeArea()
 
+            // P3 slot: illustrated Home background (arrives with the PM's art).
+            // Scrim keeps content readable; cards stay white on top.
+            if let background = GuardAssets.homeBackground {
+                Image(background)
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .overlay(CFColor.skyPrimary.opacity(0.30).ignoresSafeArea())
+                    .accessibilityHidden(true)
+            }
+
             ScrollView {
                 VStack(spacing: 0) {
                     headerSection
                         .padding(.top, CFSpacing.lg)
+
+                    // P3 slot: guard mascot above the hero (shield when idle,
+                    // watching pose while armed). Renders nothing until the art lands.
+                    if let mascot = touchAlert.state == .disarmed
+                        ? GuardAssets.heroDisarmed : GuardAssets.heroArmed {
+                        Image(mascot)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 130)
+                            .padding(.top, CFSpacing.md)
+                            .accessibilityHidden(true)
+                    }
 
                     TouchAlertHeroView(
                         state: touchAlert.state,

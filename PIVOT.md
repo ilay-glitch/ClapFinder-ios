@@ -19,8 +19,8 @@ code and its documentation remain in the repo, dormant and recoverable.
 
 | Item | Ruling |
 |---|---|
-| **Name** | **"Guard Dog — Don't Touch My Phone"** (PM ruling, 2026-07-02) |
-| **Bundle ID** | **NEW** bundle ID + fresh listing (never shipped publicly; clean identity wins). Proposed: `com.appcentral.guarddog` — final string is the PM's at P3. |
+| **Name** | **"Guard Dog — Don't Touch My Phone"** (PM ruling, 2026-07-02). Implemented P3: device icon label `CFBundleDisplayName` = **"Guard Dog"** (iOS truncates ~14 chars); App Store listing name = **"Guard Dog — Don't Touch Phone"** (29 chars — the full ruling name is 32, over ASC's 30 limit; "My" dropped, full phrase goes in the subtitle/keywords). |
+| **Bundle ID** | **NEW** bundle ID + fresh listing (never shipped publicly; clean identity wins). **Implemented P3: `com.appcentral.guarddog`** (+ `.widgets` for the extension). Internal code/project names stay `ClapFinder*` deliberately — an internal codename; renaming the package modules would be pure churn. |
 | **Mascot** | Same detective-dog character, new job: **guard dog** — loyal protector, barks at intruders. New pose set at P3 (§6). |
 | **Creative structure to mirror** | Cute character grid as centerpiece (the 16 sounds = "guards"), single big **"Tap to activate"** action. **No tab bar at launch** (single mode; add when a second mode exists — PM ruling b2). |
 | **Palette** | Sky-blue system (DESIGN.md v-next) unchanged. |
@@ -44,7 +44,7 @@ from active flows.
 **Dormant in ClapFinderKit (NOT deleted):** `ClapDetector` (+Calibration,
 +AudioSession, +Diagnostics, +Spectral extensions), `ClapSpectral`,
 `ClapCalibration`, `ClapCalibrationController`, `ClapDiagnostics`,
-`ClapClassifierProbe`, `ResponseSuppression`, and all their tests.
+`ClapClassifierProbe`, `ResponseSuppression`, `ResponseCoordinator` (unwired since P1), and all their tests. (`AlarmResponder`/`SoundPlayer`/`FlashlightController`/`HapticController` stay LIVE — the guard uses them.)
 **Note:** `ClapDetector` remains *live but silent* as the touch-alert
 keep-alive until P2 swaps it out; after P2 it is fully dormant.
 

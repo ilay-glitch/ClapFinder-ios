@@ -23,13 +23,27 @@ struct AlarmOverlayView: View {
             VStack(spacing: CFSpacing.xl) {
                 Spacer()
 
-                Text(verbatim: animal?.emoji ?? "🛡️")
-                    .font(.system(size: 120))
-                    .offset(y: animating && !reduceMotion ? -24 : 0)
-                    .animation(
-                        reduceMotion ? nil : .easeInOut(duration: 0.4).repeatForever(autoreverses: true),
-                        value: animating
-                    )
+                // P3 slot: barking guard replaces the emoji once the art lands.
+                if let barking = GuardAssets.alarmBarking {
+                    Image(barking)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 170)
+                        .offset(y: animating && !reduceMotion ? -24 : 0)
+                        .animation(
+                            reduceMotion ? nil : .easeInOut(duration: 0.4).repeatForever(autoreverses: true),
+                            value: animating
+                        )
+                        .accessibilityHidden(true)
+                } else {
+                    Text(verbatim: animal?.emoji ?? "🛡️")
+                        .font(.system(size: 120))
+                        .offset(y: animating && !reduceMotion ? -24 : 0)
+                        .animation(
+                            reduceMotion ? nil : .easeInOut(duration: 0.4).repeatForever(autoreverses: true),
+                            value: animating
+                        )
+                }
 
                 Text(NSLocalizedString("touch.status.alarming", comment: ""))
                     .font(CFFont.title1())
