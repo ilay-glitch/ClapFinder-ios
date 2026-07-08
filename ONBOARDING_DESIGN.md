@@ -1,12 +1,27 @@
 # ONBOARDING_DESIGN.md — First-launch onboarding
 
-**Version:** v1 — **IMPLEMENTED 2026-06-21** (redesign Part C,
-`phase3/pr-24-onboarding`). Copy is the baseline; tune wording on-device.
-**Closes:** the deferred-onboarding note in SPLASH_DESIGN.md.
+**Version:** v2 — **PIVOT RESCOPE 2026-07-02** (PIVOT.md; supersedes v1's clap
+story). v1 was implemented 2026-06-21 (`phase3/pr-24-onboarding`); the flow
+mechanics (routing, flag, ATT relocation, QA rows) are UNCHANGED — only the
+story and the step-2 permission change.
 
-A 3-step, first-launch-only guided intro built around the detective-dog mascot,
-inserted between splash and Home. Includes the pre-permission mic explainer we
-deferred earlier.
+A 3-step, first-launch-only guided intro built around the **guard-dog** mascot,
+inserted between splash and Home.
+
+## 0. v2 steps (the guard story — implemented at pivot P1)
+
+| Step | Purpose | Asset | Copy (baseline, tune on-device) |
+|------|---------|-------|--------------------------------|
+| **1 — Meet your guard** | what the app does | `guard_dog_wave` (P3; existing wave until then) | **Title:** "I'll guard your phone!"  **Body:** "Put me on watch — if anyone touches your phone, I bark 🐶🛡️"  **CTA:** Continue |
+| **2 — Permissions explainer** | pre-permission education | `guard_dog_watching` motif | **P1 (transitional):** mic explainer stays — the touch alert's background keep-alive still uses the audio session ("The guard needs the microphone permission to stay on watch when the screen locks — it never records"). **P2 (end-state):** mic step REMOVED; becomes the notification explainer ("I'll notify you if guarding is interrupted") → `UNUserNotificationCenter` prompt. |
+| **3 — On duty** | hand off to Home | `guard_dog_shield` (P3) | **Title:** "Ready to stand guard."  **Body:** "Arm me whenever you leave your phone."  **CTA:** "Start" |
+
+Strings move to `onboarding.*` v2 keys at P1; QA rows O1–O6 re-run with the
+new flow (O3 becomes: step-2 prompt & ATT never overlap — same rule).
+
+---
+
+*The remainder of this doc is the v1 mechanics, still in force.*
 
 ---
 
