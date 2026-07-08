@@ -1,9 +1,6 @@
 /* Guard Dog — Localizable Strings */
 
 /* MARK: - Privacy / permissions */
-/* Note: NSMicrophoneUsageDescription in Info.plist must match the intent here */
-"permission.microphone"   = "Guard Dog uses the microphone permission only to keep guarding when the screen locks. It never records or stores audio.";
-
 /* Note: NSUserTrackingUsageDescription in Info.plist must match the intent here */
 "permission.tracking"     = "Guard Dog may show ads to keep the app free. Allow tracking to see ads that are relevant to you.";
 
@@ -18,9 +15,9 @@
 "onboarding.step1.title"   = "I'll guard your phone!";
 "onboarding.step1.body"    = "Put me on watch — if anyone touches your phone, I bark 🐶🛡️";
 "onboarding.continue"      = "Continue";
-"onboarding.step2.title"   = "How I stay on watch";
-"onboarding.step2.body"    = "The microphone permission keeps me on guard when the screen locks — I never record 🔒";
-"onboarding.step2.cta"     = "Enable Microphone";
+"onboarding.step2.title"   = "If guarding stops, you'll know";
+"onboarding.step2.body"    = "I'll send a notification if anything interrupts my watch 🔔";
+"onboarding.step2.cta"     = "Enable Notifications";
 "onboarding.step3.title"   = "Ready to stand guard.";
 "onboarding.step3.body"    = "Arm me whenever you leave your phone.";
 "onboarding.step3.cta"     = "Start";

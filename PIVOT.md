@@ -62,7 +62,10 @@ record path and the mic permission entirely. **"No microphone access" is a
 category-defining privacy line for a phone-guard app.** Known risk: silent-loop
 background audio is an App Review gray area — mitigated because the audible
 alarm genuinely uses the audio session. P2 ships only through its device QA
-gate (§3).
+gate (§3). **Implemented 2026-07-08 (`pivot/p2-mic-removal`)** — `SilentKeepAlive`
+(playback-only silent loop) replaces the ClapDetector mic tap; the mic
+permission and `NSMicrophoneUsageDescription` are gone; `ClapDetector` is now
+fully dormant.
 
 ## 6. Asset poses (PM generates; same character, 1254², bg ≈ #5BB8FF)
 

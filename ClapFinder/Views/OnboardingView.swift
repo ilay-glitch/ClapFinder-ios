@@ -1,6 +1,6 @@
-import AVFAudio
 import ClapFinderKitDesign
 import SwiftUI
+import UserNotifications
 
 // MARK: - OnboardingView
 
@@ -8,15 +8,18 @@ import SwiftUI
 /// `onboarding.hasCompleted` in `ClapFinderApp` — a flag **separate** from the
 /// App Open Ad's first-launch flag, so the ad fence is untouched.
 ///
-/// Step 2 is the mic pre-permission explainer: it shows *why* first, then fires
-/// the system `requestRecordPermission`; grant or deny, it proceeds (the
-/// detector requests the mic lazily anyway). No detection logic is touched.
+/// Step 2 is the notification pre-permission explainer (P2 — the mic is gone):
+/// it shows *why* first, then fires the system notification prompt; grant or
+/// deny, it proceeds. It also marks the in-Home notif explainer as seen so the
+/// user isn't double-prompted on first arm.
 struct OnboardingView: View {
 
     let onFinished: () -> Void
 
     @State private var step = 0
     private let totalSteps = 3
+    /// Set when step 2 completes — Home's pre-arm explainer becomes redundant.
+    @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
 
     var body: some View {
         ZStack {
@@ -54,7 +57,7 @@ struct OnboardingView: View {
             stepBody(image: "detective_dog_wave",
                      titleKey: "onboarding.step1.title", bodyKey: "onboarding.step1.body")
         case 1:
-            micStep
+            notifStep
         default:
             stepBody(image: "detective_dog_phone",
                      titleKey: "onboarding.step3.title", bodyKey: "onboarding.step3.body")
@@ -72,8 +75,8 @@ struct OnboardingView: View {
         }
     }
 
-    /// Step 2 — mascot badge + a mic / sound-wave listening motif, then the card.
-    private var micStep: some View {
+    /// Step 2 — mascot badge + a notification-bell motif, then the card.
+    private var notifStep: some View {
         VStack(spacing: CFSpacing.lg) {
             ZStack {
                 ForEach(0..<2, id: \.self) { ring in
@@ -81,7 +84,7 @@ struct OnboardingView: View {
                         .stroke(CFColor.ctaBlue.opacity(0.30), lineWidth: 3)
                         .frame(width: 110 + CGFloat(ring) * 44, height: 110 + CGFloat(ring) * 44)
                 }
-                Image(systemName: "mic.fill")
+                Image(systemName: "bell.badge.fill")
                     .font(.system(size: 52))
                     .foregroundStyle(CFColor.ctaBlue)
                 Image("detective_dog_avatar")
@@ -142,9 +145,11 @@ struct OnboardingView: View {
 
     private func advance() {
         if step == 1 {
-            // Pre-explainer shown → now fire the system mic prompt; proceed on
-            // either outcome (detector re-requests lazily on first listen).
-            AVAudioApplication.requestRecordPermission { _ in
+            // Pre-explainer shown → fire the system notification prompt;
+            // proceed on either outcome (the watchdog notification is a
+            // fallback, not a gate). Marks Home's explainer as seen.
+            hasSeenNotifExplainer = true
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
                 Task { @MainActor in goNext() }
             }
         } else {

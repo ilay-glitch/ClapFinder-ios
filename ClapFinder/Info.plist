@@ -34,8 +34,6 @@
         App Store Review requires a clear, honest description.
         All Ages rating: keep language simple and child-friendly.
     -->
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Guard Dog uses the microphone permission only to keep guarding when the screen locks. It never records or stores audio.</string>
 
     <!-- ── Tracking (ATT) ───────────────────────────────────────── -->
     <!--

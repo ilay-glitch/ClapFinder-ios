@@ -13,7 +13,7 @@ inserted between splash and Home.
 | Step | Purpose | Asset | Copy (baseline, tune on-device) |
 |------|---------|-------|--------------------------------|
 | **1 — Meet your guard** | what the app does | `guard_dog_wave` (P3; existing wave until then) | **Title:** "I'll guard your phone!"  **Body:** "Put me on watch — if anyone touches your phone, I bark 🐶🛡️"  **CTA:** Continue |
-| **2 — Permissions explainer** | pre-permission education | `guard_dog_watching` motif | **P1 (transitional):** mic explainer stays — the touch alert's background keep-alive still uses the audio session ("The guard needs the microphone permission to stay on watch when the screen locks — it never records"). **P2 (end-state):** mic step REMOVED; becomes the notification explainer ("I'll notify you if guarding is interrupted") → `UNUserNotificationCenter` prompt. |
+| **2 — Permissions explainer** | pre-permission education | `guard_dog_watching` motif | **P1 (transitional):** mic explainer stays — the touch alert's background keep-alive still uses the audio session ("The guard needs the microphone permission to stay on watch when the screen locks — it never records"). **P2 (end-state — IMPLEMENTED 2026-07-08, `pivot/p2-mic-removal`):** mic step REMOVED; the notification explainer ("I'll send a notification if anything interrupts my watch 🔔") → `UNUserNotificationCenter` prompt; also marks the in-Home pre-arm explainer as seen (no double prompt). |
 | **3 — On duty** | hand off to Home | `guard_dog_shield` (P3) | **Title:** "Ready to stand guard."  **Body:** "Arm me whenever you leave your phone."  **CTA:** "Start" |
 
 Strings move to `onboarding.*` v2 keys at P1; QA rows O1–O6 re-run with the
