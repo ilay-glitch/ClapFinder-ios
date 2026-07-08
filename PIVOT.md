@@ -73,6 +73,17 @@ fully dormant.
 `guard_dog_barking` (alarm overlay) · `guard_dog_wave` (onboarding welcome;
 existing wave may be reused) · `guard_dog_icon` (App Icon, fully opaque).
 
+## 6b. Known platform limitation — flashlight on locked alarms
+
+The alarm flashlight cannot fire while the phone is locked/backgrounded:
+`AVCaptureDevice` torch is camera-subsystem hardware and iOS restricts it to
+foreground apps (background torch writes are silently ignored; the system
+force-disables the torch when an app backgrounds; no entitlement exists).
+Verified 2026-07-08: our `FlashlightController` attempts unconditionally on the
+alarm path — the OS gates it. The alarm **sound** is the primary defense and
+works from locked (QA M7 ✅); the torch self-recovers the moment the app is
+foregrounded during an active alarm.
+
 ## 7. Fences (unchanged by the pivot)
 
 Ads/monetization policy untouched (App Open Ad rules, banner idle-only,

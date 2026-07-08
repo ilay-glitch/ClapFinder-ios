@@ -24,7 +24,8 @@ alarm on touch).
 | # | Check | Expected |
 |---|---|---|
 | C1 | Arm → grace → monitoring | "Tap to activate" → 5 s grace → armed |
-| C2 | Touch while armed | Alarm: sound loops + flashlight + overlay; DISARM stops everything |
+| C2 | Touch while armed (foreground) | Alarm: sound loops + flashlight pulses + overlay; DISARM stops everything |
+| C2b | Touch while armed (LOCKED/background) | Alarm SOUND loops (primary defense). **Flashlight does NOT fire — iOS platform limit** (torch is camera-subsystem hardware, foreground-only; the OS silently ignores background torch requests and force-disables the torch on backgrounding). Our code keeps attempting — so the torch starts pulsing the moment the phone is unlocked into the app while the alarm still runs. EXPECTED behavior, not a bug. |
 | C3 | Lock-screen guard | M2 ✅ (re-spot-check) |
 | C4 | Live Activity | Armed state on Lock Screen / Dynamic Island; disarm button works |
 | C5 | Watchdog | M6 ✅ |
