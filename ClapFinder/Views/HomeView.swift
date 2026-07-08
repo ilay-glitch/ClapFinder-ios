@@ -1,4 +1,4 @@
-import ClapFinderKitAudio
+import ClapFinderKitAds
 import ClapFinderKitData
 import ClapFinderKitDesign
 import ClapFinderKitMotion
@@ -6,37 +6,30 @@ import SwiftUI
 
 // MARK: - HomeView
 
-/// The single-screen app UI.
+/// The single-screen guard app UI (PIVOT.md — Touch Alert IS the product).
 ///
-/// Layout (top → bottom):
+/// Layout (top → bottom), mirroring the winning creative:
 ///   Header (title + subtitle)
-///   Toggle hero (PulseRings + ListeningToggle)
+///   Guard hero — arm/disarm, the single big "tap to activate" action
 ///   Status label
-///   Animal grid
+///   Guard grid (the 16 alert sounds)
 ///   Sensitivity control
-///   (Ad banner — Phase 2)
+///   (idle-only ad banner at the bottom)
 struct HomeView: View {
 
     @Environment(CatalogStore.self) private var catalogStore
-    @Environment(ResponseCoordinator.self) private var coordinator
     @Environment(TouchAlertCoordinator.self) private var touchAlert
     @Environment(InterstitialController.self) private var interstitials
 
-    /// Tracks the brief "Found you!" flash after a clap is detected.
-    @State private var showFoundState = false
     @State private var startError: String?
-    @State private var mode: DetectionMode = .clap
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
     @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
     @State private var showNotifExplainer = false
-    @State private var calibrator = ClapCalibrationController()
-    @State private var showCalibration = false
 
     private let gridColumns = Array(repeating: GridItem(.fixed(80), spacing: CFSpacing.sm), count: 4)
 
     var body: some View {
         ZStack {
-            // ── Background ──────────────────────────────────────────────
             CFColor.skyPrimary.ignoresSafeArea()
 
             ScrollView {
@@ -44,11 +37,13 @@ struct HomeView: View {
                     headerSection
                         .padding(.top, CFSpacing.lg)
 
-                    ModeSwitcherView(mode: $mode)
-                        .padding(.top, CFSpacing.md)
-
-                    heroSection
-                        .padding(.top, CFSpacing.lg)
+                    TouchAlertHeroView(
+                        state: touchAlert.state,
+                        graceRemaining: touchAlert.graceRemaining,
+                        gracePeriod: 5.0,
+                        onTap: toggleTouchAlert
+                    )
+                    .padding(.top, CFSpacing.lg)
 
                     statusLabel
                         .padding(.top, CFSpacing.md)
@@ -60,16 +55,11 @@ struct HomeView: View {
                             .padding(.top, CFSpacing.xs)
                     }
 
-                    animalSection
+                    guardGridSection
                         .padding(.top, CFSpacing.xl)
 
                     sensitivitySection
                         .padding(.top, CFSpacing.lg)
-
-                    if mode == .clap {
-                        calibrateSection
-                            .padding(.top, CFSpacing.md)
-                    }
 
 #if DEBUG
                     // Build provenance stamp — answers "which build is on the
@@ -88,8 +78,8 @@ struct HomeView: View {
             .scrollIndicators(.hidden)
 
             // Banner: bottom of Home ONLY, idle-only (ADS_DESIGN.md D3) —
-            // hidden while listening and while the touch alert is armed.
-            if !coordinator.isActive && touchAlert.state == .disarmed {
+            // hidden while the guard is armed or alarming.
+            if touchAlert.state == .disarmed {
                 VStack {
                     Spacer()
                     BannerAdView()
@@ -98,26 +88,7 @@ struct HomeView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: coordinator.isActive)
         .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .disarmed)
-        .onChange(of: coordinator.lastTriggeredAnimal) { _, animal in
-            guard animal != nil else { return }
-            showFoundState = true
-            Task {
-                try? await Task.sleep(for: .seconds(2.0))
-                showFoundState = false
-            }
-        }
-        .onChange(of: mode) { _, newMode in
-            // Modes are exclusive — one detection pipeline at a time (design §3).
-            switch newMode {
-            case .clap:
-                if touchAlert.state != .disarmed { touchAlert.disarm() }
-            case .touch:
-                if coordinator.isActive { coordinator.stop() }
-            }
-            startError = nil
-        }
         .overlay {
             if touchAlert.state == .alarming {
                 AlarmOverlayView(animal: touchAlert.armedAnimal) {
@@ -138,30 +109,17 @@ struct HomeView: View {
         } message: {
             Text(NSLocalizedString("touch.notifExplainer.body", comment: ""))
         }
-        .sheet(isPresented: $showCalibration, onDismiss: { calibrator.cancel() }, content: {
-            ClapCalibrationSheet(
-                calibrator: calibrator,
-                onCalibrated: { threshold in
-                    catalogStore.calibratedClapCrest = threshold
-                    showCalibration = false
-                },
-                onReset: {
-                    catalogStore.calibratedClapCrest = nil
-                    showCalibration = false
-                }
-            )
-        })
     }
 
     // MARK: Sections
 
     private var headerSection: some View {
         VStack(spacing: CFSpacing.xs) {
-            Text(NSLocalizedString("home.title", comment: "")) // allow-hardcoded-string until: pr-8
+            Text(NSLocalizedString("home.title", comment: ""))
                 .font(CFFont.display())
                 .foregroundStyle(CFColor.textPrimary)
 
-            Text(NSLocalizedString("home.subtitle", comment: "")) // allow-hardcoded-string until: pr-8
+            Text(NSLocalizedString("home.subtitle", comment: ""))
                 .font(CFFont.callout())
                 .foregroundStyle(CFColor.textSecondary)
                 .multilineTextAlignment(.center)
@@ -169,82 +127,34 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private var heroSection: some View {
-        switch mode {
-        case .clap:
-            ZStack {
-                // Pulse rings behind the toggle
-                PulseRingsView(isActive: coordinator.isActive, diameter: 72)
-
-                ListeningToggleView(isListening: coordinator.isActive) {
-                    toggleListening()
-                }
-            }
-            .frame(height: 180)
-
-        case .touch:
-            TouchAlertHeroView(
-                state: touchAlert.state,
-                graceRemaining: touchAlert.graceRemaining,
-                gracePeriod: 5.0,
-                onTap: toggleTouchAlert
-            )
-        }
-    }
-
     private var statusLabel: some View {
         Group {
-            if mode == .touch {
-                touchStatusLabel
-            } else if showFoundState {
-                Text(NSLocalizedString("status.found", comment: "")) // allow-hardcoded-string until: pr-8
-                    .foregroundStyle(CFColor.celebrationCyan)
-            } else if coordinator.isActive {
+            switch touchAlert.state {
+            case .disarmed:
+                Text(NSLocalizedString("touch.status.disarmed", comment: ""))
+                    .foregroundStyle(CFColor.textTertiary)
+            case .grace:
+                Text(NSLocalizedString("touch.status.grace", comment: ""))
+                    .foregroundStyle(CFColor.textSecondary)
+            case .monitoring:
                 HStack(spacing: CFSpacing.xs) {
                     Circle()
                         .fill(CFColor.listeningActive)
                         .frame(width: 8, height: 8)
-                    Text(NSLocalizedString("status.listening", comment: "")) // allow-hardcoded-string until: pr-8
+                    Text(NSLocalizedString("touch.status.monitoring", comment: ""))
                         .foregroundStyle(CFColor.listeningActive)
                 }
-            } else {
-                Text(NSLocalizedString("status.idle", comment: "")) // allow-hardcoded-string until: pr-8
-                    .foregroundStyle(CFColor.textTertiary)
+            case .alarming:
+                Text(NSLocalizedString("touch.status.alarming", comment: ""))
+                    .foregroundStyle(.red)
             }
         }
         .font(CFFont.callout())
-        .animation(.easeInOut(duration: 0.25), value: coordinator.isActive)
-        .animation(.easeInOut(duration: 0.25), value: showFoundState)
     }
 
-    @ViewBuilder
-    private var touchStatusLabel: some View {
-        switch touchAlert.state {
-        case .disarmed:
-            Text(NSLocalizedString("touch.status.disarmed", comment: ""))
-                .foregroundStyle(CFColor.textTertiary)
-        case .grace:
-            Text(NSLocalizedString("touch.status.grace", comment: ""))
-                .foregroundStyle(CFColor.textSecondary)
-        case .monitoring:
-            HStack(spacing: CFSpacing.xs) {
-                Circle()
-                    .fill(CFColor.listeningActive)
-                    .frame(width: 8, height: 8)
-                Text(NSLocalizedString("touch.status.monitoring", comment: ""))
-                    .foregroundStyle(CFColor.listeningActive)
-            }
-        case .alarming:
-            Text(NSLocalizedString("touch.status.alarming", comment: ""))
-                .foregroundStyle(.red)
-        }
-    }
-
-    private var animalSection: some View {
-        @Bindable var store = catalogStore
-
-        return VStack(alignment: .leading, spacing: CFSpacing.md) {
-            Text(NSLocalizedString("animals.header", comment: "")) // allow-hardcoded-string until: pr-8
+    private var guardGridSection: some View {
+        VStack(alignment: .leading, spacing: CFSpacing.md) {
+            Text(NSLocalizedString("animals.header", comment: ""))
                 .font(CFFont.headline())
                 .foregroundStyle(CFColor.textPrimary)
 
@@ -254,7 +164,7 @@ struct HomeView: View {
                         animal: animal,
                         isSelected: catalogStore.selectedAnimalID == animal.id
                     ) {
-                        selectAnimal(animal)
+                        selectGuard(animal)
                     }
                 }
             }
@@ -266,58 +176,7 @@ struct HomeView: View {
         return SensitivityControlView(sensitivity: $store.sensitivity)
     }
 
-    private var calibrateSection: some View {
-        VStack(spacing: CFSpacing.xs) {
-            Button {
-                calibrator.reset()
-                showCalibration = true
-            } label: {
-                Label(
-                    NSLocalizedString("calibrate.button", comment: ""),
-                    systemImage: "hand.tap"
-                )
-                .font(CFFont.callout())
-                .foregroundStyle(CFColor.textPrimary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, CFSpacing.sm)
-                .background(CFColor.surfaceCard, in: Capsule())
-            }
-            .disabled(coordinator.isActive)
-
-            if catalogStore.calibratedClapCrest != nil {
-                Text(NSLocalizedString("calibrate.active", comment: ""))
-                    .font(CFFont.caption())
-                    .foregroundStyle(CFColor.listeningActive)
-            }
-        }
-    }
-
     // MARK: Actions
-
-    private func toggleListening() {
-        startError = nil
-        if coordinator.isActive {
-            coordinator.stop()
-            // Interstitial attempt at stop-listening ONLY (ADS_DESIGN.md D1).
-            // Detection is now off; the policy re-checks every flag anyway.
-            interstitials.attemptPresentation(
-                isDetectionActive: coordinator.isActive,
-                isAlarmActive: touchAlert.state != .disarmed
-            )
-        } else {
-            guard let animal = catalogStore.selectedAnimal else { return }
-            do {
-                try coordinator.start(
-                    animal: animal,
-                    sensitivity: catalogStore.sensitivity,
-                    crestOverride: catalogStore.calibratedClapCrest
-                )
-                interstitials.recordUse()   // D1: a use = a listening session start
-            } catch {
-                startError = error.localizedDescription
-            }
-        }
-    }
 
     private func toggleTouchAlert() {
         startError = nil
@@ -328,7 +187,19 @@ struct HomeView: View {
                 showNotifExplainer = true
             }
         } else {
+            // D1-v2 (ADS_DESIGN, PM 2026-07-08): a use = a completed guard
+            // session — user-disarm from MONITORING only. Grace-cancels don't
+            // count; the alarm-dismiss path (AlarmOverlayView) never reaches
+            // here. Attempt fires at disarm-idle, policy re-checks all flags.
+            let completedSession = touchAlert.state == .monitoring
             touchAlert.disarm()
+            if completedSession {
+                interstitials.recordUse()
+                interstitials.attemptPresentation(
+                    isDetectionActive: false,
+                    isAlarmActive: touchAlert.state != .disarmed
+                )
+            }
         }
     }
 
@@ -341,19 +212,9 @@ struct HomeView: View {
         }
     }
 
-    private func selectAnimal(_ animal: Animal) {
-        // If already listening, restart with the new animal
-        if coordinator.isActive {
-            coordinator.stop()
-            catalogStore.selectedAnimalID = animal.id
-            guard let selected = catalogStore.selectedAnimal else { return }
-            do {
-                try coordinator.start(animal: selected, sensitivity: catalogStore.sensitivity)
-            } catch {
-                startError = error.localizedDescription
-            }
-        } else {
-            catalogStore.selectedAnimalID = animal.id
-        }
+    /// Persists the guard choice. While armed, monitoring continues with the
+    /// sound it was armed with; the new choice takes effect on the next arm.
+    private func selectGuard(_ animal: Animal) {
+        catalogStore.selectedAnimalID = animal.id
     }
 }

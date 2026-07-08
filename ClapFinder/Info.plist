@@ -35,7 +35,7 @@
         All Ages rating: keep language simple and child-friendly.
     -->
     <key>NSMicrophoneUsageDescription</key>
-    <string>ClapFinder listens for claps so you can find your phone. The microphone is only used for clap detection and nothing else.</string>
+    <string>Guard Dog uses the microphone permission only to keep guarding when the screen locks. It never records or stores audio.</string>
 
     <!-- ── Tracking (ATT) ───────────────────────────────────────── -->
     <!--
@@ -43,7 +43,7 @@
         All Ages copy: plain English, no marketing language.
     -->
     <key>NSUserTrackingUsageDescription</key>
-    <string>ClapFinder may show ads to keep the app free. Allow tracking to see ads that are relevant to you.</string>
+    <string>Guard Dog may show ads to keep the app free. Allow tracking to see ads that are relevant to you.</string>
 
     <!-- ── AdMob (Google Mobile Ads SDK) ─────────────────────────── -->
     <!--

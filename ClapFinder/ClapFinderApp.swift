@@ -13,17 +13,16 @@ import SwiftUI
 struct ClapFinderApp: App {
 
     @State private var catalogStore = CatalogStore()
-    @State private var coordinator: ResponseCoordinator
     @State private var touchAlert: TouchAlertCoordinator
     @State private var attManager = ATTManager()
     @State private var interstitials = InterstitialController()
 
     init() {
-        // Both coordinators share ONE AlarmResponder (sound + flashlight) —
-        // the AlertTrigger extraction from TOUCH_ALERT_DESIGN.md §6.
-        let responseCoordinator = ResponseCoordinator()
-        _coordinator = State(initialValue: responseCoordinator)
-        _touchAlert = State(initialValue: TouchAlertCoordinator(responder: responseCoordinator.responder))
+        // PIVOT.md: the guard (touch alert) is the product — it owns the
+        // response pipeline directly. ResponseCoordinator (clap) is dormant
+        // in the package, no longer constructed here.
+        let responder = AlarmResponder(soundPlayer: SoundPlayer(), flashlight: FlashlightController())
+        _touchAlert = State(initialValue: TouchAlertCoordinator(responder: responder))
     }
     @State private var hasRequestedATT = false
 
@@ -53,7 +52,6 @@ struct ClapFinderApp: App {
             case .home:
                 HomeView()
                     .environment(catalogStore)
-                    .environment(coordinator)
                     .environment(touchAlert)
                     .environment(interstitials)
                     .transition(.opacity)
@@ -96,7 +94,7 @@ struct ClapFinderApp: App {
 
         case .background:
             // UIBackgroundModes = ["audio"] keeps the engine running.
-            Self.logger.info("App backgrounded — detection continues via background audio mode")
+            Self.logger.info("App backgrounded — guard monitoring continues via background audio mode")
 
         case .inactive:
             break

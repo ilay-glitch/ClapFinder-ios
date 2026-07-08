@@ -20,7 +20,16 @@ idle-only.
 
 ## 2. Decisions (RULED — PM 2026-06-11)
 
-**D1 — "Use" definition — RULING: approved.** One use = one **clap-mode
+**D1-v2 — "Use" redefined at the pivot (PM RULING 2026-07-08).** With clap
+mode removed (PIVOT.md), a **use = a completed guard session**: armed, then
+**disarmed by the user from the monitoring state** — not a grace-cancel, and
+never the alarm-dismiss path. The interstitial attempt fires at **disarm-idle**
+(user disarmed, back on Home): never during arm, never during an active alarm,
+never on alarm-dismiss. Frequency mechanics (D2) unchanged. Rationale:
+disarm-idle is the only task-complete moment — the exact analog of the original
+"listening session ended."
+
+**D1 (v1, superseded) — "Use" definition — RULING: approved.** One use = one **clap-mode
 listening session start**. The interstitial attempt happens at
 **stop-listening only**. Touch-alert sessions neither count as uses nor
 trigger attempts — constraint 4 bans interstitials on arm/disarm, and

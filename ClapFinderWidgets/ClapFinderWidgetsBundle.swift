@@ -9,6 +9,7 @@ import WidgetKit
 struct ClapFinderWidgetsBundle: WidgetBundle {
     var body: some Widget {
         TouchAlertLiveActivity()
-        ClapListeningLiveActivity()
+        // ClapListeningLiveActivity: unregistered at the pivot (PIVOT.md §4) —
+        // the type stays in the target, dormant.
     }
 }

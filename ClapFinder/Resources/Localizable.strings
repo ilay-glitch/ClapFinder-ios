@@ -1,42 +1,33 @@
-/* ClapFinder — Localizable Strings */
+/* Guard Dog — Localizable Strings */
 
 /* MARK: - Privacy / permissions */
 /* Note: NSMicrophoneUsageDescription in Info.plist must match the intent here */
-"permission.microphone"   = "ClapFinder listens for claps so you can find your phone. The microphone is only used for clap detection and nothing else.";
+"permission.microphone"   = "Guard Dog uses the microphone permission only to keep guarding when the screen locks. It never records or stores audio.";
 
 /* Note: NSUserTrackingUsageDescription in Info.plist must match the intent here */
-"permission.tracking"     = "ClapFinder may show ads to keep the app free. Allow tracking to see ads that are relevant to you.";
+"permission.tracking"     = "Guard Dog may show ads to keep the app free. Allow tracking to see ads that are relevant to you.";
 
 /* MARK: - Splash screen */
-"splash.tagline"          = "Clap your hands — your phone answers! 🐶";
+"splash.tagline"          = "Nobody touches your phone. Ever. 🐶🛡️";
 "splash.loading"          = "Loading %d%%…";
 /* Required while an App Open Ad request is in flight */
 "splash.adDisclaimer"     = "This action can contain ads";
 
 /* MARK: - Onboarding (first launch only) */
 "onboarding.progress"      = "STEP %d OF 3";
-"onboarding.step1.title"   = "Hi, I'm on the case!";
-"onboarding.step1.body"    = "To find your phone, just clap twice 👏";
+"onboarding.step1.title"   = "I'll guard your phone!";
+"onboarding.step1.body"    = "Put me on watch — if anyone touches your phone, I bark 🐶🛡️";
 "onboarding.continue"      = "Continue";
-"onboarding.step2.title"   = "I listen for your clap";
-"onboarding.step2.body"    = "Only listens for claps · Your privacy matters 🔒";
+"onboarding.step2.title"   = "How I stay on watch";
+"onboarding.step2.body"    = "The microphone permission keeps me on guard when the screen locks — I never record 🔒";
 "onboarding.step2.cta"     = "Enable Microphone";
-"onboarding.step3.title"   = "All set!";
-"onboarding.step3.body"    = "Let's test it — give it a clap.";
+"onboarding.step3.title"   = "Ready to stand guard.";
+"onboarding.step3.body"    = "Arm me whenever you leave your phone.";
 "onboarding.step3.cta"     = "Start";
 
 /* MARK: - Home screen */
-"home.title"              = "ClapFinder";
-"home.subtitle"           = "Clap twice to find your phone";
-
-/* Listening toggle */
-"toggle.start"            = "Start listening";
-"toggle.stop"             = "Stop listening";
-
-/* Status labels */
-"status.idle"             = "Tap the mic to start";
-"status.listening"        = "Listening…";
-"status.found"            = "Found you! 🎉";
+"home.title"              = "Guard Dog";
+"home.subtitle"           = "Don't touch my phone!";
 
 /* Sensitivity control */
 "sensitivity.label"       = "Sensitivity";
@@ -45,38 +36,21 @@
 "sensitivity.high"        = "High";
 
 /* Animal picker section header */
-"animals.header"          = "Choose a sound";
-
-/* Clap calibration (SOUND_RECOGNITION_DESIGN.md §5) */
-"calibrate.button"        = "Calibrate my clap";
-"calibrate.active"        = "✓ Tuned to your clap";
-"calibrate.title"         = "Calibrate your clap";
-"calibrate.instructions"  = "Hold your phone where you usually leave it, then clap twice — a few times — during the countdown. We'll tune detection to your clap.";
-"calibrate.start"         = "Start";
-"calibrate.listening"     = "Listening… clap twice, a few times";
-"calibrate.success"       = "All set! Detection is now tuned to your clap.";
-"calibrate.done"          = "Done";
-"calibrate.failed"        = "Didn't catch enough claps. Try again, a bit louder.";
-"calibrate.retry"         = "Try again";
-"calibrate.useDefault"    = "Use default sensitivity";
+"animals.header"          = "Choose your guard";
 
 /* MARK: - Touch Alert (PR-11) */
-"mode.clap"                    = "Clap";
-"mode.touch"                   = "Touch Alert";
 "touch.status.disarmed"        = "Tap the shield to arm";
 "touch.status.grace"           = "Arming — put your phone down…";
 "touch.status.monitoring"      = "Armed — don't touch 🛡️";
 "touch.status.alarming"        = "Motion detected!";
 "touch.disarm"                 = "DISARM";
 "touch.notifExplainer.title"   = "One quick thing";
-"touch.notifExplainer.body"    = "ClapFinder will ask to send notifications — so we can tell you if monitoring stops.";
+"touch.notifExplainer.body"    = "Guard Dog will ask to send notifications — so we can tell you if guarding stops.";
 "touch.notifExplainer.ok"      = "Got it";
 "touchAlert.notification.title" = "Touch Alert stopped";
 "touchAlert.notification.body"  = "The system interrupted monitoring. Your phone is not being watched right now.";
 
 /* Accessibility */
-"a11y.toggle.on"          = "Clap detection on";
-"a11y.toggle.off"         = "Clap detection off";
 "a11y.animal.selected"    = "%@, %@. Selected.";
 "a11y.animal.unselected"  = "%@, %@. Not selected.";
 "a11y.touch.armed"        = "Touch alert armed. Tap to disarm.";
@@ -86,5 +60,3 @@
 "liveactivity.status.grace"     = "Arming — %d…";
 "liveactivity.status.armed"     = "Armed — don't touch 🛡️";
 "liveactivity.status.alarming"  = "Motion detected!";
-"liveactivity.clap.listening"   = "Listening — clap to find";
-"liveactivity.clap.stop"        = "STOP";
