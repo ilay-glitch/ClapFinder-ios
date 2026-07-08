@@ -53,6 +53,7 @@ struct ClapFinderApp: App {
                 HomeView()
                     .environment(catalogStore)
                     .environment(touchAlert)
+                    .environment(interstitials)
                     .transition(.opacity)
             }
         }

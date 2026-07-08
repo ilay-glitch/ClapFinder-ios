@@ -1,3 +1,4 @@
+import ClapFinderKitAds
 import ClapFinderKitData
 import ClapFinderKitDesign
 import ClapFinderKitMotion
@@ -18,6 +19,7 @@ struct HomeView: View {
 
     @Environment(CatalogStore.self) private var catalogStore
     @Environment(TouchAlertCoordinator.self) private var touchAlert
+    @Environment(InterstitialController.self) private var interstitials
 
     @State private var startError: String?
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
@@ -185,7 +187,19 @@ struct HomeView: View {
                 showNotifExplainer = true
             }
         } else {
+            // D1-v2 (ADS_DESIGN, PM 2026-07-08): a use = a completed guard
+            // session — user-disarm from MONITORING only. Grace-cancels don't
+            // count; the alarm-dismiss path (AlarmOverlayView) never reaches
+            // here. Attempt fires at disarm-idle, policy re-checks all flags.
+            let completedSession = touchAlert.state == .monitoring
             touchAlert.disarm()
+            if completedSession {
+                interstitials.recordUse()
+                interstitials.attemptPresentation(
+                    isDetectionActive: false,
+                    isAlarmActive: touchAlert.state != .disarmed
+                )
+            }
         }
     }
 
