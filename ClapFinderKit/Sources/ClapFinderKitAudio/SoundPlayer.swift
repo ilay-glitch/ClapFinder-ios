@@ -23,6 +23,11 @@ public final class SoundPlayer {
     /// `true` while a sound is actively playing.
     public private(set) var isPlaying = false
 
+    /// When the last playback actually ended (one-shot finished or `stop()`).
+    /// Authoritative anchor for the feedback-suppression tail grace — trigger
+    /// timing can't observe this (ResponseSuppression).
+    public private(set) var lastPlaybackEndedAt: Date?
+
     // MARK: Private
 
     private var player: AVAudioPlayer?
@@ -75,7 +80,10 @@ public final class SoundPlayer {
                 Task { @MainActor [weak self, weak audioPlayer] in
                     try? await Task.sleep(for: .seconds(max(duration, 0.05)))
                     // Guard against the player being replaced mid-flight
-                    if self?.player === audioPlayer { self?.isPlaying = false }
+                    if self?.player === audioPlayer {
+                        self?.isPlaying = false
+                        self?.lastPlaybackEndedAt = Date()
+                    }
                 }
             }
         } catch {
@@ -85,6 +93,7 @@ public final class SoundPlayer {
 
     /// Stops playback immediately.
     public func stop() {
+        if isPlaying { lastPlaybackEndedAt = Date() }
         player?.stop()
         player = nil
         isPlaying = false

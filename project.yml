@@ -64,6 +64,18 @@ targets:
         DEVELOPMENT_TEAM: 59FH4WW82C
         TARGETED_DEVICE_FAMILY: "1,2"
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    preBuildScripts:
+      - name: Generate BuildStamp
+        basedOnDependencyAnalysis: false
+        script: |
+          STAMP="$(git -C "$SRCROOT" rev-parse --short HEAD 2>/dev/null || echo dev) · $(date '+%m-%d %H:%M')"
+          cat > "$SRCROOT/ClapFinder/Debug/BuildStamp.swift" <<STAMPEOF
+          // GENERATED at build time by the "Generate BuildStamp" pre-build script
+          // (project.yml). Gitignored — do not edit or commit.
+          enum BuildStamp {
+              static let value = "$STAMP"
+          }
+          STAMPEOF
     dependencies:
       - package: ClapFinderKit
         product: ClapFinderKitAds

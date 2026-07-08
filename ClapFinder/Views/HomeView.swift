@@ -69,10 +69,19 @@ struct HomeView: View {
                     if mode == .clap {
                         calibrateSection
                             .padding(.top, CFSpacing.md)
-                            .padding(.bottom, CFSpacing.xxl)
-                    } else {
-                        Color.clear.frame(height: CFSpacing.xxl)
                     }
+
+#if DEBUG
+                    // Build provenance stamp — answers "which build is on the
+                    // phone?" by looking at it (DEBUG only, never ships).
+                    Text(verbatim: BuildStamp.value)
+                        .font(CFFont.caption())
+                        .foregroundStyle(CFColor.textTertiary)
+                        .padding(.top, CFSpacing.md)
+                        .padding(.bottom, CFSpacing.xxl)
+#else
+                    Color.clear.frame(height: CFSpacing.xxl)
+#endif
                 }
                 .padding(.horizontal, CFSpacing.md)
             }

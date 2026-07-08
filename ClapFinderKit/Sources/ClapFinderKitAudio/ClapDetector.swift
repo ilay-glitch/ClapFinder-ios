@@ -45,7 +45,7 @@ public final class ClapDetector {
     // MARK: - Private — AVFoundation (non-Sendable, main-actor access only)
 
     // All `engine` access is on the main actor → `nonisolated(unsafe)` is safe.
-    nonisolated(unsafe) private let engine = AVAudioEngine()
+    nonisolated(unsafe) let engine = AVAudioEngine()   // internal: +AudioSession ext
 
     // MARK: - Private — detection state
 
@@ -57,13 +57,21 @@ public final class ClapDetector {
     private var currentCrestThreshold: Float = Sensitivity.medium.clapCrestThreshold
     /// When set, the tap forwards each above-floor buffer's crest here instead
     /// of running detection — used by calibration capture.
-    private var calibrationHandler: (@MainActor (Float) -> Void)?
+    var calibrationHandler: (@MainActor (Float) -> Void)?   // internal: +Calibration ext
     /// Notification observers, cancelled in `tearDown()`.
-    private var interruptionTask: Task<Void, Never>?
-    private var routeChangeTask: Task<Void, Never>?
+    var interruptionTask: Task<Void, Never>?   // internal: +AudioSession ext
+    var routeChangeTask: Task<Void, Never>?
 
     /// Stage-2 spectral confirm (v3). Immutable after init → audio-tap safe.
     private let spectralAnalyzer = ClapSpectralAnalyzer()
+    /// Hard feed gate (set by ResponseCoordinator): while true, buffers are
+    /// dropped before the FSM — playback + tail can't seed or pair anything.
+    var feedGate: (@MainActor () -> Bool)?
+    /// Engine-start moment; buffers in the first `startTransientGrace` are
+    /// dropped (the tap start-up transient was seeding firstClap at t≈0.3–1.0).
+    private var engineStartedAt = Date.distantPast
+    /// Grace after engine start during which all buffers are dropped.
+    public let startTransientGrace: TimeInterval = 1.0
     /// Veto master switch — OFF until thresholds are tuned (then flip true).
     var spectralVetoEnabled = false
     /// `false` on Bluetooth/non-built-in mics → crest-only fallback (§11).
@@ -72,11 +80,14 @@ public final class ClapDetector {
 #if DEBUG
     /// Measure-first instrumentation (CLAP_DIAGNOSTICS.md), DEBUG-only/additive.
     let diagnostics = ClapDiagnostics.Session()
+    /// SoundAnalysis experiment probe — logs alongside crest, never gates
+    /// (SOUND_ANALYSIS_INVESTIGATION.md §5). DEBUG-only.
+    let snProbe = ClapClassifierProbe()
 #endif
 
     // MARK: - Logging
 
-    nonisolated private static let logger = Logger(
+    nonisolated static let logger = Logger(   // internal: extensions log too
         subsystem: "com.appcentral.clapfinder",
         category: "ClapDetector"
     )
@@ -102,6 +113,7 @@ public final class ClapDetector {
 
         try activateEngine()
         updateSpectralRouteEligibility()
+        engineStartedAt = Date()
         isListening = true
         Self.logger.info("Listening started")
     }
@@ -113,32 +125,12 @@ public final class ClapDetector {
         Self.logger.info("Listening stopped")
     }
 
-    // MARK: - Calibration capture
-
-    /// Forwards each above-floor buffer's crest to `onCrest` (no detection) to
-    /// learn the user's clap. Call `stopCalibration()` when done.
-    public func startCalibration(onCrest: @escaping @MainActor (Float) -> Void) throws {
-        guard !isListening && calibrationHandler == nil else { return }
-        calibrationHandler = onCrest
-        do {
-            try activateEngine()
-        } catch {
-            calibrationHandler = nil
-            throw error
-        }
-        Self.logger.info("Calibration capture started")
-    }
-
-    public func stopCalibration() {
-        guard calibrationHandler != nil else { return }
-        calibrationHandler = nil
-        tearDown()
-        Self.logger.info("Calibration capture stopped")
-    }
+    // Calibration capture (startCalibration/stopCalibration) lives in
+    // ClapDetector+Calibration.swift.
 
     // MARK: - Private — engine bring-up
 
-    private func activateEngine() throws {
+    func activateEngine() throws {
 #if os(iOS)
         do {
             try configureAudioSession()
@@ -161,14 +153,21 @@ public final class ClapDetector {
 
     // MARK: - Private — setup / teardown
 
-    private func installTap() {
+    func installTap() {   // internal: +AudioSession ext
         let inputNode = engine.inputNode
         let format = inputNode.inputFormat(forBus: 0)
 
         // The tap runs on a real-time AUDIO thread — must be `@Sendable`. Compute
         // features here, then hop to the main actor with the results.
         let analyzer = spectralAnalyzer
-        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, _ in
+#if DEBUG
+        let probe = snProbe   // measurement-only; feeds the same buffers
+        if calibrationHandler == nil { probe.start(format: format) }
+#endif
+        let onBuffer: @Sendable (AVAudioPCMBuffer, AVAudioTime) -> Void = { [weak self] buffer, when in
+#if DEBUG
+            probe.analyze(buffer, at: when)
+#endif
             let rms = ClapDSP.rmsAmplitude(buffer: buffer)
             let peak = ClapDSP.peakAmplitude(buffer: buffer)
             let dBFS = 20.0 * log10(max(rms, Float(1e-10)))
@@ -194,7 +193,10 @@ public final class ClapDetector {
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: format, block: onBuffer)
     }
 
-    private func tearDown() {
+    func tearDown() {   // internal: +Calibration ext
+#if DEBUG
+        snProbe.stop()
+#endif
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         interruptionTask?.cancel()
@@ -213,6 +215,15 @@ public final class ClapDetector {
     /// default clap-like so timing-only tests can omit them (confirm passes through).
     func processSample(dBFS: Float, crest: Float = 100, hfr: Float = 1, sfm: Float = 1, at now: Date = Date()) {
         guard isListening, !inCooldown else { return }
+
+        // HARD GATE: drop the buffer entirely while a response plays (+tail
+        // grace) or during the engine-start transient. Unlike output-filtering,
+        // gated buffers can't even seed firstClap for a later pair.
+        if now < engineStartedAt.addingTimeInterval(startTransientGrace) || feedGate?() == true {
+            reset()
+            if dBFS > dBFloor { diag(.gated, dBFS, crest, hfr: hfr, sfm: sfm) }
+            return
+        }
 
         let isPeak = dBFS > dBFloor && crest > currentCrestThreshold
         let confirmed = spectralVetoEnabled   // stage 2 veto (reject-only); off → crest-only
@@ -264,123 +275,13 @@ public final class ClapDetector {
         }
     }
 
-    private func reset() {
+    func reset() {   // internal: +AudioSession ext
         firstClapTime = nil
         releasedSinceFirstClap = false
     }
 
-#if os(iOS)
-    // MARK: - AVAudioSession configuration
-
-    private func configureAudioSession() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(
-            .playAndRecord,
-            options: [.mixWithOthers, .allowBluetooth, .defaultToSpeaker]
-        )
-        try session.setActive(true)
-    }
-
-    // MARK: - Notification observers
-
-    /// Subscribes to AVAudioSession interruption and route-change notifications
-    /// using Swift Concurrency async streams (no @objc needed, Swift 6 safe).
-    private func startNotificationObservers() {
-        interruptionTask?.cancel()
-        interruptionTask = observe(AVAudioSession.interruptionNotification) { [weak self] in
-            self?.handleInterruption($0)
-        }
-        routeChangeTask = observe(AVAudioSession.routeChangeNotification) { [weak self] in
-            self?.handleRouteChange($0)
-        }
-    }
-
-    private func observe(
-        _ name: Notification.Name,
-        _ handle: @escaping @MainActor (Notification) -> Void
-    ) -> Task<Void, Never> {
-        Task { @MainActor in
-            for await notification in NotificationCenter.default.notifications(named: name) {
-                guard !Task.isCancelled else { return }
-                handle(notification)
-            }
-        }
-    }
-
-    private func handleInterruption(_ notification: Notification) {
-        guard
-            let info = notification.userInfo,
-            let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let interruptionType = AVAudioSession.InterruptionType(rawValue: typeValue)
-        else { return }
-
-        switch interruptionType {
-        case .began:
-            // Pause without tearing down (keep isListening true to resume later).
-            Self.logger.info("Audio session interrupted — pausing engine")
-            engine.pause()
-            reset()
-
-        case .ended:
-            guard
-                let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt,
-                AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume)
-            else {
-                Self.logger.info("Interruption ended — shouldResume not set, stopping")
-                tearDown()
-                return
-            }
-            Self.logger.info("Interruption ended — resuming engine")
-            resumeAfterInterruption()
-
-        @unknown default:
-            break
-        }
-    }
-
-    private func handleRouteChange(_ notification: Notification) {
-        guard
-            let info = notification.userInfo,
-            let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
-            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
-        else { return }
-
-        updateSpectralRouteEligibility()   // built-in ↔ BT may have swapped
-
-        switch reason {
-        case .oldDeviceUnavailable:
-            // e.g. Bluetooth headset disconnected; engine may stall — restart tap
-            Self.logger.info("Audio route changed (old device unavailable) — restarting tap")
-            restartTap()
-        default:
-            break
-        }
-    }
-
-    private func resumeAfterInterruption() {
-        do {
-            try AVAudioSession.sharedInstance().setActive(true)
-            try engine.start()
-            Self.logger.info("Engine resumed after interruption")
-        } catch {
-            Self.logger.error("Failed to resume after interruption: \(error)")
-            tearDown()
-        }
-    }
-
-    private func restartTap() {
-        engine.inputNode.removeTap(onBus: 0)
-        installTap()
-        if !engine.isRunning {
-            do {
-                try engine.start()
-            } catch {
-                Self.logger.error("Failed to restart engine after route change: \(error)")
-                tearDown()
-            }
-        }
-    }
-#endif
+    // AVAudioSession config + interruption/route observers live in
+    // ClapDetector+AudioSession.swift.
 
     // MARK: - Testing support
 
@@ -391,9 +292,16 @@ public final class ClapDetector {
     public func setListeningForTesting(_ listening: Bool, sensitivity: Sensitivity) {
         isListening = listening
         currentCrestThreshold = sensitivity.clapCrestThreshold
+        engineStartedAt = .distantPast   // timing tests bypass the start gate
 #if DEBUG
         diagnostics.configure(threshold: currentCrestThreshold, calibrated: false, sensitivity: sensitivity)
 #endif
+    }
+
+    /// ⚠️ TEST-ONLY. Sets the engine-start stamp for start-transient-gate tests.
+    @_spi(Testing)
+    public func setEngineStartedForTesting(at date: Date) {
+        engineStartedAt = date
     }
 
 }
