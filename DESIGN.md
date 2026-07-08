@@ -7,6 +7,14 @@
 
 ## 1. Brand direction
 
+> **PIVOT 2026-07-02 (PIVOT.md):** the product is now **"Guard Dog — Don't
+> Touch My Phone"** — an anti-touch phone-guard app. Same character, same
+> sky-blue system; the mascot's job changes from *detective searching* to
+> **guard dog protecting**. Home mirrors the winning creative: character grid
+> (the 16 alert sounds as "guards") + one big "Tap to activate" action, no tab
+> bar at launch. Guard-pose assets land at pivot P3; visual tokens below are
+> unchanged.
+
 Bright, cheerful, trustworthy. A sunny **sky-blue** stage for a friendly 3D
 detective-dog mascot. Content lives on **white / cream cards**; sky-blue is the
 ambient backdrop and accent only — text never sits directly on the sky-blue.
@@ -123,4 +131,5 @@ it. No fur-edge cutouts anywhere.
 | Date | Version | Change |
 |------|---------|--------|
 | 2026-06-09 | v3 | Dark purple→pink→orange system signed off. |
+| 2026-07-02 | pivot | **Product pivot** (PIVOT.md): Guard Dog / anti-touch app. Palette & tokens unchanged; mascot role → guard; clap-mode UI removed at P1; guard assets at P3. |
 | 2026-06-21 | v-next | **Sky-blue redesign — LOCKED.** Light theme, dark-on-light text (`#14233D`, AA/AAA verified), flat `ctaBlue` CTAs, detective-dog mascot. Brand gradients re-pointed to blue; `backgroundPrimary`/`backgroundElevated`/violet-pink-orange/splash tokens deprecated. Two direct raw-anchor refs repointed (`AnimalCardView`, `ClapCalibrationSheet`). |
