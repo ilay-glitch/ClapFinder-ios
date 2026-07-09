@@ -90,3 +90,16 @@ Ads/monetization policy untouched (App Open Ad rules, banner idle-only,
 interstitial counter). Touch-alert *logic* (CoreMotion, alarm, notification
 watchdog) is proven — P1 reskins and promotes it, **no rewrite**. Sound
 catalog: all 16 sounds stay, re-framed as the guard grid.
+
+
+## 8. Post-launch list
+
+- **Critical Alerts entitlement application** (`com.apple.developer.
+  usernotifications.critical-alerts`): lets the alarm notification's sound
+  bypass the silent switch and Focus even if the app process is dead —
+  robustness layer on top of the in-app alarm audio. Security justification to
+  submit: an anti-theft alarm that a thief can defeat by Focus/silent is not an
+  alarm; the notification is the theft-moment alert. Manual Apple review
+  (days–weeks, resubmissions common) — deliberately NOT a v1 gate.
+- Foghorn alert-sound replacement (PM pick pending; Warfare horn placeholder).
+- Second detection mode (would introduce the tab bar per DESIGN pivot note).

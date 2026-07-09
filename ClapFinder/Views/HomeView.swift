@@ -25,6 +25,10 @@ struct HomeView: View {
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
     @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
     @State private var showNotifExplainer = false
+    /// LED-flash tip: appears after the first completed guard session, until
+    /// dismissed (no deep-link — Settings panes are private API).
+    @AppStorage("home.hasCompletedFirstSession") private var hasCompletedFirstSession = false
+    @AppStorage("home.flashTipDismissed") private var flashTipDismissed = false
 
     private let gridColumns = Array(repeating: GridItem(.fixed(80), spacing: CFSpacing.sm), count: 4)
 
@@ -70,6 +74,11 @@ struct HomeView: View {
 
                     statusLabel
                         .padding(.top, CFSpacing.md)
+
+                    if hasCompletedFirstSession && !flashTipDismissed {
+                        flashTipCard
+                            .padding(.top, CFSpacing.md)
+                    }
 
                     if let err = startError {
                         Text(err) // allow-hardcoded-string until: pr-8
@@ -194,6 +203,29 @@ struct HomeView: View {
         }
     }
 
+    /// One-time LED-flash tip (PM spec 2026-07-09): full settings path as
+    /// text — deep-linking to Accessibility is private API (rejection risk).
+    private var flashTipCard: some View {
+        HStack(alignment: .top, spacing: CFSpacing.sm) {
+            VStack(alignment: .leading, spacing: CFSpacing.xs) {
+                Text(NSLocalizedString("home.flashTip.title", comment: ""))
+                    .font(CFFont.headline())
+                    .foregroundStyle(CFColor.textPrimary)
+                Text(NSLocalizedString("home.flashTip.body", comment: ""))
+                    .font(CFFont.caption())
+                    .foregroundStyle(CFColor.textSecondary)
+            }
+            Spacer()
+            Button(NSLocalizedString("home.flashTip.dismiss", comment: "")) {
+                flashTipDismissed = true
+            }
+            .font(CFFont.caption())
+            .foregroundStyle(CFColor.ctaBlue)
+        }
+        .padding(CFSpacing.md)
+        .background(CFColor.cream, in: RoundedRectangle(cornerRadius: CFRadius.card, style: .continuous))
+    }
+
     private var sensitivitySection: some View {
         @Bindable var store = catalogStore
         return SensitivityControlView(sensitivity: $store.sensitivity)
@@ -217,6 +249,7 @@ struct HomeView: View {
             let completedSession = touchAlert.state == .monitoring
             touchAlert.disarm()
             if completedSession {
+                hasCompletedFirstSession = true
                 interstitials.recordUse()
                 interstitials.attemptPresentation(
                     isDetectionActive: false,

@@ -29,6 +29,8 @@ alarm on touch).
 | C3 | Lock-screen guard | M2 ✅ (re-spot-check) |
 | C4 | Live Activity | Armed state on Lock Screen / Dynamic Island; disarm button works |
 | C5 | Watchdog | M6 ✅ |
+| C6 | LED flash on locked alarm | LED Flash for Alerts ON (Accessibility) → lock → trigger → sound + **system LED blinks** on the alarm notification, repeats ~5 s apart (3 total); disarm cancels pending repeats (none fires late) |
+| C7 | Flash tip card | After first user-disarm, the 💡 tip card appears on Home; "Got it" dismisses permanently |
 
 ## D. New sounds (Mixkit, SOUNDS_LICENSES.md)
 | # | Check | Expected |

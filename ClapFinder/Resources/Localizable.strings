@@ -16,7 +16,7 @@
 "onboarding.step1.body"    = "Put me on watch — if anyone touches your phone, I bark 🐶🛡️";
 "onboarding.continue"      = "Continue";
 "onboarding.step2.title"   = "If guarding stops, you'll know";
-"onboarding.step2.body"    = "I'll send a notification if anything interrupts my watch 🔔";
+"onboarding.step2.body"    = "I'll send a notification if anything interrupts my watch 🔔 Tip: turn on LED Flash for Alerts (Settings → Accessibility) and I'll blink the flash too!";
 "onboarding.step2.cta"     = "Enable Notifications";
 "onboarding.step3.title"   = "Ready to stand guard.";
 "onboarding.step3.body"    = "Arm me whenever you leave your phone.";
@@ -35,6 +35,11 @@
 /* Animal picker section header */
 "animals.header"          = "Choose your guard";
 
+/* One-time flash tip card (after first disarm) */
+"home.flashTip.title"     = "💡 Make the flash blink too";
+"home.flashTip.body"      = "Turn on LED Flash for Alerts in Settings → Accessibility → Audio/Visual, and the flash blinks when the alarm fires — even locked.";
+"home.flashTip.dismiss"   = "Got it";
+
 /* MARK: - Touch Alert (PR-11) */
 "touch.status.disarmed"        = "Tap the shield to arm";
 "touch.status.grace"           = "Arming — put your phone down…";
@@ -44,6 +49,8 @@
 "touch.notifExplainer.title"   = "One quick thing";
 "touch.notifExplainer.body"    = "Guard Dog will ask to send notifications — so we can tell you if guarding stops.";
 "touch.notifExplainer.ok"      = "Got it";
+"touchAlert.alarmNotification.title" = "🚨 Motion detected!";
+"touchAlert.alarmNotification.body"  = "Guard Dog caught someone touching your phone!";
 "touchAlert.notification.title" = "Touch Alert stopped";
 "touchAlert.notification.body"  = "The system interrupted monitoring. Your phone is not being watched right now.";
 
