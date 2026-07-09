@@ -33,17 +33,15 @@ public enum NotifDiag {
     }
 
     /// Current UIApplication state — the "foreground-but-locked?" question.
+    @MainActor
     public static func appState() -> String {
 #if canImport(UIKit) && os(iOS)
-        if Thread.isMainThread {
-            switch UIApplication.shared.applicationState {
-            case .active: return "active"
-            case .inactive: return "inactive"
-            case .background: return "background"
-            @unknown default: return "unknown"
-            }
+        switch UIApplication.shared.applicationState {
+        case .active: return "active"
+        case .inactive: return "inactive"
+        case .background: return "background"
+        @unknown default: return "unknown"
         }
-        return "offMain"
 #else
         return "n/a"
 #endif
