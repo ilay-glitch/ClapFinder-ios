@@ -10,8 +10,8 @@ import UserNotifications
 /// alarm notification never "presented" and the system's LED Flash for Alerts
 /// never fired. Presenting with `.banner/.list/.sound` restores delivery in
 /// every app state; the LED blink rides the presentation.
-// @unchecked Sendable: stateless (only a nonisolated static logger) — safe to
-// share across the arbitrary queues UNUserNotificationCenter calls back on.
+/// `@unchecked Sendable`: stateless (only a static logger) — safe to share
+/// across the arbitrary queues UNUserNotificationCenter calls back on.
 final class NotificationPresenter: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
 
     static let shared = NotificationPresenter()
