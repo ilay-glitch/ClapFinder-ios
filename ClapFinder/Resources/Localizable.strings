@@ -16,7 +16,7 @@
 "onboarding.step1.body"    = "Put me on watch — if anyone touches your phone, I bark 🐶🛡️";
 "onboarding.continue"      = "Continue";
 "onboarding.step2.title"   = "If guarding stops, you'll know";
-"onboarding.step2.body"    = "I'll send a notification if anything interrupts my watch 🔔 Tip: turn on LED Flash for Alerts (Settings → Accessibility) and I'll blink the flash too!";
+"onboarding.step2.body"    = "I'll send a notification if anything interrupts my watch 🔔";
 "onboarding.step2.cta"     = "Enable Notifications";
 "onboarding.step3.title"   = "Ready to stand guard.";
 "onboarding.step3.body"    = "Arm me whenever you leave your phone.";
@@ -36,9 +36,9 @@
 "animals.header"          = "Choose your guard";
 
 /* One-time flash tip card (after first disarm) */
-"home.flashTip.title"     = "💡 Make the flash blink too";
-"home.flashTip.body"      = "Turn on LED Flash for Alerts in Settings → Accessibility → Audio/Visual, and the flash blinks when the alarm fires — even locked.";
-"home.flashTip.dismiss"   = "Got it";
+"home.volumeTip.title"    = "🔊 Louder = safer";
+"home.volumeTip.body"     = "The alarm barks at your phone's volume — turn it up before you walk away. It sounds even with the ringer switch off.";
+"home.volumeTip.dismiss"  = "Got it";
 
 /* MARK: - Touch Alert (PR-11) */
 "touch.status.disarmed"        = "Tap the shield to arm";

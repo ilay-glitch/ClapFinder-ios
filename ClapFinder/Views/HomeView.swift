@@ -25,10 +25,11 @@ struct HomeView: View {
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
     @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
     @State private var showNotifExplainer = false
-    /// LED-flash tip: appears after the first completed guard session, until
-    /// dismissed (no deep-link — Settings panes are private API).
+    /// Volume tip: appears after the first completed guard session, until
+    /// dismissed. (Was the LED-flash tip — rewritten per PIVOT.md §6c: the
+    /// accessibility LED never fires for local notifications.)
     @AppStorage("home.hasCompletedFirstSession") private var hasCompletedFirstSession = false
-    @AppStorage("home.flashTipDismissed") private var flashTipDismissed = false
+    @AppStorage("home.volumeTipDismissed") private var volumeTipDismissed = false
 
     private let gridColumns = Array(repeating: GridItem(.fixed(80), spacing: CFSpacing.sm), count: 4)
 
@@ -75,8 +76,8 @@ struct HomeView: View {
                     statusLabel
                         .padding(.top, CFSpacing.md)
 
-                    if hasCompletedFirstSession && !flashTipDismissed {
-                        flashTipCard
+                    if hasCompletedFirstSession && !volumeTipDismissed {
+                        volumeTipCard
                             .padding(.top, CFSpacing.md)
                     }
 
@@ -203,21 +204,22 @@ struct HomeView: View {
         }
     }
 
-    /// One-time LED-flash tip (PM spec 2026-07-09): full settings path as
-    /// text — deep-linking to Accessibility is private API (rejection risk).
-    private var flashTipCard: some View {
+    /// One-time volume tip: the alarm's loudness is the locked-phone defense
+    /// (PIVOT.md §6b/§6c), and it plays at media volume via the `.playback`
+    /// session — worth surfacing once.
+    private var volumeTipCard: some View {
         HStack(alignment: .top, spacing: CFSpacing.sm) {
             VStack(alignment: .leading, spacing: CFSpacing.xs) {
-                Text(NSLocalizedString("home.flashTip.title", comment: ""))
+                Text(NSLocalizedString("home.volumeTip.title", comment: ""))
                     .font(CFFont.headline())
                     .foregroundStyle(CFColor.textPrimary)
-                Text(NSLocalizedString("home.flashTip.body", comment: ""))
+                Text(NSLocalizedString("home.volumeTip.body", comment: ""))
                     .font(CFFont.caption())
                     .foregroundStyle(CFColor.textSecondary)
             }
             Spacer()
-            Button(NSLocalizedString("home.flashTip.dismiss", comment: "")) {
-                flashTipDismissed = true
+            Button(NSLocalizedString("home.volumeTip.dismiss", comment: "")) {
+                volumeTipDismissed = true
             }
             .font(CFFont.caption())
             .foregroundStyle(CFColor.ctaBlue)

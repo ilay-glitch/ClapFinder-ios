@@ -95,22 +95,10 @@ struct ClapFinderApp: App {
         switch phase {
         case .active:
             Self.logger.info("App active")
-#if DEBUG
-            // Foregrounding cancels an un-fired idle probe (it must deliver locked).
-            UNUserNotificationCenter.current()
-                .removePendingNotificationRequests(withIdentifiers: ["notifdiag.test.idle"])
-#endif
 
         case .background:
             // UIBackgroundModes = ["audio"] keeps the engine running.
             Self.logger.info("App backgrounded — guard monitoring continues via background audio mode")
-#if DEBUG
-            // LED isolation probe, idle case: no keep-alive, app suspends —
-            // the closest match to the WhatsApp control test.
-            if touchAlert.state == .disarmed {
-                touchAlert.scheduleLEDTestNotification(id: "notifdiag.test.idle", delay: 15)
-            }
-#endif
 
         case .inactive:
             break

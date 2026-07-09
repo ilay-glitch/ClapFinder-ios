@@ -112,9 +112,6 @@ public final class TouchAlertCoordinator {
 
         analytics.log(TouchAlertAnalytics.armed(sensitivity: sensitivity.rawValue))
         Self.logger.info("Armed — \(animal.name), sensitivity \(sensitivity.rawValue)")
-#if DEBUG
-        scheduleLEDTestNotification(id: "notifdiag.test.armed", delay: 15)
-#endif
     }
 
     /// Disarms from any armed state. The ONLY way to stop the alarm (§3).
@@ -128,8 +125,6 @@ public final class TouchAlertCoordinator {
         responder.stopAlarm()
 #if DEBUG && canImport(UserNotifications) && os(iOS)
         NotifDiag.log("disarm appState=\(NotifDiag.appState())")
-        UNUserNotificationCenter.current()
-            .removePendingNotificationRequests(withIdentifiers: ["notifdiag.test.armed"])
 #endif
         cancelAlarmNotifications()
         detector.stop()

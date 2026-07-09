@@ -29,8 +29,8 @@ alarm on touch).
 | C3 | Lock-screen guard | M2 ✅ (re-spot-check) |
 | C4 | Live Activity | Armed state on Lock Screen / Dynamic Island; disarm button works |
 | C5 | Watchdog | M6 ✅ |
-| C6 | LED flash on locked alarm | LED Flash for Alerts ON (Accessibility) → lock → trigger → sound + **system LED blinks** on the alarm notification, repeats ~5 s apart (3 total); disarm cancels pending repeats (none fires late) |
-| C7 | Flash tip card | After first user-disarm, the 💡 tip card appears on Home; "Got it" dismisses permanently |
+| C6 | Alarm notifications on locked alarm | Lock → trigger → alarm notification banners land on the lock screen at 0/5/10 s; disarm cancels pending repeats (none fires late). **The accessibility LED does NOT blink — iOS platform limit**: LED Flash for Alerts ignores third-party locally scheduled notifications (fires for remote pushes only; PIVOT.md §6c, isolated 2026-07-09). EXPECTED behavior, not a bug. |
+| C7 | Volume tip card | After first user-disarm, the 🔊 volume tip card appears on Home; "Got it" dismisses permanently (was the LED tip — rewritten per §6c, LED unavailable for local notifications) |
 
 ## D. New sounds (Mixkit, SOUNDS_LICENSES.md)
 | # | Check | Expected |

@@ -84,6 +84,28 @@ alarm path — the OS gates it. The alarm **sound** is the primary defense and
 works from locked (QA M7 ✅); the torch self-recovers the moment the app is
 foregrounded during an active alarm.
 
+## 6c. Known platform limitation — accessibility LED on local notifications
+
+"LED Flash for Alerts" does not fire for our alarm notifications. Established
+empirically 2026-07-09 (iOS 26.5, iPhone 15), three-point isolation with
+file-based delivery diagnostics (`notifdiag.csv`):
+
+- Control: a WhatsApp remote push on the same device/settings DOES blink.
+- Our locally scheduled notifications were verifiably scheduled (`add`
+  error=nil), fully authorized (lockScreen setting enabled), and delivered on
+  the locked screen via the normal path (app `.background`, no `willPresent`)
+  — and did not blink, in all three states: mid-alarm (audio blaring),
+  armed-quiet (silent keep-alive only), and idle-quiet (no audio session, app
+  suspended, screen off — the perfect-conditions mirror of the control).
+
+No public API influences the LED, and every documented user-facing condition
+(locked, lock-screen notifications enabled, per-app notifications on) was
+satisfied per the diagnostics rows. Conclusion: on current iOS the LED fires
+for remote pushes but not for third-party locally scheduled notifications —
+unreachable for a serverless local alarm. Not documented by Apple; empirical.
+The in-app LED-tip copy was rewritten to promise only what works (sound).
+Post-launch option parked in §8.
+
 ## 7. Fences (unchanged by the pivot)
 
 Ads/monetization policy untouched (App Open Ad rules, banner idle-only,
@@ -101,5 +123,8 @@ catalog: all 16 sounds stay, re-framed as the guard grid.
   submit: an anti-theft alarm that a thief can defeat by Focus/silent is not an
   alarm; the notification is the theft-moment alert. Manual Apple review
   (days–weeks, resubmissions common) — deliberately NOT a v1 gate.
+- **Remote-push alarm path** (server + APNs): the only route to the
+  accessibility LED blink (§6c) and a delivery path that survives app death;
+  pairs naturally with the Critical Alerts entitlement above.
 - Foghorn alert-sound replacement (PM pick pending; Warfare horn placeholder).
 - Second detection mode (would introduce the tab bar per DESIGN pivot note).
