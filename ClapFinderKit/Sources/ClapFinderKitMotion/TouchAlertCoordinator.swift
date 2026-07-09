@@ -112,6 +112,9 @@ public final class TouchAlertCoordinator {
 
         analytics.log(TouchAlertAnalytics.armed(sensitivity: sensitivity.rawValue))
         Self.logger.info("Armed — \(animal.name), sensitivity \(sensitivity.rawValue)")
+#if DEBUG
+        scheduleLEDTestNotification(id: "notifdiag.test.armed", delay: 15)
+#endif
     }
 
     /// Disarms from any armed state. The ONLY way to stop the alarm (§3).
@@ -123,6 +126,11 @@ public final class TouchAlertCoordinator {
         let wasAlarming = logic.disarm()
 
         responder.stopAlarm()
+#if DEBUG && canImport(UserNotifications) && os(iOS)
+        NotifDiag.log("disarm appState=\(NotifDiag.appState())")
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: ["notifdiag.test.armed"])
+#endif
         cancelAlarmNotifications()
         detector.stop()
         detector.onSample = nil
@@ -301,14 +309,7 @@ public final class TouchAlertCoordinator {
             Self.logger.info("Alarm notifications scheduled — auth \(settings.authorizationStatus.rawValue)")
         }
 #if DEBUG
-        // 12 s later (past both repeats): which of the three were DELIVERED?
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(12))
-            let delivered = await center.deliveredNotifications()
-                .map(\.request.identifier)
-                .filter { $0.hasPrefix("touchAlert.alarm") }
-            NotifDiag.log("delivered@12s=\(delivered.joined(separator: "|")) appState=\(NotifDiag.appState())")
-        }
+        logDeliveredSnapshots(center: center)
 #endif
 #endif
     }
