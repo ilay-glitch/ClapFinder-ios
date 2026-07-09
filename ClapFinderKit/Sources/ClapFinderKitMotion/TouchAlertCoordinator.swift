@@ -269,6 +269,9 @@ public final class TouchAlertCoordinator {
     private func scheduleAlarmNotifications() {
 #if canImport(UserNotifications) && os(iOS)
         let center = UNUserNotificationCenter.current()
+#if DEBUG
+        NotifDiag.log("schedule appState=\(NotifDiag.appState())")
+#endif
         for (index, id) in Self.alarmNotificationIDs.enumerated() {
             let content = UNMutableNotificationContent()
             content.title = NSLocalizedString("touchAlert.alarmNotification.title", comment: "")
@@ -278,17 +281,35 @@ public final class TouchAlertCoordinator {
                 ? nil   // immediate
                 : UNTimeIntervalNotificationTrigger(timeInterval: Double(index) * 5.0, repeats: false)
             center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger)) { error in
+#if DEBUG
+                NotifDiag.log("add \(id) error=\(error?.localizedDescription ?? "nil")")
+#endif
                 if let error {
-                    Self.logger.error("""
-                    Alarm notification \(id, privacy: .public) add failed: \
-                    \(error.localizedDescription)
-                    """)
+                    Self.logger.error("Alarm notification add failed: \(error.localizedDescription)")
                 }
             }
         }
         center.getNotificationSettings { settings in
-            Self.logger.info("Alarm notifications scheduled — auth status \(settings.authorizationStatus.rawValue)")
+#if DEBUG
+            NotifDiag.log(
+                "auth=\(settings.authorizationStatus.rawValue)"
+                + " alert=\(settings.alertSetting.rawValue)"
+                + " lockScreen=\(settings.lockScreenSetting.rawValue)"
+                + " sound=\(settings.soundSetting.rawValue)"
+            )
+#endif
+            Self.logger.info("Alarm notifications scheduled — auth \(settings.authorizationStatus.rawValue)")
         }
+#if DEBUG
+        // 12 s later (past both repeats): which of the three were DELIVERED?
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(12))
+            let delivered = await center.deliveredNotifications()
+                .map(\.request.identifier)
+                .filter { $0.hasPrefix("touchAlert.alarm") }
+            NotifDiag.log("delivered@12s=\(delivered.joined(separator: "|")) appState=\(NotifDiag.appState())")
+        }
+#endif
 #endif
     }
 

@@ -1,3 +1,4 @@
+import ClapFinderKitMotion
 import OSLog
 import UserNotifications
 
@@ -25,7 +26,13 @@ final class NotificationPresenter: NSObject, UNUserNotificationCenterDelegate, @
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
-        Self.logger.info("Presenting notification in foreground: \(notification.request.identifier, privacy: .public)")
+        Self.logger.info("Presenting in foreground: \(notification.request.identifier, privacy: .public)")
+#if DEBUG
+        // Path discriminator: a row here = this delivery took the FOREGROUND
+        // (willPresent) path. Deliveries with no row took the normal path.
+        let state = await MainActor.run { NotifDiag.appState() }
+        NotifDiag.log("willPresent \(notification.request.identifier) appState=\(state)")
+#endif
         return [.banner, .list, .sound]
     }
 }
