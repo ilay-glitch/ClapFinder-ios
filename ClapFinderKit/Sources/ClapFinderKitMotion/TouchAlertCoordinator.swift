@@ -277,7 +277,17 @@ public final class TouchAlertCoordinator {
             let trigger: UNNotificationTrigger? = index == 0
                 ? nil   // immediate
                 : UNTimeIntervalNotificationTrigger(timeInterval: Double(index) * 5.0, repeats: false)
-            center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
+            center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger)) { error in
+                if let error {
+                    Self.logger.error("""
+                    Alarm notification \(id, privacy: .public) add failed: \
+                    \(error.localizedDescription)
+                    """)
+                }
+            }
+        }
+        center.getNotificationSettings { settings in
+            Self.logger.info("Alarm notifications scheduled — auth status \(settings.authorizationStatus.rawValue)")
         }
 #endif
     }

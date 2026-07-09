@@ -4,6 +4,7 @@ import ClapFinderKitData
 import ClapFinderKitMotion
 import OSLog
 import SwiftUI
+import UserNotifications
 
 // ClapFinder app target entry point.
 // Xcode project (.xcodeproj) is created manually via Xcode → File → New → Project
@@ -23,6 +24,9 @@ struct ClapFinderApp: App {
         // in the package, no longer constructed here.
         let responder = AlarmResponder(soundPlayer: SoundPlayer(), flashlight: FlashlightController())
         _touchAlert = State(initialValue: TouchAlertCoordinator(responder: responder))
+        // Foreground notification presentation (alarm 🚨 + LED blink) — see
+        // NotificationPresenter.
+        UNUserNotificationCenter.current().delegate = NotificationPresenter.shared
     }
     @State private var hasRequestedATT = false
 

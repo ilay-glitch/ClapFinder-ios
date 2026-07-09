@@ -16,6 +16,7 @@
 		34C59F813A02ECA904DACF70 /* sheep_baa.caf in Resources */ = {isa = PBXBuildFile; fileRef = F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */; };
 		37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 4641B24B3D6601188D02C221 /* air_horn.caf */; };
 		39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C28A92E42035AFE64CFBED6 /* SplashView.swift */; };
+		40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */; };
 		46DE2E1650F309DB30C7C0D4 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = A34C84EBDD96B375E75B5DC2 /* ClapFinderKitActivity */; };
 		4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */ = {isa = PBXBuildFile; fileRef = 88EF60ED1B99B45FB9597062 /* beep.caf */; };
 		4E607E825860DC2D744F0B9F /* rooster_crow.caf in Resources */ = {isa = PBXBuildFile; fileRef = C4FD638F38EA5721F09B12AA /* rooster_crow.caf */; };
@@ -107,6 +108,7 @@
 		94D97DABA693A338ECA53390 /* frog_ribbit.caf */ = {isa = PBXFileReference; path = frog_ribbit.caf; sourceTree = "<group>"; };
 		982F94330D8C525A1BE035DD /* dog_bark.caf */ = {isa = PBXFileReference; path = dog_bark.caf; sourceTree = "<group>"; };
 		9E9911E009298BAA6F4004B6 /* TouchAlertLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertLiveActivity.swift; sourceTree = "<group>"; };
+		9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
 		A4223CAE7C416F483AF18D47 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlayView.swift; sourceTree = "<group>"; };
 		AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdLoader.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */,
+				9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */,
 				A9F965084EF7694AC3879FE4 /* Ads */,
 				68B48E6A2180E43BF8390D76 /* Debug */,
 				A60224AFEFDF5C25F3E41BC9 /* Resources */,
@@ -439,6 +442,7 @@
 				1EA8049422AB3398462B096D /* GuardAssets.swift in Sources */,
 				24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */,
 				63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */,
+				40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */,
 				9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */,
 				B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */,
 				807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */,

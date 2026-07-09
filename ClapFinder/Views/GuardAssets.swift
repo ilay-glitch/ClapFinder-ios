@@ -21,6 +21,8 @@ enum GuardAssets {
     static var homeBackground: String? { imageName("guard_dog_home_background") }
     static var heroDisarmed: String? { imageName("guard_dog_shield") }
     static var heroArmed: String? { imageName("guard_dog_watching", fallback: "guard_dog_shield") }
+    /// NOT wired (PM ruling 2026-07-09: alarm overlay shows the selected
+    /// guard's emoji, matching the chosen sound). Asset kept for marketing.
     static var alarmBarking: String? { imageName("guard_dog_barking") }
     static var onboardingWave: String? { imageName("guard_dog_wave", fallback: "detective_dog_wave") }
     static var onboardingReady: String? { imageName("guard_dog_shield", fallback: "detective_dog_phone") }
