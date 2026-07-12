@@ -55,6 +55,19 @@ public final class AlarmResponder {
         flashlight.pulse()
     }
 
+    // MARK: Arm/disarm feedback (car-remote grammar)
+
+    /// Double high beep — "locked". Played when the guard actually engages
+    /// (grace end → monitoring), the moment any movement starts the alarm.
+    public func playArmChirp(in bundle: Bundle = .main) {
+        soundPlayer.playEffect(named: "arm_chirp.caf", in: bundle)
+    }
+
+    /// Clunk + single low chirp — "unlocked". Played on disarm.
+    public func playDisarmChirp(in bundle: Bundle = .main) {
+        soundPlayer.playEffect(named: "disarm_chirp.caf", in: bundle)
+    }
+
     // MARK: Continuous alarm (touch alert)
 
     /// Starts the looping alarm: sound repeats and the flashlight pulses

@@ -42,6 +42,7 @@
 
 /* MARK: - Touch Alert (PR-11) */
 "touch.status.disarmed"        = "Tap the shield to arm";
+"touch.howItWorks"             = "Arm it, set your phone down — any movement sets off the alarm.";
 "touch.status.grace"           = "Arming — put your phone down…";
 "touch.status.monitoring"      = "Armed — don't touch 🛡️";
 "touch.status.alarming"        = "Motion detected!";
