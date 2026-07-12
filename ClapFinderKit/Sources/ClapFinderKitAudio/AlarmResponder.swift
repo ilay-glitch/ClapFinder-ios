@@ -57,15 +57,11 @@ public final class AlarmResponder {
 
     // MARK: Arm/disarm feedback (car-remote grammar)
 
-    /// Double high beep — "locked". Played when the guard actually engages
-    /// (grace end → monitoring), the moment any movement starts the alarm.
-    public func playArmChirp(in bundle: Bundle = .main) {
+    /// Double high beep, same on arm and disarm (PM ruling 2026-07-12:
+    /// symmetric, like a car remote that chirps identically both ways).
+    /// Arm plays at grace end — the moment monitoring engages.
+    public func playChirp(in bundle: Bundle = .main) {
         soundPlayer.playEffect(named: "arm_chirp.caf", in: bundle)
-    }
-
-    /// Clunk + single low chirp — "unlocked". Played on disarm.
-    public func playDisarmChirp(in bundle: Bundle = .main) {
-        soundPlayer.playEffect(named: "disarm_chirp.caf", in: bundle)
     }
 
     // MARK: Continuous alarm (touch alert)

@@ -32,7 +32,6 @@
 		80603027D4CF7CF5DDCE530F /* whistle.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0B2C34E5A31DD26E6309CDA2 /* whistle.caf */; };
 		807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */; };
 		83F8A9420968E5D18142D8D0 /* ClapFinderWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		8715E769C94CBE82DB20DAEB /* disarm_chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0EF770AD0057AA3AF2323C30 /* disarm_chirp.caf */; };
 		882448679A5F04F22274DEA5 /* bell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2ACD4ACC57959E4B128A4721 /* bell.caf */; };
 		89336F8D4DCEBC858335A1DC /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F1849F5440D9BD66E9E8C135 /* GoogleMobileAds */; };
 		8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6C711829C5CE93258C85D182 /* alarm_clock.caf */; };
@@ -88,7 +87,6 @@
 		034457FB4DC6EBE426A37265 /* foghorn.caf */ = {isa = PBXFileReference; path = foghorn.caf; sourceTree = "<group>"; };
 		0B2C34E5A31DD26E6309CDA2 /* whistle.caf */ = {isa = PBXFileReference; path = whistle.caf; sourceTree = "<group>"; };
 		0D1A24CAACB4FEEBDC1F2582 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		0EF770AD0057AA3AF2323C30 /* disarm_chirp.caf */ = {isa = PBXFileReference; path = disarm_chirp.caf; sourceTree = "<group>"; };
 		1C28A92E42035AFE64CFBED6 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ClapFinderWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ACD4ACC57959E4B128A4721 /* bell.caf */ = {isa = PBXFileReference; path = bell.caf; sourceTree = "<group>"; };
@@ -176,7 +174,6 @@
 				2ACD4ACC57959E4B128A4721 /* bell.caf */,
 				B65BA16DD4368B32B8468E5F /* cat_meow.caf */,
 				314046E6E33DB47CD039CE26 /* cow_moo.caf */,
-				0EF770AD0057AA3AF2323C30 /* disarm_chirp.caf */,
 				982F94330D8C525A1BE035DD /* dog_bark.caf */,
 				2F99ABA31E0D3D13A37458C4 /* doorbell.caf */,
 				C1762A4281DB585C456AAB3D /* duck_quack.caf */,
@@ -398,7 +395,6 @@
 				882448679A5F04F22274DEA5 /* bell.caf in Resources */,
 				E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */,
 				1855A8AE8D565B818E2136BC /* cow_moo.caf in Resources */,
-				8715E769C94CBE82DB20DAEB /* disarm_chirp.caf in Resources */,
 				9FB102267116B977253F26BB /* dog_bark.caf in Resources */,
 				BB7B089073D09A4F8C81A381 /* doorbell.caf in Resources */,
 				8CE113715A03CB9DDBF86F5D /* duck_quack.caf in Resources */,
