@@ -16,6 +16,7 @@
 		34C59F813A02ECA904DACF70 /* sheep_baa.caf in Resources */ = {isa = PBXBuildFile; fileRef = F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */; };
 		37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 4641B24B3D6601188D02C221 /* air_horn.caf */; };
 		39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C28A92E42035AFE64CFBED6 /* SplashView.swift */; };
+		3CB37098C5311420D95CB60D /* arm_chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = B4346328E72E98C33C357FB3 /* arm_chirp.caf */; };
 		40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */; };
 		46DE2E1650F309DB30C7C0D4 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = A34C84EBDD96B375E75B5DC2 /* ClapFinderKitActivity */; };
 		4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */ = {isa = PBXBuildFile; fileRef = 88EF60ED1B99B45FB9597062 /* beep.caf */; };
@@ -31,6 +32,7 @@
 		80603027D4CF7CF5DDCE530F /* whistle.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0B2C34E5A31DD26E6309CDA2 /* whistle.caf */; };
 		807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */; };
 		83F8A9420968E5D18142D8D0 /* ClapFinderWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8715E769C94CBE82DB20DAEB /* disarm_chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0EF770AD0057AA3AF2323C30 /* disarm_chirp.caf */; };
 		882448679A5F04F22274DEA5 /* bell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2ACD4ACC57959E4B128A4721 /* bell.caf */; };
 		89336F8D4DCEBC858335A1DC /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F1849F5440D9BD66E9E8C135 /* GoogleMobileAds */; };
 		8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6C711829C5CE93258C85D182 /* alarm_clock.caf */; };
@@ -86,6 +88,7 @@
 		034457FB4DC6EBE426A37265 /* foghorn.caf */ = {isa = PBXFileReference; path = foghorn.caf; sourceTree = "<group>"; };
 		0B2C34E5A31DD26E6309CDA2 /* whistle.caf */ = {isa = PBXFileReference; path = whistle.caf; sourceTree = "<group>"; };
 		0D1A24CAACB4FEEBDC1F2582 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		0EF770AD0057AA3AF2323C30 /* disarm_chirp.caf */ = {isa = PBXFileReference; path = disarm_chirp.caf; sourceTree = "<group>"; };
 		1C28A92E42035AFE64CFBED6 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ClapFinderWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ACD4ACC57959E4B128A4721 /* bell.caf */ = {isa = PBXFileReference; path = bell.caf; sourceTree = "<group>"; };
@@ -113,6 +116,7 @@
 		A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlayView.swift; sourceTree = "<group>"; };
 		AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdLoader.swift; sourceTree = "<group>"; };
 		AD8116237551BE69D5D912DF /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		B4346328E72E98C33C357FB3 /* arm_chirp.caf */ = {isa = PBXFileReference; path = arm_chirp.caf; sourceTree = "<group>"; };
 		B65BA16DD4368B32B8468E5F /* cat_meow.caf */ = {isa = PBXFileReference; path = cat_meow.caf; sourceTree = "<group>"; };
 		BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapFinderApp.swift; sourceTree = "<group>"; };
 		C1762A4281DB585C456AAB3D /* duck_quack.caf */ = {isa = PBXFileReference; path = duck_quack.caf; sourceTree = "<group>"; };
@@ -167,10 +171,12 @@
 			children = (
 				4641B24B3D6601188D02C221 /* air_horn.caf */,
 				6C711829C5CE93258C85D182 /* alarm_clock.caf */,
+				B4346328E72E98C33C357FB3 /* arm_chirp.caf */,
 				88EF60ED1B99B45FB9597062 /* beep.caf */,
 				2ACD4ACC57959E4B128A4721 /* bell.caf */,
 				B65BA16DD4368B32B8468E5F /* cat_meow.caf */,
 				314046E6E33DB47CD039CE26 /* cow_moo.caf */,
+				0EF770AD0057AA3AF2323C30 /* disarm_chirp.caf */,
 				982F94330D8C525A1BE035DD /* dog_bark.caf */,
 				2F99ABA31E0D3D13A37458C4 /* doorbell.caf */,
 				C1762A4281DB585C456AAB3D /* duck_quack.caf */,
@@ -387,10 +393,12 @@
 				77BC3A85754C89212FC5268E /* Localizable.strings in Resources */,
 				37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */,
 				8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */,
+				3CB37098C5311420D95CB60D /* arm_chirp.caf in Resources */,
 				4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */,
 				882448679A5F04F22274DEA5 /* bell.caf in Resources */,
 				E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */,
 				1855A8AE8D565B818E2136BC /* cow_moo.caf in Resources */,
+				8715E769C94CBE82DB20DAEB /* disarm_chirp.caf in Resources */,
 				9FB102267116B977253F26BB /* dog_bark.caf in Resources */,
 				BB7B089073D09A4F8C81A381 /* doorbell.caf in Resources */,
 				8CE113715A03CB9DDBF86F5D /* duck_quack.caf in Resources */,

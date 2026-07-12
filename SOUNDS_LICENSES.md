@@ -23,6 +23,8 @@ to ≤ 6 s.
 | `beep.caf` | **Pixabay**: Alarm beep by freesound_community (#34359) — PM pick round 2 | https://pixabay.com/sound-effects/film-special-effects-alarm-beep-34359/ |
 | `doorbell.caf` | **Pixabay**: Doorbell Ding Dong by DRAGON-STUDIO (#482879) — PM pick round 2 | https://pixabay.com/sound-effects/household-doorbell-ding-dong-482879/ |
 | `foghorn.caf` | Warfare horn (#2289) — deep horn, nearest equivalent to a foghorn. **PM may swap.** | https://assets.mixkit.co/active_storage/sfx/2289/2289.wav |
+| `arm_chirp.caf` | **Pixabay**: Old Maruti car unlock sound keyless entry beep by arunangshubanerjee (#327691) — trimmed to the double 1 kHz beep (0.03–0.58 s, fade-out); UI feedback "guard armed", car-lock chirp-chirp | https://pixabay.com/sound-effects/film-special-effects-old-maruti-car-unlock-sound-keyless-entry-beep-327691/ |
+| `disarm_chirp.caf` | **Pixabay**: Car locking by freesound_community (#100528) — trimmed 0.15–1.10 s (clunk + single low chirp, fade-out); UI feedback "guard disarmed" | https://pixabay.com/sound-effects/film-special-effects-car-locking-100528/ |
 
 The 8 animal sounds (`dog_bark`, `cat_meow`, `cow_moo`, `frog_ribbit`,
 `duck_quack`, `pig_oink`, `rooster_crow`, `sheep_baa`) are untouched

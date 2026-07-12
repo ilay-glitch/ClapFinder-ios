@@ -123,6 +123,7 @@ public final class TouchAlertCoordinator {
         let wasAlarming = logic.disarm()
 
         responder.stopAlarm()
+        responder.playDisarmChirp(in: soundBundle)
 #if DEBUG && canImport(UserNotifications) && os(iOS)
         NotifDiag.log("disarm appState=\(NotifDiag.appState())")
 #endif
@@ -188,6 +189,9 @@ public final class TouchAlertCoordinator {
             // Grace finished — reflect the armed/monitoring state.
             if let self, self.logic.state != .alarming {
                 self.updateLiveActivity(phase: .armed)
+                // Car-lock chirp-chirp: the guard is now live — audible
+                // confirmation for a user who has already stepped away.
+                self.responder.playArmChirp(in: self.soundBundle)
             }
         }
     }
