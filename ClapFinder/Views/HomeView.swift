@@ -76,6 +76,16 @@ struct HomeView: View {
                     statusLabel
                         .padding(.top, CFSpacing.md)
 
+                    // One-line model explanation (competitor gap: theirs is a
+                    // buried paragraph). Idle only — armed states say it live.
+                    if touchAlert.state == .disarmed {
+                        Text(NSLocalizedString("touch.howItWorks", comment: ""))
+                            .font(CFFont.caption())
+                            .foregroundStyle(CFColor.textTertiary)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, CFSpacing.xs)
+                    }
+
                     if hasCompletedFirstSession && !volumeTipDismissed {
                         volumeTipCard
                             .padding(.top, CFSpacing.md)
