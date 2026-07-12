@@ -42,6 +42,10 @@
 
 /* MARK: - Touch Alert (PR-11) */
 "touch.status.disarmed"        = "Tap the shield to arm";
+"tab.dontTouch"            = "Don't Touch";
+"tab.pocketMode"           = "Pocket Mode";
+"pocket.title"             = "Pocket Mode";
+"pocket.status.disarmed"   = "Tap to guard your pocket";
 "touch.howItWorks"             = "Arm it, set your phone down — any movement sets off the alarm.";
 "touch.status.grace"           = "Arming — put your phone down…";
 "touch.status.monitoring"      = "Armed — don't touch 🛡️";
