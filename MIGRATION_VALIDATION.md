@@ -183,3 +183,22 @@ notification-action button.
 | O4 | Onboarding does NOT show on relaunch | Complete onboarding → force-quit → relaunch → splash → Home directly | ⏳ | `onboarding.hasCompleted` |
 | O5 | No App Open Ad on first launch | Fresh install → splash shows no interstitial/app-open ad | ⏳ | Ad fence intact |
 | O6 | Deny mic still completes | Deny at step 2 → onboarding still reaches Home; first listen re-prompts / Settings | ⏳ | Detector lazy-requests |
+
+
+---
+
+## Device QA pass — Pivot P2 (mic removal / silent keep-alive) — MERGE GATE
+
+⚠️ This PR touches the proven touch-alert plumbing. **No merge without this
+on-device pass** (PM runs it).
+
+| # | Check | Steps | Result | Notes |
+|---|---|---|---|---|
+| M1 | No mic prompt anywhere | Fresh install → onboarding → arm the guard → no microphone permission dialog ever appears | ⏳ | The point of P2 |
+| M2 | Lock-screen survival | Arm → lock the phone → wait 2+ min → touch/move the phone → alarm fires | ⏳ | Silent keep-alive holds |
+| M3 | Background survival | Arm → switch to another app for 2+ min → move the phone → alarm fires | ⏳ | |
+| M4 | Interruption: call | Arm → receive/place a call → end call → guard resumes (or watchdog notifies + stands down — either is honest; silence is not) | ⏳ | shouldResume path |
+| M5 | Interruption: Siri / other-app audio | Arm → invoke Siri / play music in another app → guard resumes or notifies | ⏳ | mixWithOthers |
+| M6 | Watchdog path | Force the session to die unresumably while armed (e.g. long call) → "guarding stopped" notification arrives + app shows disarmed | ⏳ | §4.2 unchanged |
+| M7 | Alarm audible when locked | Arm → lock → trigger → alarm sound plays at full volume from the lock state | ⏳ | .playback session |
+| M8 | Onboarding step 2 | Fresh install → step 2 shows the notification explainer → system notification prompt (no mic copy anywhere) | ⏳ | |

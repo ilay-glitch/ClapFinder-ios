@@ -93,7 +93,7 @@ struct TouchAlertCoordinatorTests {
         let coordinator = makeCoordinator()
         coordinator.armForTesting(animal: animal, sensitivity: .medium, at: base)
         // Simulate the system killing the audio session
-        coordinator.keepAlive.setListeningForTesting(false, sensitivity: .medium)
+        coordinator.keepAlive.setListeningForTesting(false)
         coordinator.detector.simulateSample(magnitude: 0.2, at: afterGrace)
         #expect(coordinator.state == .disarmed)
         #expect(!coordinator.responder.isAlarming)

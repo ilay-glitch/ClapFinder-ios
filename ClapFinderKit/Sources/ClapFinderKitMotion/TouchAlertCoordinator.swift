@@ -21,10 +21,10 @@ import ActivityKit
 ///
 /// ## Background keep-alive (§4)
 /// CoreMotion only delivers while the process executes, and iOS has no
-/// motion background mode. Arming therefore also starts a `ClapDetector`
-/// with no clap callback: its AVAudioEngine mic tap + active
-/// `.playAndRecord` session keep the process alive when the screen locks
-/// or the app backgrounds — the same mechanism clap detection uses.
+/// motion background mode. Arming therefore also starts a `SilentKeepAlive`:
+/// a playback-only silent loop (`.playback`, mixWithOthers) that keeps the
+/// process alive when the screen locks — **no mic, no record path**
+/// (PIVOT.md §5, P2; pre-pivot this was a ClapDetector mic tap).
 ///
 /// ## System-stop watchdog (§4.2)
 /// If the audio session dies unresumably while armed (`keepAlive.isListening`
@@ -49,7 +49,7 @@ public final class TouchAlertCoordinator {
     public let detector: MotionDetector
     public let responder: AlarmResponder
     /// Audio-session keep-alive — a ClapDetector with no clap callback (§4.1).
-    public let keepAlive: ClapDetector
+    public let keepAlive: SilentKeepAlive
     public var soundBundle: Bundle
 
     private let analytics: AnalyticsClient
@@ -73,7 +73,7 @@ public final class TouchAlertCoordinator {
     public init(
         responder: AlarmResponder,
         detector: MotionDetector = MotionDetector(),
-        keepAlive: ClapDetector = ClapDetector(),
+        keepAlive: SilentKeepAlive = SilentKeepAlive(),
         analytics: AnalyticsClient = OSLogAnalyticsClient(),
         soundBundle: Bundle = .main
     ) {
@@ -90,12 +90,12 @@ public final class TouchAlertCoordinator {
     /// sampling, and the 5 s grace period.
     ///
     /// - Throws: `ClapDetectorError` if the keep-alive audio session
-    ///   cannot start (mic permission denied, session conflict).
+    ///   cannot start (session conflict; no mic involvement since P2).
     public func arm(animal: Animal, sensitivity: Sensitivity) throws {
         guard logic.state == .disarmed else { return }
 
         armedAnimal = animal
-        try keepAlive.start(sensitivity: sensitivity)
+        try keepAlive.start()
 
         detector.onSample = { [weak self] magnitude, now in
             self?.handleSample(magnitude: magnitude, at: now)
@@ -276,7 +276,7 @@ public final class TouchAlertCoordinator {
     func armForTesting(animal: Animal, sensitivity: Sensitivity, at now: Date) {
         guard logic.state == .disarmed else { return }
         armedAnimal = animal
-        keepAlive.setListeningForTesting(true, sensitivity: sensitivity)
+        keepAlive.setListeningForTesting(true)
         detector.onSample = { [weak self] magnitude, sampleNow in
             self?.handleSample(magnitude: magnitude, at: sampleNow)
         }
