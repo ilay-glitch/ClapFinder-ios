@@ -32,6 +32,11 @@ public final class SoundPlayer {
 
     private var player: AVAudioPlayer?
 
+    /// Separate slot for short UI feedback sounds (arm/disarm chirps) so an
+    /// effect never cancels — and is never cancelled by — the alarm player,
+    /// and doesn't touch `isPlaying`/`lastPlaybackEndedAt` (suppression anchors).
+    private var effectPlayer: AVAudioPlayer?
+
     // MARK: Logging
 
     nonisolated private static let logger = Logger(
@@ -88,6 +93,24 @@ public final class SoundPlayer {
             }
         } catch {
             Self.logger.error("AVAudioPlayer init failed: \(error)")
+        }
+    }
+
+    /// Plays a short one-shot feedback sound by file name (e.g. the car-lock
+    /// style arm/disarm chirps). Independent of the animal/alarm player.
+    public func playEffect(named fileName: String, in bundle: Bundle = .main) {
+        guard let url = bundle.url(forResource: fileName, withExtension: nil) else {
+            Self.logger.error("Effect file not found: \(fileName)")
+            return
+        }
+        do {
+            let effect = try AVAudioPlayer(contentsOf: url)
+            effect.volume = 1.0
+            effect.prepareToPlay()
+            effect.play()
+            effectPlayer = effect
+        } catch {
+            Self.logger.error("Effect player init failed: \(error)")
         }
     }
 

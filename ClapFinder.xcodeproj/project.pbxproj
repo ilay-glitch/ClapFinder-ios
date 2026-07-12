@@ -16,6 +16,7 @@
 		34C59F813A02ECA904DACF70 /* sheep_baa.caf in Resources */ = {isa = PBXBuildFile; fileRef = F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */; };
 		37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 4641B24B3D6601188D02C221 /* air_horn.caf */; };
 		39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C28A92E42035AFE64CFBED6 /* SplashView.swift */; };
+		3CB37098C5311420D95CB60D /* arm_chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = B4346328E72E98C33C357FB3 /* arm_chirp.caf */; };
 		40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */; };
 		46DE2E1650F309DB30C7C0D4 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = A34C84EBDD96B375E75B5DC2 /* ClapFinderKitActivity */; };
 		4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */ = {isa = PBXBuildFile; fileRef = 88EF60ED1B99B45FB9597062 /* beep.caf */; };
@@ -113,6 +114,7 @@
 		A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlayView.swift; sourceTree = "<group>"; };
 		AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdLoader.swift; sourceTree = "<group>"; };
 		AD8116237551BE69D5D912DF /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		B4346328E72E98C33C357FB3 /* arm_chirp.caf */ = {isa = PBXFileReference; path = arm_chirp.caf; sourceTree = "<group>"; };
 		B65BA16DD4368B32B8468E5F /* cat_meow.caf */ = {isa = PBXFileReference; path = cat_meow.caf; sourceTree = "<group>"; };
 		BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClapFinderApp.swift; sourceTree = "<group>"; };
 		C1762A4281DB585C456AAB3D /* duck_quack.caf */ = {isa = PBXFileReference; path = duck_quack.caf; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 			children = (
 				4641B24B3D6601188D02C221 /* air_horn.caf */,
 				6C711829C5CE93258C85D182 /* alarm_clock.caf */,
+				B4346328E72E98C33C357FB3 /* arm_chirp.caf */,
 				88EF60ED1B99B45FB9597062 /* beep.caf */,
 				2ACD4ACC57959E4B128A4721 /* bell.caf */,
 				B65BA16DD4368B32B8468E5F /* cat_meow.caf */,
@@ -387,6 +390,7 @@
 				77BC3A85754C89212FC5268E /* Localizable.strings in Resources */,
 				37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */,
 				8B35933FE55E81D92ADAC9A5 /* alarm_clock.caf in Resources */,
+				3CB37098C5311420D95CB60D /* arm_chirp.caf in Resources */,
 				4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */,
 				882448679A5F04F22274DEA5 /* bell.caf in Resources */,
 				E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */,
