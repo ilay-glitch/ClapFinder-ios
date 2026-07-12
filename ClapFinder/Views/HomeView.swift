@@ -132,25 +132,17 @@ struct HomeView: View {
 
             // Banner: bottom of Home ONLY, idle-only (ADS_DESIGN.md D3) —
             // hidden while the guard is armed or alarming.
+            // (No .ignoresSafeArea here since PR-P1: the banner must sit
+            // ABOVE the tab bar, inside the tab's safe area.)
             if touchAlert.state == .disarmed {
                 VStack {
                     Spacer()
                     BannerAdView()
                 }
-                .ignoresSafeArea(edges: .bottom)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .disarmed)
-        .overlay {
-            if touchAlert.state == .alarming {
-                AlarmOverlayView(animal: touchAlert.armedAnimal) {
-                    touchAlert.disarm()
-                }
-                .transition(.opacity)
-            }
-        }
-        .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .alarming)
         .alert(
             Text(NSLocalizedString("touch.notifExplainer.title", comment: "")),
             isPresented: $showNotifExplainer

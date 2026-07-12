@@ -54,10 +54,12 @@
 		C9E8DF59BF10D74CA8304CB7 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = E1674C54C715190CF85BF37C /* ClapFinderKitActivity */; };
 		D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */; };
 		D123C8874ED735250D6B2EE6 /* frog_ribbit.caf in Resources */ = {isa = PBXBuildFile; fileRef = 94D97DABA693A338ECA53390 /* frog_ribbit.caf */; };
+		D75119EED8EB6DD94D3A545D /* PocketModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CD2B2C40184E68BAA3E737 /* PocketModeView.swift */; };
 		D817CD31036E73539B822806 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AD8116237551BE69D5D912DF /* Localizable.strings */; };
 		DC05314BEC28A75ED9DD8EC7 /* TouchAlertHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */; };
 		E059F38EA96CF5EBD23C5DD0 /* cat_meow.caf in Resources */ = {isa = PBXBuildFile; fileRef = B65BA16DD4368B32B8468E5F /* cat_meow.caf */; };
 		E1915D5B3A7348DD170D7A6A /* ClapFinderKitDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 69C77123E4DF5BCFB53F973E /* ClapFinderKitDesign */; };
+		E3897507AEB26653CECCE11F /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F008E4DFD34E170082A479D /* MainTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +90,7 @@
 		034457FB4DC6EBE426A37265 /* foghorn.caf */ = {isa = PBXFileReference; path = foghorn.caf; sourceTree = "<group>"; };
 		0B2C34E5A31DD26E6309CDA2 /* whistle.caf */ = {isa = PBXFileReference; path = whistle.caf; sourceTree = "<group>"; };
 		0D1A24CAACB4FEEBDC1F2582 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		0F008E4DFD34E170082A479D /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		1C28A92E42035AFE64CFBED6 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ClapFinderWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ACD4ACC57959E4B128A4721 /* bell.caf */ = {isa = PBXFileReference; path = bell.caf; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 		314046E6E33DB47CD039CE26 /* cow_moo.caf */ = {isa = PBXFileReference; path = cow_moo.caf; sourceTree = "<group>"; };
 		4641B24B3D6601188D02C221 /* air_horn.caf */ = {isa = PBXFileReference; path = air_horn.caf; sourceTree = "<group>"; };
 		508FBC43B8DDEEAACD96A34B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		53CD2B2C40184E68BAA3E737 /* PocketModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketModeView.swift; sourceTree = "<group>"; };
 		5428AD88C91157AD274AE9D0 /* GuardAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuardAssets.swift; sourceTree = "<group>"; };
 		5481D18B530933145E1D7F55 /* InterstitialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialController.swift; sourceTree = "<group>"; };
 		54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertHeroView.swift; sourceTree = "<group>"; };
@@ -197,7 +201,9 @@
 				F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */,
 				5428AD88C91157AD274AE9D0 /* GuardAssets.swift */,
 				508FBC43B8DDEEAACD96A34B /* HomeView.swift */,
+				0F008E4DFD34E170082A479D /* MainTabView.swift */,
 				710B7A576F28AD33F238327D /* OnboardingView.swift */,
+				53CD2B2C40184E68BAA3E737 /* PocketModeView.swift */,
 				694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */,
 				C70903BE6739F797EA4B3EC1 /* SensitivityControlView.swift */,
 				1C28A92E42035AFE64CFBED6 /* SplashView.swift */,
@@ -449,8 +455,10 @@
 				1EA8049422AB3398462B096D /* GuardAssets.swift in Sources */,
 				24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */,
 				63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */,
+				E3897507AEB26653CECCE11F /* MainTabView.swift in Sources */,
 				40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */,
 				9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */,
+				D75119EED8EB6DD94D3A545D /* PocketModeView.swift in Sources */,
 				56F90889DD7C9A1BCE48B19B /* PocketProbe.swift in Sources */,
 				B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */,
 				807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */,

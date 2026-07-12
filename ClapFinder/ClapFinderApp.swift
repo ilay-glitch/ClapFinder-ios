@@ -54,7 +54,7 @@ struct ClapFinderApp: App {
                 OnboardingView { onOnboardingFinished() }
                     .transition(.opacity)
             case .home:
-                HomeView()
+                MainTabView()
                     .environment(catalogStore)
                     .environment(touchAlert)
                     .environment(interstitials)
