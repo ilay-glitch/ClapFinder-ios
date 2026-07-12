@@ -129,17 +129,16 @@ struct HomeView: View {
                 .padding(.horizontal, CFSpacing.md)
             }
             .scrollIndicators(.hidden)
-
-            // Banner: bottom of Home ONLY, idle-only (ADS_DESIGN.md D3) —
-            // hidden while the guard is armed or alarming.
-            // (No .ignoresSafeArea here since PR-P1: the banner must sit
-            // ABOVE the tab bar, inside the tab's safe area.)
+        }
+        // Banner: bottom of Home ONLY, idle-only (ADS_DESIGN.md D3) — hidden
+        // while the guard is armed or alarming. safeAreaInset docks it flush
+        // above the tab bar as bottom chrome and insets the scroll content,
+        // so content scrolls above it instead of underneath (PM layout ruling
+        // 2026-07-12: tab bar → banner → content, no gap, no floating).
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             if touchAlert.state == .disarmed {
-                VStack {
-                    Spacer()
-                    BannerAdView()
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+                BannerAdView()
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .disarmed)
