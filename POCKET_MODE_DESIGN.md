@@ -29,7 +29,7 @@ D0 evidence (`pocketdiag.csv`, 2m17s session, 8 transitions, 3 orientations):
 |---|---|
 | 1. Proximity events during blank | ✅ all transitions fired; covered state held through a 51 s dark stretch |
 | 2. appState during blank | ✅ `.active` in all 27 heartbeats |
-| 3. Auto-lock suppressed (`isIdleTimerDisabled`) | ✅ zero lifecycle rows in 2m17s; **confirm PM Auto-Lock setting ≤ 2 min, else re-verified by QA row Q7** |
+| 3. Auto-lock suppressed (`isIdleTimerDisabled`) | ✅ **closed** — PM Auto-Lock is 30 s; the 51 s continuous blank stretch (and 2m17s session) survived it 1.7–4× over with zero lifecycle rows. Q7 stays as the regression row. |
 | 4. CoreMotion during blank | ✅ steady 10 Hz (49–52 samples / 5 s window) |
 | 5. Audio during blank | ✅ beeps audible on pocket-in and pocket-out (PM ears) + healthy session log |
 | 6. Battery | ⚠️ unmeasured at 2 min resolution → QA row Q8 (30-min measurement) |
