@@ -22,6 +22,9 @@ struct HomeView: View {
     @Environment(InterstitialController.self) private var interstitials
 
     @State private var startError: String?
+#if DEBUG
+    @State private var showPocketProbe = false
+#endif
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
     @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
     @State private var showNotifExplainer = false
@@ -111,7 +114,14 @@ struct HomeView: View {
                         .font(CFFont.caption())
                         .foregroundStyle(CFColor.textTertiary)
                         .padding(.top, CFSpacing.md)
-                        .padding(.bottom, CFSpacing.xxl)
+
+                    // D0 pocket-probe entry (DEBUG only, never ships).
+                    Button("Pocket probe (D0)") { // allow-hardcoded-string until: pr-d0 (DEBUG-only)
+                        showPocketProbe = true
+                    }
+                    .font(CFFont.caption())
+                    .foregroundStyle(CFColor.textTertiary)
+                    .padding(.bottom, CFSpacing.xxl)
 #else
                     Color.clear.frame(height: CFSpacing.xxl)
 #endif
@@ -152,6 +162,9 @@ struct HomeView: View {
         } message: {
             Text(NSLocalizedString("touch.notifExplainer.body", comment: ""))
         }
+#if DEBUG
+        .sheet(isPresented: $showPocketProbe) { PocketProbeView() }
+#endif
     }
 
     // MARK: Sections
