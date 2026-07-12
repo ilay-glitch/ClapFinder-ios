@@ -4,7 +4,7 @@
 <dict>
     <!-- ── Identity ─────────────────────────────────────────────── -->
     <key>CFBundleDisplayName</key>
-    <string>ClapFinder</string>
+    <string>Guard Dog</string>
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleVersion</key>

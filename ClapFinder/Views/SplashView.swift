@@ -64,7 +64,7 @@ struct SplashView: View {
     private func heroStage(in size: CGSize) -> some View {
         ZStack {
             radarRings
-            Image("detective_dog_phone")
+            Image(GuardAssets.splashHero ?? "detective_dog_phone")
                 .resizable()
                 .scaledToFit()
                 .frame(width: min(size.width * 0.62, 260))

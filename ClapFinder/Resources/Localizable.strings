@@ -35,6 +35,11 @@
 /* Animal picker section header */
 "animals.header"          = "Choose your guard";
 
+/* One-time flash tip card (after first disarm) */
+"home.volumeTip.title"    = "🔊 Louder = safer";
+"home.volumeTip.body"     = "The alarm barks at your phone's volume — turn it up before you walk away. It sounds even with the ringer switch off.";
+"home.volumeTip.dismiss"  = "Got it";
+
 /* MARK: - Touch Alert (PR-11) */
 "touch.status.disarmed"        = "Tap the shield to arm";
 "touch.status.grace"           = "Arming — put your phone down…";
@@ -44,6 +49,8 @@
 "touch.notifExplainer.title"   = "One quick thing";
 "touch.notifExplainer.body"    = "Guard Dog will ask to send notifications — so we can tell you if guarding stops.";
 "touch.notifExplainer.ok"      = "Got it";
+"touchAlert.alarmNotification.title" = "🚨 Motion detected!";
+"touchAlert.alarmNotification.body"  = "Guard Dog caught someone touching your phone!";
 "touchAlert.notification.title" = "Touch Alert stopped";
 "touchAlert.notification.body"  = "The system interrupted monitoring. Your phone is not being watched right now.";
 

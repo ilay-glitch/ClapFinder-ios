@@ -54,12 +54,12 @@ struct OnboardingView: View {
     private var content: some View {
         switch step {
         case 0:
-            stepBody(image: "detective_dog_wave",
+            stepBody(image: GuardAssets.onboardingWave ?? "detective_dog_wave",
                      titleKey: "onboarding.step1.title", bodyKey: "onboarding.step1.body")
         case 1:
             notifStep
         default:
-            stepBody(image: "detective_dog_phone",
+            stepBody(image: GuardAssets.onboardingReady ?? "detective_dog_phone",
                      titleKey: "onboarding.step3.title", bodyKey: "onboarding.step3.body")
         }
     }

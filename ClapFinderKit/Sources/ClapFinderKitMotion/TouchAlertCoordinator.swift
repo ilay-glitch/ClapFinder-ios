@@ -123,6 +123,10 @@ public final class TouchAlertCoordinator {
         let wasAlarming = logic.disarm()
 
         responder.stopAlarm()
+#if DEBUG && canImport(UserNotifications) && os(iOS)
+        NotifDiag.log("disarm appState=\(NotifDiag.appState())")
+#endif
+        cancelAlarmNotifications()
         detector.stop()
         detector.onSample = nil
         keepAlive.stop()
@@ -168,6 +172,7 @@ public final class TouchAlertCoordinator {
         Self.logger.info("Motion alarm triggered — \(animal.name)")
         responder.startAlarm(animal: animal, in: soundBundle)
         updateLiveActivity(phase: .alarming)
+        scheduleAlarmNotifications()
     }
 
     private func startGraceCountdown() {
@@ -251,6 +256,64 @@ public final class TouchAlertCoordinator {
             _ = try? await UNUserNotificationCenter.current()
                 .requestAuthorization(options: [.alert, .sound])
         }
+#endif
+    }
+
+    /// Alarm-moment notifications (PM ruling 2026-07-09): one immediate + two
+    /// 5 s-spaced repeats (3 total). With the user's "LED Flash for Alerts"
+    /// accessibility setting on, each delivery blinks the rear LED while the
+    /// phone is locked — the supported flash-from-locked mechanism (direct
+    /// torch is foreground-only, PIVOT.md §6b). Repeats are cancelled the
+    /// moment the alarm is disarmed so none fires late.
+    private static let alarmNotificationIDs = [
+        "touchAlert.alarm.0", "touchAlert.alarm.1", "touchAlert.alarm.2"
+    ]
+
+    private func scheduleAlarmNotifications() {
+#if canImport(UserNotifications) && os(iOS)
+        let center = UNUserNotificationCenter.current()
+#if DEBUG
+        NotifDiag.log("schedule appState=\(NotifDiag.appState())")
+#endif
+        for (index, id) in Self.alarmNotificationIDs.enumerated() {
+            let content = UNMutableNotificationContent()
+            content.title = NSLocalizedString("touchAlert.alarmNotification.title", comment: "")
+            content.body = NSLocalizedString("touchAlert.alarmNotification.body", comment: "")
+            content.sound = .default
+            let trigger: UNNotificationTrigger? = index == 0
+                ? nil   // immediate
+                : UNTimeIntervalNotificationTrigger(timeInterval: Double(index) * 5.0, repeats: false)
+            center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger)) { error in
+#if DEBUG
+                NotifDiag.log("add \(id) error=\(error?.localizedDescription ?? "nil")")
+#endif
+                if let error {
+                    Self.logger.error("Alarm notification add failed: \(error.localizedDescription)")
+                }
+            }
+        }
+        center.getNotificationSettings { settings in
+#if DEBUG
+            NotifDiag.log(
+                "auth=\(settings.authorizationStatus.rawValue)"
+                + " alert=\(settings.alertSetting.rawValue)"
+                + " lockScreen=\(settings.lockScreenSetting.rawValue)"
+                + " sound=\(settings.soundSetting.rawValue)"
+            )
+#endif
+            Self.logger.info("Alarm notifications scheduled — auth \(settings.authorizationStatus.rawValue)")
+        }
+#if DEBUG
+        logDeliveredSnapshots(center: center)
+#endif
+#endif
+    }
+
+    private func cancelAlarmNotifications() {
+#if canImport(UserNotifications) && os(iOS)
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: Self.alarmNotificationIDs)
+        center.removeDeliveredNotifications(withIdentifiers: Self.alarmNotificationIDs)
 #endif
     }
 

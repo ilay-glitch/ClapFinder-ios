@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		15FC397D1862D0C424B671AA /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D55CBE695533189A80B9256 /* SplashViewModel.swift */; };
 		1855A8AE8D565B818E2136BC /* cow_moo.caf in Resources */ = {isa = PBXBuildFile; fileRef = 314046E6E33DB47CD039CE26 /* cow_moo.caf */; };
+		1EA8049422AB3398462B096D /* GuardAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5428AD88C91157AD274AE9D0 /* GuardAssets.swift */; };
 		24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508FBC43B8DDEEAACD96A34B /* HomeView.swift */; };
 		2EC4316D43D025650B6CDA6D /* ClapFinderKitAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 29009E77D63B9F74DA59AF8E /* ClapFinderKitAudio */; };
 		30849F4A4945475017DCD8EC /* AlarmOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */; };
 		34C59F813A02ECA904DACF70 /* sheep_baa.caf in Resources */ = {isa = PBXBuildFile; fileRef = F4E74937BF9BD5B1450F6FD5 /* sheep_baa.caf */; };
 		37B90DCA5C66492C8E8BA7B5 /* air_horn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 4641B24B3D6601188D02C221 /* air_horn.caf */; };
 		39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C28A92E42035AFE64CFBED6 /* SplashView.swift */; };
+		40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */; };
 		46DE2E1650F309DB30C7C0D4 /* ClapFinderKitActivity in Frameworks */ = {isa = PBXBuildFile; productRef = A34C84EBDD96B375E75B5DC2 /* ClapFinderKitActivity */; };
 		4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */ = {isa = PBXBuildFile; fileRef = 88EF60ED1B99B45FB9597062 /* beep.caf */; };
 		4E607E825860DC2D744F0B9F /* rooster_crow.caf in Resources */ = {isa = PBXBuildFile; fileRef = C4FD638F38EA5721F09B12AA /* rooster_crow.caf */; };
@@ -91,6 +93,7 @@
 		314046E6E33DB47CD039CE26 /* cow_moo.caf */ = {isa = PBXFileReference; path = cow_moo.caf; sourceTree = "<group>"; };
 		4641B24B3D6601188D02C221 /* air_horn.caf */ = {isa = PBXFileReference; path = air_horn.caf; sourceTree = "<group>"; };
 		508FBC43B8DDEEAACD96A34B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		5428AD88C91157AD274AE9D0 /* GuardAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuardAssets.swift; sourceTree = "<group>"; };
 		5481D18B530933145E1D7F55 /* InterstitialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialController.swift; sourceTree = "<group>"; };
 		54B7F7D89DEF3D8A52308019 /* TouchAlertHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertHeroView.swift; sourceTree = "<group>"; };
 		6044AF28719447AAE601B0B9 /* siren.caf */ = {isa = PBXFileReference; path = siren.caf; sourceTree = "<group>"; };
@@ -105,6 +108,7 @@
 		94D97DABA693A338ECA53390 /* frog_ribbit.caf */ = {isa = PBXFileReference; path = frog_ribbit.caf; sourceTree = "<group>"; };
 		982F94330D8C525A1BE035DD /* dog_bark.caf */ = {isa = PBXFileReference; path = dog_bark.caf; sourceTree = "<group>"; };
 		9E9911E009298BAA6F4004B6 /* TouchAlertLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertLiveActivity.swift; sourceTree = "<group>"; };
+		9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
 		A4223CAE7C416F483AF18D47 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlayView.swift; sourceTree = "<group>"; };
 		AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdLoader.swift; sourceTree = "<group>"; };
@@ -186,6 +190,7 @@
 			children = (
 				A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */,
 				F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */,
+				5428AD88C91157AD274AE9D0 /* GuardAssets.swift */,
 				508FBC43B8DDEEAACD96A34B /* HomeView.swift */,
 				710B7A576F28AD33F238327D /* OnboardingView.swift */,
 				694EDEE0F8F56E436B87B595 /* PulseRingsView.swift */,
@@ -201,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */,
+				9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */,
 				A9F965084EF7694AC3879FE4 /* Ads */,
 				68B48E6A2180E43BF8390D76 /* Debug */,
 				A60224AFEFDF5C25F3E41BC9 /* Resources */,
@@ -433,8 +439,10 @@
 				A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */,
 				8C637C16A705020E3FA9DDCE /* BuildStamp.swift in Sources */,
 				A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */,
+				1EA8049422AB3398462B096D /* GuardAssets.swift in Sources */,
 				24A04DC9DD3E73446C8D79B3 /* HomeView.swift in Sources */,
 				63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */,
+				40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */,
 				9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */,
 				B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */,
 				807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */,
@@ -474,7 +482,7 @@
 				INFOPLIST_FILE = ClapFinderWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.clapfinder.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.guarddog.widgets;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -553,7 +561,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.clapfinder;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.guarddog;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -574,7 +582,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.clapfinder;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.guarddog;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -590,7 +598,7 @@
 				INFOPLIST_FILE = ClapFinderWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.clapfinder.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appcentral.guarddog.widgets;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";

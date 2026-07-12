@@ -19,8 +19,8 @@ code and its documentation remain in the repo, dormant and recoverable.
 
 | Item | Ruling |
 |---|---|
-| **Name** | **"Guard Dog — Don't Touch My Phone"** (PM ruling, 2026-07-02) |
-| **Bundle ID** | **NEW** bundle ID + fresh listing (never shipped publicly; clean identity wins). Proposed: `com.appcentral.guarddog` — final string is the PM's at P3. |
+| **Name** | **"Guard Dog — Don't Touch My Phone"** (PM ruling, 2026-07-02). Implemented P3: device icon label `CFBundleDisplayName` = **"Guard Dog"** (iOS truncates ~14 chars); App Store listing name = **"Guard Dog — Don't Touch Phone"** (29 chars — the full ruling name is 32, over ASC's 30 limit; "My" dropped, full phrase goes in the subtitle/keywords). |
+| **Bundle ID** | **NEW** bundle ID + fresh listing (never shipped publicly; clean identity wins). **Implemented P3: `com.appcentral.guarddog`** (+ `.widgets` for the extension). Internal code/project names stay `ClapFinder*` deliberately — an internal codename; renaming the package modules would be pure churn. |
 | **Mascot** | Same detective-dog character, new job: **guard dog** — loyal protector, barks at intruders. New pose set at P3 (§6). |
 | **Creative structure to mirror** | Cute character grid as centerpiece (the 16 sounds = "guards"), single big **"Tap to activate"** action. **No tab bar at launch** (single mode; add when a second mode exists — PM ruling b2). |
 | **Palette** | Sky-blue system (DESIGN.md v-next) unchanged. |
@@ -44,7 +44,7 @@ from active flows.
 **Dormant in ClapFinderKit (NOT deleted):** `ClapDetector` (+Calibration,
 +AudioSession, +Diagnostics, +Spectral extensions), `ClapSpectral`,
 `ClapCalibration`, `ClapCalibrationController`, `ClapDiagnostics`,
-`ClapClassifierProbe`, `ResponseSuppression`, and all their tests.
+`ClapClassifierProbe`, `ResponseSuppression`, `ResponseCoordinator` (unwired since P1), and all their tests. (`AlarmResponder`/`SoundPlayer`/`FlashlightController`/`HapticController` stay LIVE — the guard uses them.)
 **Note:** `ClapDetector` remains *live but silent* as the touch-alert
 keep-alive until P2 swaps it out; after P2 it is fully dormant.
 
@@ -73,9 +73,58 @@ fully dormant.
 `guard_dog_barking` (alarm overlay) · `guard_dog_wave` (onboarding welcome;
 existing wave may be reused) · `guard_dog_icon` (App Icon, fully opaque).
 
+## 6b. Known platform limitation — flashlight on locked alarms
+
+The alarm flashlight cannot fire while the phone is locked/backgrounded:
+`AVCaptureDevice` torch is camera-subsystem hardware and iOS restricts it to
+foreground apps (background torch writes are silently ignored; the system
+force-disables the torch when an app backgrounds; no entitlement exists).
+Verified 2026-07-08: our `FlashlightController` attempts unconditionally on the
+alarm path — the OS gates it. The alarm **sound** is the primary defense and
+works from locked (QA M7 ✅); the torch self-recovers the moment the app is
+foregrounded during an active alarm.
+
+## 6c. Known platform limitation — accessibility LED on local notifications
+
+"LED Flash for Alerts" does not fire for our alarm notifications. Established
+empirically 2026-07-09 (iOS 26.5, iPhone 15), three-point isolation with
+file-based delivery diagnostics (`notifdiag.csv`):
+
+- Control: a WhatsApp remote push on the same device/settings DOES blink.
+- Our locally scheduled notifications were verifiably scheduled (`add`
+  error=nil), fully authorized (lockScreen setting enabled), and delivered on
+  the locked screen via the normal path (app `.background`, no `willPresent`)
+  — and did not blink, in all three states: mid-alarm (audio blaring),
+  armed-quiet (silent keep-alive only), and idle-quiet (no audio session, app
+  suspended, screen off — the perfect-conditions mirror of the control).
+
+No public API influences the LED, and every documented user-facing condition
+(locked, lock-screen notifications enabled, per-app notifications on) was
+satisfied per the diagnostics rows. Conclusion: on current iOS the LED fires
+for remote pushes but not for third-party locally scheduled notifications —
+unreachable for a serverless local alarm. Not documented by Apple; empirical.
+The in-app LED-tip copy was rewritten to promise only what works (sound).
+Post-launch option parked in §8.
+
 ## 7. Fences (unchanged by the pivot)
 
 Ads/monetization policy untouched (App Open Ad rules, banner idle-only,
 interstitial counter). Touch-alert *logic* (CoreMotion, alarm, notification
 watchdog) is proven — P1 reskins and promotes it, **no rewrite**. Sound
 catalog: all 16 sounds stay, re-framed as the guard grid.
+
+
+## 8. Post-launch list
+
+- **Critical Alerts entitlement application** (`com.apple.developer.
+  usernotifications.critical-alerts`): lets the alarm notification's sound
+  bypass the silent switch and Focus even if the app process is dead —
+  robustness layer on top of the in-app alarm audio. Security justification to
+  submit: an anti-theft alarm that a thief can defeat by Focus/silent is not an
+  alarm; the notification is the theft-moment alert. Manual Apple review
+  (days–weeks, resubmissions common) — deliberately NOT a v1 gate.
+- **Remote-push alarm path** (server + APNs): the only route to the
+  accessibility LED blink (§6c) and a delivery path that survives app death;
+  pairs naturally with the Critical Alerts entitlement above.
+- Foghorn alert-sound replacement (PM pick pending; Warfare horn placeholder).
+- Second detection mode (would introduce the tab bar per DESIGN pivot note).

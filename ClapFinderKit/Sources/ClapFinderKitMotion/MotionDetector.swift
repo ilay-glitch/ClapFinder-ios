@@ -54,6 +54,10 @@ public final class MotionDetector {
         }
 
         manager.deviceMotionUpdateInterval = updateInterval
+#if DEBUG
+        startDiagFile()
+        let diagStart = Date()
+#endif
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, error in
             if let error {
                 Self.logger.error("Device motion error: \(error.localizedDescription)")
@@ -62,6 +66,20 @@ public final class MotionDetector {
             guard let motion else { return }
             let accel = motion.userAcceleration
             let magnitude = (accel.x * accel.x + accel.y * accel.y + accel.z * accel.z).squareRoot()
+#if DEBUG
+            // Motion diagnostics (PM sessions: table-vibration vs real pickup).
+            // Gravity vector = tilt signal; rotationRate = handling signal —
+            // the candidate discriminators against raw-magnitude spikes.
+            let grav = motion.gravity
+            let rot = motion.rotationRate
+            let rotMag = (rot.x * rot.x + rot.y * rot.y + rot.z * rot.z).squareRoot()
+            let line = String(
+                format: "%.2f,%.4f,%.3f,%.3f,%.3f,%.3f",
+                Date().timeIntervalSince(diagStart), magnitude,
+                grav.x, grav.y, grav.z, rotMag
+            )
+            Task { @MainActor [weak self] in self?.appendDiag(line) }
+#endif
             Task { @MainActor [weak self] in
                 self?.onSample?(magnitude, Date())
             }
@@ -71,6 +89,36 @@ public final class MotionDetector {
         Self.logger.info("Motion monitoring started (10 Hz)")
         return true
     }
+
+#if DEBUG
+    // MARK: Motion diagnostics (DEBUG only — Documents/motiondiag.csv)
+
+    /// Appends per listen-session (repeated header = session delimiter), same
+    /// pull path as clapdiag.csv: devicectl copy from the app container.
+    private var diagURL: URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            .first?.appendingPathComponent("motiondiag.csv")
+    }
+
+    private func startDiagFile() {
+        guard let url = diagURL else { return }
+        let header = Data("t,uaMag,gravX,gravY,gravZ,rotMag\n".utf8)
+        if let handle = try? FileHandle(forWritingTo: url) {
+            defer { try? handle.close() }
+            _ = try? handle.seekToEnd()
+            try? handle.write(contentsOf: header)
+        } else {
+            try? header.write(to: url)
+        }
+    }
+
+    private func appendDiag(_ line: String) {
+        guard let url = diagURL, let handle = try? FileHandle(forWritingTo: url) else { return }
+        defer { try? handle.close() }
+        _ = try? handle.seekToEnd()
+        try? handle.write(contentsOf: Data((line + "\n").utf8))
+    }
+#endif
 
     /// Stops device-motion updates.
     public func stop() {

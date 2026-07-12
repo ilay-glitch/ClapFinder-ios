@@ -56,7 +56,7 @@ targets:
           - "**/.DS_Store"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.appcentral.clapfinder
+        PRODUCT_BUNDLE_IDENTIFIER: com.appcentral.guarddog
         INFOPLIST_FILE: ClapFinder/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_STRICT_CONCURRENCY: complete
@@ -107,7 +107,7 @@ targets:
           - "**/.DS_Store"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.appcentral.clapfinder.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.appcentral.guarddog.widgets
         INFOPLIST_FILE: ClapFinderWidgets/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_STRICT_CONCURRENCY: complete

@@ -23,6 +23,8 @@ struct AlarmOverlayView: View {
             VStack(spacing: CFSpacing.xl) {
                 Spacer()
 
+                // PM ruling 2026-07-09: the SELECTED guard's emoji, not the
+                // barking dog — the visual must match the user-chosen sound.
                 Text(verbatim: animal?.emoji ?? "🛡️")
                     .font(.system(size: 120))
                     .offset(y: animating && !reduceMotion ? -24 : 0)

@@ -25,6 +25,11 @@ struct HomeView: View {
     /// Pre-permission explainer before the first arm (design §4.2 ruling).
     @AppStorage("touchAlert.hasSeenNotifExplainer") private var hasSeenNotifExplainer = false
     @State private var showNotifExplainer = false
+    /// Volume tip: appears after the first completed guard session, until
+    /// dismissed. (Was the LED-flash tip — rewritten per PIVOT.md §6c: the
+    /// accessibility LED never fires for local notifications.)
+    @AppStorage("home.hasCompletedFirstSession") private var hasCompletedFirstSession = false
+    @AppStorage("home.volumeTipDismissed") private var volumeTipDismissed = false
 
     private let gridColumns = Array(repeating: GridItem(.fixed(80), spacing: CFSpacing.sm), count: 4)
 
@@ -32,10 +37,33 @@ struct HomeView: View {
         ZStack {
             CFColor.skyPrimary.ignoresSafeArea()
 
+            // P3 slot: illustrated Home background (arrives with the PM's art).
+            // Scrim keeps content readable; cards stay white on top.
+            if let background = GuardAssets.homeBackground {
+                Image(background)
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .overlay(CFColor.skyPrimary.opacity(0.30).ignoresSafeArea())
+                    .accessibilityHidden(true)
+            }
+
             ScrollView {
                 VStack(spacing: 0) {
                     headerSection
                         .padding(.top, CFSpacing.lg)
+
+                    // P3 slot: guard mascot above the hero (shield when idle,
+                    // watching pose while armed). Renders nothing until the art lands.
+                    if let mascot = touchAlert.state == .disarmed
+                        ? GuardAssets.heroDisarmed : GuardAssets.heroArmed {
+                        Image(mascot)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 130)
+                            .padding(.top, CFSpacing.md)
+                            .accessibilityHidden(true)
+                    }
 
                     TouchAlertHeroView(
                         state: touchAlert.state,
@@ -47,6 +75,11 @@ struct HomeView: View {
 
                     statusLabel
                         .padding(.top, CFSpacing.md)
+
+                    if hasCompletedFirstSession && !volumeTipDismissed {
+                        volumeTipCard
+                            .padding(.top, CFSpacing.md)
+                    }
 
                     if let err = startError {
                         Text(err) // allow-hardcoded-string until: pr-8
@@ -171,6 +204,30 @@ struct HomeView: View {
         }
     }
 
+    /// One-time volume tip: the alarm's loudness is the locked-phone defense
+    /// (PIVOT.md §6b/§6c), and it plays at media volume via the `.playback`
+    /// session — worth surfacing once.
+    private var volumeTipCard: some View {
+        HStack(alignment: .top, spacing: CFSpacing.sm) {
+            VStack(alignment: .leading, spacing: CFSpacing.xs) {
+                Text(NSLocalizedString("home.volumeTip.title", comment: ""))
+                    .font(CFFont.headline())
+                    .foregroundStyle(CFColor.textPrimary)
+                Text(NSLocalizedString("home.volumeTip.body", comment: ""))
+                    .font(CFFont.caption())
+                    .foregroundStyle(CFColor.textSecondary)
+            }
+            Spacer()
+            Button(NSLocalizedString("home.volumeTip.dismiss", comment: "")) {
+                volumeTipDismissed = true
+            }
+            .font(CFFont.caption())
+            .foregroundStyle(CFColor.ctaBlue)
+        }
+        .padding(CFSpacing.md)
+        .background(CFColor.cream, in: RoundedRectangle(cornerRadius: CFRadius.card, style: .continuous))
+    }
+
     private var sensitivitySection: some View {
         @Bindable var store = catalogStore
         return SensitivityControlView(sensitivity: $store.sensitivity)
@@ -194,6 +251,7 @@ struct HomeView: View {
             let completedSession = touchAlert.state == .monitoring
             touchAlert.disarm()
             if completedSession {
+                hasCompletedFirstSession = true
                 interstitials.recordUse()
                 interstitials.attemptPresentation(
                     isDetectionActive: false,
