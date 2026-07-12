@@ -121,7 +121,7 @@ monitoring), `pocket_alarm`, `pocket_disarmed(duration, wasAlarming)`,
 | Q4 | Side-button lock while monitoring | stand-down notification fires; no silent death |
 | Q5 | Incoming call while monitoring | stand-down notification fires |
 | Q6 | Loose-pocket flicker (walk, sit, stairs) | no false alarm (debounce holds) |
-| Q7 | Auto-Lock = 30 s setting, 5-min pocketed session | session survives (idle timer disabled) — closes D0 row 3 unconditionally |
+| Q7 | Auto-Lock = 30 s setting, 5-min pocketed session | session survives (idle timer disabled) — regression guard for D0 row 3 (closed) |
 | Q8 | 30-min pocketed session | battery Δ recorded — closes D0 row 6 |
 | Q9 | Full session upside-down/head-first AND right-side-up standing | identical behavior — closes D0 row 7 footnote |
 | Q10 | Face-down on desk arming | covered = engages ("desk pocket" — accepted behavior, documented) |
