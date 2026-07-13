@@ -14,7 +14,6 @@ import SwiftUI
 ///   Status label
 ///   Guard grid (the 16 alert sounds)
 ///   Sensitivity control
-///   (idle-only ad banner at the bottom)
 struct HomeView: View {
 
     @Environment(CatalogStore.self) private var catalogStore
@@ -129,20 +128,7 @@ struct HomeView: View {
                 .padding(.horizontal, CFSpacing.md)
             }
             .scrollIndicators(.hidden)
-
-            // Banner: bottom of Home ONLY, idle-only (ADS_DESIGN.md D3) —
-            // hidden while the guard is armed or alarming.
-            // (No .ignoresSafeArea here since PR-P1: the banner must sit
-            // ABOVE the tab bar, inside the tab's safe area.)
-            if touchAlert.state == .disarmed {
-                VStack {
-                    Spacer()
-                    BannerAdView()
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
         }
-        .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .disarmed)
         .alert(
             Text(NSLocalizedString("touch.notifExplainer.title", comment: "")),
             isPresented: $showNotifExplainer

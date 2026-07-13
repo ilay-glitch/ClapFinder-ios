@@ -112,19 +112,9 @@ public final class UserDefaultsInterstitialStore: InterstitialStore, @unchecked 
     }
 }
 
-// MARK: - AdPlacementAnalytics (EVENTS.md — Banner / Interstitial)
+// MARK: - AdPlacementAnalytics (EVENTS.md — Interstitial)
 
 public enum AdPlacementAnalytics {
-
-    public static func bannerLoaded() -> AnalyticsEvent {
-        AnalyticsEvent(name: "banner_loaded")
-    }
-
-    public static func bannerFailed(errorReason: String) -> AnalyticsEvent {
-        AnalyticsEvent(name: "banner_failed", params: [
-            "error_reason": .string(errorReason)
-        ])
-    }
 
     public static func interstitialShown(usesSinceLast: Int) -> AnalyticsEvent {
         AnalyticsEvent(name: "interstitial_shown", params: [
