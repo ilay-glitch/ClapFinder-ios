@@ -43,7 +43,6 @@
 		9B99D815E84E6D6CB2F9D23C /* ClapFinderKitMotion in Frameworks */ = {isa = PBXBuildFile; productRef = B6031855CF37D69C82E54CB8 /* ClapFinderKitMotion */; };
 		9C8FA463CD777411D1A687F5 /* foghorn.caf in Resources */ = {isa = PBXBuildFile; fileRef = 034457FB4DC6EBE426A37265 /* foghorn.caf */; };
 		9FB102267116B977253F26BB /* dog_bark.caf in Resources */ = {isa = PBXBuildFile; fileRef = 982F94330D8C525A1BE035DD /* dog_bark.caf */; };
-		A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4223CAE7C416F483AF18D47 /* BannerAdView.swift */; };
 		A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4FED72CFFF9C058EC12CE3 /* ClapFinderApp.swift */; };
 		B223DCED093866E1FEEA19CE /* siren.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6044AF28719447AAE601B0B9 /* siren.caf */; };
 		B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945CB9ECDE4D0BE89551B78 /* AnimalCardView.swift */; };
@@ -116,7 +115,6 @@
 		982F94330D8C525A1BE035DD /* dog_bark.caf */ = {isa = PBXFileReference; path = dog_bark.caf; sourceTree = "<group>"; };
 		9E9911E009298BAA6F4004B6 /* TouchAlertLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAlertLiveActivity.swift; sourceTree = "<group>"; };
 		9F48174EF8EA04F07E551E4C /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
-		A4223CAE7C416F483AF18D47 /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		A60915F6645978F90BBC7A74 /* AlarmOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlayView.swift; sourceTree = "<group>"; };
 		AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdLoader.swift; sourceTree = "<group>"; };
 		AD8116237551BE69D5D912DF /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
@@ -249,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				AAA233BA8A2AFDF484BA4533 /* AppOpenAdLoader.swift */,
-				A4223CAE7C416F483AF18D47 /* BannerAdView.swift */,
 				5481D18B530933145E1D7F55 /* InterstitialController.swift */,
 			);
 			path = Ads;
@@ -449,7 +446,6 @@
 				30849F4A4945475017DCD8EC /* AlarmOverlayView.swift in Sources */,
 				B7C948051589923453D5F5C3 /* AnimalCardView.swift in Sources */,
 				D0FA1D01D0673BC484C8C77F /* AppOpenAdLoader.swift in Sources */,
-				A216DCCEB4C70BCB3B24541E /* BannerAdView.swift in Sources */,
 				8C637C16A705020E3FA9DDCE /* BuildStamp.swift in Sources */,
 				A9C8752C3A1A34B99EAE723C /* ClapFinderApp.swift in Sources */,
 				1EA8049422AB3398462B096D /* GuardAssets.swift in Sources */,

@@ -1,11 +1,21 @@
 # ADS_DESIGN.md — Banner + Interstitial (PR-12)
 
-**Version:** v2 (PM rulings folded — approved for implementation)
+**Version:** v3 (banner removed — see Decision Record below)
 **PR:** logical PR-12 `phase2/pr-12-banner-interstitial`
-**Status:** Approved 2026-06-11. D1–D3 ruled as proposed: "use" =
-clap listening start with attempt at stop-listening only; threshold
-drawn 3–5 per cycle with not-loaded preserving the counter; banner
-idle-only.
+**Status:** Approved 2026-06-11. D1–D3 ruled as proposed; D1 re-ruled
+D1-v2 at the pivot ("use" = completed guard session). **Banner REMOVED
+at P1-review (PM ruling 2026-07-12)** — see Decision Record.
+
+## Decision Record — banner removed (PM, 2026-07-12, P1 device review)
+
+With the two-mode tab bar (POCKET_MODE_DESIGN.md §4), the bottom chrome
+sandwich — banner docked above the tab bar — read as too heavy; the PM
+ruled for the clean screen. Removed: `BannerAdView`, its idle-only
+show/hide wiring in Home, the banner ad-unit reference, and the
+`banner_loaded`/`banner_failed` analytics events. **Revenue consolidates
+on the interstitial (D1-v2) and the App Open Ad — both untouched.** The
+AdMob SDK stays (those formats need it). Banner sections below are kept
+as historical record; constraint 1 and D3 are void.
 
 ---
 
