@@ -22,7 +22,6 @@
 		4E4C72C87EE09655C14C9BD4 /* beep.caf in Resources */ = {isa = PBXBuildFile; fileRef = 88EF60ED1B99B45FB9597062 /* beep.caf */; };
 		4E607E825860DC2D744F0B9F /* rooster_crow.caf in Resources */ = {isa = PBXBuildFile; fileRef = C4FD638F38EA5721F09B12AA /* rooster_crow.caf */; };
 		5190609869231098D142D8B7 /* ClapFinderKitData in Frameworks */ = {isa = PBXBuildFile; productRef = BDEA670469C2DA5619F97569 /* ClapFinderKitData */; };
-		56F90889DD7C9A1BCE48B19B /* PocketProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D30BEAE9E7D0DF5DE1592FB /* PocketProbe.swift */; };
 		63464AEBC1F6E2715E0D3192 /* InterstitialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5481D18B530933145E1D7F55 /* InterstitialController.swift */; };
 		6C47271544A5AA86604CB9E3 /* ClapFinderKitLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = DE25CE73229C5787BECC0459 /* ClapFinderKitLocalization */; };
 		6F0E6917F566DFF47C9E4603 /* ClapFinderWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86F503BAEA217D482BE9627 /* ClapFinderWidgetsBundle.swift */; };
@@ -93,7 +92,6 @@
 		1C28A92E42035AFE64CFBED6 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		2146BA0C723D11A0EFFAB38D /* ClapFinderWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ClapFinderWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ACD4ACC57959E4B128A4721 /* bell.caf */ = {isa = PBXFileReference; path = bell.caf; sourceTree = "<group>"; };
-		2D30BEAE9E7D0DF5DE1592FB /* PocketProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketProbe.swift; sourceTree = "<group>"; };
 		2F99ABA31E0D3D13A37458C4 /* doorbell.caf */ = {isa = PBXFileReference; path = doorbell.caf; sourceTree = "<group>"; };
 		314046E6E33DB47CD039CE26 /* cow_moo.caf */ = {isa = PBXFileReference; path = cow_moo.caf; sourceTree = "<group>"; };
 		4641B24B3D6601188D02C221 /* air_horn.caf */ = {isa = PBXFileReference; path = air_horn.caf; sourceTree = "<group>"; };
@@ -228,7 +226,6 @@
 			isa = PBXGroup;
 			children = (
 				C33DA923C077EF94E1C4E622 /* BuildStamp.swift */,
-				2D30BEAE9E7D0DF5DE1592FB /* PocketProbe.swift */,
 			);
 			path = Debug;
 			sourceTree = "<group>";
@@ -455,7 +452,6 @@
 				40E7E36E90B16B23ABFA2432 /* NotificationPresenter.swift in Sources */,
 				9AC8E3ED520ECE33BA68EF57 /* OnboardingView.swift in Sources */,
 				D75119EED8EB6DD94D3A545D /* PocketModeView.swift in Sources */,
-				56F90889DD7C9A1BCE48B19B /* PocketProbe.swift in Sources */,
 				B8861F9B38A57272A4C9D7E8 /* PulseRingsView.swift in Sources */,
 				807A89DBCD6FFF3720A41587 /* SensitivityControlView.swift in Sources */,
 				39A26666D7FD1CF1736E0519 /* SplashView.swift in Sources */,

@@ -14,6 +14,7 @@ import SwiftUI
 struct MainTabView: View {
 
     @Environment(TouchAlertCoordinator.self) private var touchAlert
+    @Environment(PocketModeCoordinator.self) private var pocket
 
     var body: some View {
         ZStack {
@@ -34,8 +35,19 @@ struct MainTabView: View {
                     touchAlert.disarm()
                 }
                 .transition(.opacity)
+            } else if pocket.state == .alarming {
+                AlarmOverlayView(
+                    animal: pocket.armedAnimal,
+                    titleKey: "pocket.status.alarming"
+                ) {
+                    pocket.disarm()
+                }
+                .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: touchAlert.state == .alarming)
+        .animation(
+            .easeInOut(duration: 0.25),
+            value: touchAlert.state == .alarming || pocket.state == .alarming
+        )
     }
 }

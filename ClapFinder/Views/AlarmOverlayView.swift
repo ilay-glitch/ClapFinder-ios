@@ -9,6 +9,8 @@ import SwiftUI
 struct AlarmOverlayView: View {
 
     let animal: Animal?
+    /// Localized title key — touch and pocket alarms narrate differently.
+    var titleKey = "touch.status.alarming"
     let onDisarm: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -33,7 +35,7 @@ struct AlarmOverlayView: View {
                         value: animating
                     )
 
-                Text(NSLocalizedString("touch.status.alarming", comment: ""))
+                Text(NSLocalizedString(titleKey, comment: ""))
                     .font(CFFont.title1())
                     .foregroundStyle(CFColor.textPrimary)
 

@@ -44,6 +44,10 @@ public final class TouchAlertCoordinator {
     /// The animal that will sound (and is sounding) on trigger.
     public private(set) var armedAnimal: Animal?
 
+    /// Mutual-exclusivity hook (POCKET_MODE_DESIGN.md §5): the app wires
+    /// this to disarm the pocket coordinator. Called on every successful arm.
+    public var onWillArm: (() -> Void)?
+
     // MARK: Dependencies
 
     public let detector: MotionDetector
@@ -93,6 +97,7 @@ public final class TouchAlertCoordinator {
     ///   cannot start (session conflict; no mic involvement since P2).
     public func arm(animal: Animal, sensitivity: Sensitivity) throws {
         guard logic.state == .disarmed else { return }
+        onWillArm?()
 
         armedAnimal = animal
         try keepAlive.start()
@@ -342,6 +347,7 @@ public final class TouchAlertCoordinator {
     /// **Only call this from test code.**
     func armForTesting(animal: Animal, sensitivity: Sensitivity, at now: Date) {
         guard logic.state == .disarmed else { return }
+        onWillArm?()
         armedAnimal = animal
         keepAlive.setListeningForTesting(true)
         detector.onSample = { [weak self] magnitude, sampleNow in
