@@ -46,6 +46,12 @@
 "tab.pocketMode"           = "Pocket Mode";
 "pocket.title"             = "Pocket Mode";
 "pocket.status.disarmed"   = "Tap to guard your pocket";
+"pocket.status.awaitingPocket" = "Screen on — slide me into your pocket…";
+"pocket.status.monitoring" = "On duty in your pocket 👀";
+"pocket.status.alarming"   = "Phone pulled out!";
+"pocket.howItWorks"        = "Arm it, slide the phone in your pocket — pulling it out sets off the alarm.";
+"pocket.arm"               = "Guard my pocket";
+"pocket.disarm"            = "Stop guarding";
 "touch.howItWorks"             = "Arm it, set your phone down — any movement sets off the alarm.";
 "touch.status.grace"           = "Arming — put your phone down…";
 "touch.status.monitoring"      = "Armed — don't touch 🛡️";

@@ -15,15 +15,23 @@ struct ClapFinderApp: App {
 
     @State private var catalogStore = CatalogStore()
     @State private var touchAlert: TouchAlertCoordinator
+    @State private var pocketMode: PocketModeCoordinator
     @State private var attManager = ATTManager()
     @State private var interstitials = InterstitialController()
 
     init() {
         // PIVOT.md: the guard (touch alert) is the product — it owns the
         // response pipeline directly. ResponseCoordinator (clap) is dormant
-        // in the package, no longer constructed here.
+        // in the package, no longer constructed here. Pocket mode shares the
+        // same responder (single response pipeline, POCKET_MODE_DESIGN §5).
         let responder = AlarmResponder(soundPlayer: SoundPlayer(), flashlight: FlashlightController())
-        _touchAlert = State(initialValue: TouchAlertCoordinator(responder: responder))
+        let touch = TouchAlertCoordinator(responder: responder)
+        let pocket = PocketModeCoordinator(responder: responder)
+        // Mutual exclusivity (§5, QA Q11): arming one disarms the other.
+        touch.onWillArm = { [weak pocket] in pocket?.disarm() }
+        pocket.onWillArm = { [weak touch] in touch?.disarm() }
+        _touchAlert = State(initialValue: touch)
+        _pocketMode = State(initialValue: pocket)
         // Foreground notification presentation (alarm 🚨 + LED blink) — see
         // NotificationPresenter.
         UNUserNotificationCenter.current().delegate = NotificationPresenter.shared
@@ -57,6 +65,7 @@ struct ClapFinderApp: App {
                 MainTabView()
                     .environment(catalogStore)
                     .environment(touchAlert)
+                    .environment(pocketMode)
                     .environment(interstitials)
                     .transition(.opacity)
             }
