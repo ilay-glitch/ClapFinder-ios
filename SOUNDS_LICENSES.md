@@ -28,3 +28,8 @@ to ≤ 6 s.
 The 8 animal sounds (`dog_bark`, `cat_meow`, `cow_moo`, `frog_ribbit`,
 `duck_quack`, `pig_oink`, `rooster_crow`, `sheep_baa`) are untouched
 (pre-existing synthesized assets).
+
+## Android
+
+The Android app ships the same 17 sounds as lossless FLAC (`app/src/main/res/raw/`),
+transcoded from the iOS PCM assets — same audio, same sources and licenses as above.

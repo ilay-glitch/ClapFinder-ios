@@ -4,78 +4,78 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project
 
-ClapFinder is a free iOS utility app: clap twice → your phone plays a loud animal sound + flashes the flashlight. Target: families with children. Free + ads (ad network TBD, Phase 2). All Ages App Store category.
+**Guard Dog — Don't Touch My Phone**, Android. An anti-theft deterrent with a
+cartoon guard-dog mascot: arm a guard, and if the phone is moved (Don't Touch) or
+pulled out of a pocket (Pocket Mode), it screams the chosen alarm sound until the
+owner taps DISARM. Free + ads (AdMob app open + interstitial, no banner).
 
-**Identifiers**
+This branch (`android`) is a rewrite of the iOS app on `main`, built from the
+behavior spec in `ANDROID_HANDOFF.md` — not a line-by-line port.
 
 | Item | Value |
 |------|-------|
-| Bundle ID | `com.appcentral.clapfinder` |
+| Application ID | `com.appcentral.guarddog` (debug: `.debug` suffix) |
+| minSdk / targetSdk / compileSdk | 26 / 36 / 37 |
+| Stack | Kotlin 2.3, Jetpack Compose (Material 3), AGP 9.4, Gradle 9.7 |
 
 ## Commands
 
 ```bash
-# Lint (run before every PR; CI runs the same)
-bash scripts/lint/all.sh
+# Unit tests (pure Kotlin core — state machines and ad policies)
+./gradlew :core:test
 
-# Build ClapFinderKit
-cd ClapFinderKit && swift build -v
+# Debug APK
+./gradlew :app:assembleDebug
 
-# Test ClapFinderKit
-cd ClapFinderKit && swift test -v
+# Lint (run before every PR)
+./gradlew :app:lintDebug
 
-# Build Boomr app (after Xcode project exists — created manually in PR-1)
-xcodebuild build \
-  -project ClapFinder.xcodeproj \
-  -scheme ClapFinder \
-  -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
-  -quiet
+# Install + launch on a connected device/emulator
+./gradlew :app:installDebug && adb shell am start -n com.appcentral.guarddog.debug/com.appcentral.guarddog.MainActivity
+
+# Analytics events stream to logcat until a real SDK lands
+adb logcat -s GuardDogAnalytics
 ```
+
+Builds need JDK 17+ (`JAVA_HOME`) and `local.properties` with `sdk.dir`.
 
 ## Architecture
 
-**`ClapFinderKit/`** — local Swift Package (Swift 6, iOS 17+). Five modules:
+**`core/`** — pure Kotlin/JVM, no Android imports. Every rule with timing in it
+takes the clock as a parameter, so tests never sleep.
 
-| Module | Responsibility |
-|--------|----------------|
-| `ClapFinderKitDesign` | Design tokens — color, type, shape. Only place hex literals allowed. |
-| `ClapFinderKitAudio` | Clap detection (AVAudioEngine), sound playback, flashlight, response coordination. |
-| `ClapFinderKitData` | Animal model, catalog.json (16 animals), CatalogStore, Sensitivity enum. |
-| `ClapFinderKitAds` | Ad integration stub (Phase 2). |
-| `ClapFinderKitLocalization` | L10n helpers (stub). |
+| File | Responsibility |
+|------|----------------|
+| `TouchGuardLogic` | Don't Touch: disarmed → grace (5 s) → monitoring → alarming; 2-consecutive-sample trigger |
+| `PocketGuardLogic` | Pocket: awaitingPocket → monitoring → alarming; 1.5 s cover / 0.5 s uncover debounces |
+| `Sensitivity`, `GuardCatalog` | Thresholds (g) and the 16 alarm voices + chirp |
+| `AppOpenAdPolicy`, `SplashStateMachine` | Cold-launch app open ad rules, 1.5 s min / 5 s timeout |
+| `InterstitialPolicy`, `InterstitialCounter` | "Use" counting, 3–5 threshold, never while armed |
+| `Analytics` | Event names/params — the contract in `EVENTS.md` |
 
-**`ClapFinder/`** — Xcode app target. Imports ClapFinderKit as local SPM dependency.
+**`app/`** — everything platform-bound.
+
+| Package | Responsibility |
+|---------|----------------|
+| `guard/GuardEngine` | Process-wide owner of both modes: sensors, alarm, chirps, notifications, mode exclusivity, fail-loud stand-down |
+| `guard/GuardService` | Foreground service (`specialUse`) + partial wake lock + ongoing status notification with Disarm |
+| `guard/Sensors` | 10 Hz linear-acceleration magnitude; proximity covered edges (wake-up sensor preferred) |
+| `alarm/AlarmResponder` | Looping sound on the ALARM stream at max volume, torch pulse, haptics, chirp |
+| `ads/AdsManager` | UMP consent → MobileAds init, app open + interstitial |
+| `data/Prefs` | All persisted state (SharedPreferences) |
+| `ui/` | Compose screens: splash, onboarding, two tabs, alarm overlay. Tokens in `ui/theme/Theme.kt` |
 
 ## Conventions
 
-**Branching & commits**
-- Branch naming: `phase{N}/pr-{M}-{kebab-case-description}`
-- Commit prefixes: `docs:`, `code:`, `tests:`, `chore:`, `fix:`
-- Doc commits land BEFORE code commits on same branch.
-
-**Process**
+- Branching: `android/pr-{N}-{kebab-case}` off `android`. Commit prefixes: `docs:`, `code:`, `tests:`, `chore:`, `fix:`. Doc commits land before code commits on the same branch.
 - Pause and surface under-specced areas. Never expand scope silently.
-- Phase boundaries are real. Phase 2 (ads, analytics) stays out of Phase 1 PRs.
+- Color literals live only in `ui/theme/Theme.kt` (and `res/values/colors.xml` for XML-only surfaces).
+- User-visible strings live in `res/values/strings.xml`. Copy source of truth: `ANDROID_HANDOFF.md` §1.6.
+- New timing rules go into `core/` as pure logic with a test, never inline in the engine.
 
-**Canonical docs**
-- `SKILL.md` — architecture conventions (load at every session start)
-- `PROMPT_PHASE_1.md` — Phase 1 brief
-- `PLAN.md` — phase plan
-- `DESIGN.md` — visual/UX tokens
-- `HOME_MOCKUP.html`, `SETTINGS_MOCKUP.html` — visual targets
+## Canonical docs
 
-## Lint Rules
-
-`scripts/lint/all.sh` runs SwiftLint + two custom bash rules:
-
-- **no-hardcoded-hex**: hex color literals forbidden outside `ClapFinderKitDesign`.
-  Suppress: `// allow-hardcoded-hex until: pr-N`
-- **no-hardcoded-strings**: user-visible string literals in SwiftUI components must use Localizable.strings.
-  Suppress: `// allow-hardcoded-string until: pr-N`
-
-## Setup Notes
-
-- `ClapFinder/` app target Xcode project (.xcodeproj) is created manually via Xcode →
-  File → New → Project → iOS App, Bundle ID `com.appcentral.clapfinder`, add ClapFinderKit as local SPM dep.
-- Each `ClapFinderKit/Sources/{Module}/` needs at least one .swift file for SPM to resolve.
-- Sound files (.caf) are added to the Xcode bundle in PR-5. Use silent placeholders during development.
+- `ANDROID_HANDOFF.md` — behavior spec, assets, monetization rules, the re-probe list
+- `ANDROID_PORT.md` — what this implementation decided, deviations from iOS, and open probes
+- `EVENTS.md` — analytics schema
+- `ADS_DESIGN.md`, `SPLASH_DESIGN.md`, `ONBOARDING_DESIGN.md`, `TOUCH_ALERT_DESIGN.md`, `POCKET_MODE_DESIGN.md`, `DESIGN.md` — product/design records inherited from iOS (their code references are iOS-specific)

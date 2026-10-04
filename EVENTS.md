@@ -58,6 +58,32 @@ Distinguishes fill problems from caps working as designed:
 
 ---
 
+## Pocket Mode
+
+| Event | Params | Fired when |
+|---|---|---|
+| `pocket_armed` | — | Pocket hero tapped (awaiting pocket) |
+| `pocket_engaged` | — | Cover sustained ≥ 1.5 s (chirp) |
+| `pocket_alarm` | — | Uncover sustained ≥ 0.5 s |
+| `pocket_disarmed` | `was_alarming: Bool`, `armed_duration_s: Int` | Disarm from any state |
+| `pocket_standdown` | `reason: String` | Session died underneath us (e.g. `service_destroyed`) |
+
+---
+
+## Android notes
+
+- Transport: `AnalyticsClient` in `core/`, default `LogcatAnalytics`
+  (`adb logcat -s GuardDogAnalytics`).
+- `app_open_ad_requested` carries `consent_obtained: Bool` (UMP) instead of
+  `att_authorized` — Android has no ATT.
+- When UMP consent doesn't allow ad requests, the splash logs
+  `app_open_ad_failed(error_reason=no_consent)` and completes with
+  `ad_skip_reason=load_failed`. Consent is refreshed (no form) inside the 5 s
+  window before every app open request; the form itself is shown on Home.
+- No banner on either platform — `banner_*` events are retired.
+
+---
+
 ## Reserved (future PRs — do not emit yet)
 
 - Detection funnel: `listening_started`, `listening_stopped`,
