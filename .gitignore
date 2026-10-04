@@ -1,38 +1,22 @@
 # macOS
 .DS_Store
-.AppleDouble
-.LSOverride
 
-# Xcode
+# Gradle / Android
+.gradle/
 build/
-DerivedData/
-*.xcworkspace/xcuserdata/
-*.xcodeproj/xcuserdata/
-*.xcodeproj/project.xcworkspace/xcuserdata/
-xcuserdata/
+local.properties
+.kotlin/
+captures/
+*.apk
+*.aab
 
-# SPM
-.build/
-Packages/
-Package.resolved
-.swiftpm/
-
-# CocoaPods (not used — SPM only)
-Pods/
-
-# Fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-
-# Env / secrets
+# Signing / secrets
+keystore.properties
+*.jks
+*.keystore
 .env
-*.p12
-*.cer
-*.mobileprovision
 
-# Editor
+# IDE
 .idea/
+*.iml
 *.swp
-ClapFinder/Debug/BuildStamp.swift
