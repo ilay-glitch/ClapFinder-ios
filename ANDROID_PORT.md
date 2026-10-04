@@ -17,6 +17,7 @@ first full implementation on the `android` branch.
 | Completed session → volume tip appears, use counted, interstitial suppressed by `frequency_cap` | ✅ |
 | Process killed while armed → next launch posts "Touch Alert stopped" | ✅ |
 | `:core:test` (25 tests), `:app:lintDebug` (0 errors), `:app:assembleRelease` (R8 + shrink) | ✅ |
+| Release (R8) build installed and run: onboarding, arm → alarm → disarm, pocket engage → alarm → disarm | ✅ |
 
 App open path on the emulator: consent refresh → `app_open_ad_requested` →
 `app_open_ad_timeout` at 5 s → home. The UMP refresh alone took ~3.5 s there, so a
