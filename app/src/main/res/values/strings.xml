@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copy source of truth: iOS Localizable.strings (ANDROID_HANDOFF §1.6). -->
+<resources>
+    <string name="app_name">Guard Dog</string>
+
+    <!-- Splash -->
+    <string name="splash_tagline">Nobody touches your phone. Ever. 🐶🛡️</string>
+    <string name="splash_loading">Loading %1$d%%…</string>
+    <string name="splash_ad_disclaimer">This action can contain ads</string>
+
+    <!-- Onboarding (first launch only) -->
+    <string name="onboarding_progress">STEP %1$d OF 3</string>
+    <string name="onboarding_step1_title">I\'ll guard your phone!</string>
+    <string name="onboarding_step1_body">Put me on watch — if anyone touches your phone, I bark 🐶🛡️</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_step2_title">If guarding stops, you\'ll know</string>
+    <string name="onboarding_step2_body">I\'ll send a notification if anything interrupts my watch 🔔</string>
+    <string name="onboarding_step2_cta">Enable Notifications</string>
+    <string name="onboarding_step3_title">Ready to stand guard.</string>
+    <string name="onboarding_step3_body">Arm me whenever you leave your phone.</string>
+    <string name="onboarding_step3_cta">Start</string>
+
+    <!-- Home -->
+    <string name="home_title">Guard Dog</string>
+    <string name="home_subtitle">Don\'t touch my phone!</string>
+    <string name="sensitivity_label">Sensitivity</string>
+    <string name="sensitivity_low">Low</string>
+    <string name="sensitivity_medium">Medium</string>
+    <string name="sensitivity_high">High</string>
+    <string name="animals_header">Choose your guard</string>
+
+    <!-- Volume tip (once, after the first completed session). Android copy: the alarm
+         plays on the ALARM stream, raised to full volume while alarming — verify the
+         DND/silent claims on-device (handoff probe 4.5) before release. -->
+    <string name="volume_tip_title">🔊 Louder = safer</string>
+    <string name="volume_tip_body">The alarm plays at full alarm volume — even with your ringer on silent or vibrate. Keep alarms allowed in Do Not Disturb.</string>
+    <string name="volume_tip_dismiss">Got it</string>
+
+    <!-- Tabs -->
+    <string name="tab_dont_touch">Don\'t Touch</string>
+    <string name="tab_pocket_mode">Pocket Mode</string>
+
+    <!-- Don't Touch -->
+    <string name="touch_status_disarmed">Tap the shield to arm</string>
+    <string name="touch_status_grace">Arming — put your phone down…</string>
+    <string name="touch_status_monitoring">Armed — don\'t touch 🛡️</string>
+    <string name="touch_status_alarming">Motion detected!</string>
+    <string name="touch_how_it_works">Arm it, set your phone down — any movement sets off the alarm.</string>
+    <string name="touch_disarm">DISARM</string>
+    <string name="touch_notif_explainer_title">One quick thing</string>
+    <string name="touch_notif_explainer_body">Guard Dog will ask to send notifications — so we can tell you if guarding stops.</string>
+    <string name="touch_notif_explainer_ok">Got it</string>
+    <string name="touch_error_no_motion_sensor">This phone has no motion sensor, so Don\'t Touch can\'t run here.</string>
+
+    <!-- Pocket Mode -->
+    <string name="pocket_title">Pocket Mode</string>
+    <string name="pocket_status_disarmed">Tap to guard your pocket</string>
+    <string name="pocket_status_awaiting">Screen on — slide me into your pocket…</string>
+    <string name="pocket_status_monitoring">On duty in your pocket 👀</string>
+    <string name="pocket_status_alarming">Phone pulled out!</string>
+    <string name="pocket_how_it_works">Arm it, slide the phone in your pocket — pulling it out sets off the alarm.</string>
+    <string name="pocket_arm">Guard my pocket</string>
+    <string name="pocket_disarm">Stop guarding</string>
+    <string name="pocket_error_no_sensor">This phone has no proximity sensor, so Pocket Mode can\'t run here.</string>
+
+    <!-- Notifications -->
+    <string name="channel_status_name">Guard status</string>
+    <string name="channel_status_desc">Shows while a guard is armed, with a disarm button.</string>
+    <string name="channel_alarm_name">Alarms</string>
+    <string name="channel_alarm_desc">Tells you when someone touches your phone.</string>
+    <string name="channel_stopped_name">Guarding stopped</string>
+    <string name="channel_stopped_desc">Tells you if the system interrupted a guard session.</string>
+    <string name="notif_grace">Arming — %1$d…</string>
+    <string name="notif_disarm_action">Disarm</string>
+    <string name="alarm_notification_title">🚨 Motion detected!</string>
+    <string name="alarm_notification_body">Guard Dog caught someone touching your phone!</string>
+    <string name="standdown_notification_title">Touch Alert stopped</string>
+    <string name="standdown_notification_body">The system interrupted monitoring. Your phone is not being watched right now.</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_animal_selected">%1$s, %2$s. Selected.</string>
+    <string name="a11y_animal_unselected">%1$s, %2$s. Not selected.</string>
+    <string name="a11y_touch_armed">Touch alert armed. Tap to disarm.</string>
+    <string name="a11y_touch_disarmed">Touch alert off. Tap to arm.</string>
+</resources>

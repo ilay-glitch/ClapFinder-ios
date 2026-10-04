@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mirrors ui/theme/Color.kt for XML-only surfaces (window, splash, icon). -->
+    <color name="sky_primary">#5BB8FF</color>
+    <color name="icon_background">#3DB0F9</color>
+</resources>

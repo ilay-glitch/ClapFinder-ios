@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GuardDog" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/sky_primary</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- System splash hands straight off to the in-app splash on the same sky. -->
+        <item name="android:windowSplashScreenBackground">@color/sky_primary</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+    </style>
+</resources>
